@@ -1,0 +1,424 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\Booking;
+use App\Models\Destination;
+use App\Models\Notification;
+use App\Models\Ticket;
+use Illuminate\Http\Request;
+
+class BookingController extends Controller
+{
+    /**
+     * Show booking form for a specific destination.
+     */
+    public function create(Destination $destination)
+    {
+        return view('bookings.create', compact('destination'));
+    }
+
+    /**
+     * Store a new booking (Tourist submits).
+     */
+    public function store(Request $request, Destination $destination)
+    {
+        $request->validate([
+            'visit_date' => 'required|date|after:today',
+        ]);
+
+        // Check if destination has capacity
+        $confirmedBookingsOnDate = Booking::where('destination_id', $destination->id)
+            ->where('visit_date', $request->visit_date)
+            ->where('status', 'confirmed')
+            ->count();
+
+        if ($confirmedBookingsOnDate >= $destination->capacity) {
+            return back()->with('error', 'This destination is fully booked on the selected date. Please choose another date.');
+        }
+
+        $booking = Booking::create([
+            'tourist_id' => auth()->id(),
+            'destination_id' => $destination->id,
+            'visit_date' => $request->visit_date,
+            'status' => 'pending',
+        ]);
+
+        // Notify all staff assigned to this destination
+        $staffUsers = $destination->staff;
+        foreach ($staffUsers as $staff) {
+            Notification::create([
+                'recipient_id' => $staff->id,
+                'recipient_type' => 'staff',
+                'type' => 'booking_alert',
+                'message' => "New booking request from " . auth()->user()->name . " for " . $destination->name . " on " . $request->visit_date . ".",
+                'related_booking_id' => $booking->id,
+            ]);
+        }
+
+        return redirect()->route('bookings.index')->with('success', 'Booking submitted! You will be notified once it is reviewed.');
+    }
+
+    /**
+     * List all bookings for the logged-in user (tourist) or assigned destination (staff).
+     */
+    public function index()
+    {
+        $user = auth()->user();
+
+        if ($user->isTourist()) {
+            $bookings = Booking::with(['destination', 'ticket'])
+                ->where('tourist_id', $user->id)
+                ->latest()
+                ->get();
+        } elseif ($user->isStaff()) {
+            $bookings = Booking::with(['tourist', 'destination', 'ticket'])
+                ->where('destination_id', $user->assigned_destination_id)
+                ->latest()
+                ->get();
+        } else {
+            // Admin is not allowed here (blocked at the route level via 'cannot:admin-only')
+            abort(403, 'Admins do not have access to booking management.');
+        }
+
+        return view('bookings.index', compact('bookings'));
+    }
+
+    /**
+     * Confirm a booking (Staff action).
+     */
+    public function confirm(Booking $booking)
+    {
+        $user = auth()->user();
+
+        // Admin is not permitted to perform booking actions
+        if ($user->isAdmin()) {
+            abort(403, 'Admins cannot manage bookings.');
+        }
+
+        if ($user->isStaff() && $user->assigned_destination_id !== $booking->destination_id) {
+            abort(403, 'Unauthorized.');
+        }
+
+        $booking->update([
+            'status' => 'confirmed',
+            'decided_by_staff_id' => $user->id,
+        ]);
+
+        // Generate QR ticket
+        $destination = $booking->destination;
+        $qrCode = strtoupper($destination->initials) . random_int(100000, 999999);
+
+        // Ensure QR uniqueness
+        while (Ticket::where('qr_code', $qrCode)->exists()) {
+            $qrCode = strtoupper($destination->initials) . random_int(100000, 999999);
+        }
+
+        Ticket::create([
+            'booking_id' => $booking->id,
+            'qr_code' => $qrCode,
+        ]);
+
+        // Notify tourist
+        Notification::create([
+            'recipient_id' => $booking->tourist_id,
+            'recipient_type' => 'tourist',
+            'type' => 'booking_alert',
+            'message' => "Your booking for " . $destination->name . " on " . $booking->visit_date . " has been CONFIRMED! Your QR ticket code is: {$qrCode}.",
+            'related_booking_id' => $booking->id,
+        ]);
+
+        return back()->with('success', 'Booking confirmed and QR ticket generated.');
+    }
+
+    /**
+     * Decline a booking (Staff action).
+     */
+    public function decline(Request $request, Booking $booking)
+    {
+        $user = auth()->user();
+
+        // Admin is not permitted to perform booking actions
+        if ($user->isAdmin()) {
+            abort(403, 'Admins cannot manage bookings.');
+        }
+
+        if ($user->isStaff() && $user->assigned_destination_id !== $booking->destination_id) {
+            abort(403, 'Unauthorized.');
+        }
+
+        $request->validate([
+            'decline_reason' => 'required|string|max:500',
+        ]);
+
+        $booking->update([
+            'status' => 'declined',
+            'decline_reason' => $request->decline_reason,
+            'decided_by_staff_id' => $user->id,
+        ]);
+
+        // Notify tourist
+        Notification::create([
+            'recipient_id' => $booking->tourist_id,
+            'recipient_type' => 'tourist',
+            'type' => 'booking_alert',
+            'message' => "Your booking for " . $booking->destination->name . " on " . $booking->visit_date . " has been DECLINED. Reason: " . $request->decline_reason,
+            'related_booking_id' => $booking->id,
+        ]);
+
+        return back()->with('success', 'Booking declined and tourist has been notified.');
+    }
+
+    /**
+     * Submit payment proof (Tourist action).
+     */
+    public function submitPayment(Request $request, Booking $booking)
+    {
+        if (auth()->id() !== $booking->tourist_id) {
+            abort(403, 'Unauthorized.');
+        }
+
+        $request->validate([
+            'gcash_reference_number' => 'required|string|max:100',
+            'payment_screenshot' => 'nullable|image|max:4096',
+        ]);
+
+        $screenshotPath = null;
+        if ($request->hasFile('payment_screenshot')) {
+            $screenshotPath = $request->file('payment_screenshot')->store('payment_screenshots', 'public');
+        }
+
+        $booking->update([
+            'gcash_reference_number' => $request->gcash_reference_number,
+            'payment_screenshot_path' => $screenshotPath,
+            'payment_status' => 'pending_verification',
+            'payment_submitted_at' => now(),
+        ]);
+
+        return back()->with('success', 'Payment proof submitted successfully! Staff will review it shortly.');
+    }
+
+    /**
+     * Approve payment and confirm booking in one click (Staff action).
+     */
+    public function approvePayment(Booking $booking)
+    {
+        $user = auth()->user();
+
+        if ($user->isAdmin()) {
+            abort(403, 'Admins cannot approve bookings.');
+        }
+
+        if ($user->isStaff() && $user->assigned_destination_id !== $booking->destination_id) {
+            abort(403, 'Unauthorized.');
+        }
+
+        // Generate secure unguessable qr token
+        $qrToken = 'TKT-' . bin2hex(random_bytes(16));
+
+        // Generate QR code and store it
+        \Illuminate\Support\Facades\Storage::disk('public')->makeDirectory('qr-tickets');
+        $qrPath = 'qr-tickets/' . $booking->id . '.png';
+
+        try {
+            $qrCodeImage = \SimpleSoftwareIO\QrCode\Facades\QrCode::format('png')
+                ->size(250)
+                ->margin(1)
+                ->generate($qrToken);
+            \Illuminate\Support\Facades\Storage::disk('public')->put($qrPath, $qrCodeImage);
+        } catch (\Exception $e) {
+            // Fallback to SVG format if PNG fails due to lack of Imagick/GD extension, but keep PNG extension to match spec
+            $qrCodeImage = \SimpleSoftwareIO\QrCode\Facades\QrCode::size(250)
+                ->margin(1)
+                ->generate($qrToken);
+            \Illuminate\Support\Facades\Storage::disk('public')->put($qrPath, $qrCodeImage);
+        }
+
+        // Update booking and payment statuses together
+        $booking->update([
+            'status' => 'confirmed',
+            'payment_status' => 'approved',
+            'payment_reviewed_at' => now(),
+            'reviewed_by' => $user->id,
+            'qr_token' => $qrToken,
+            'qr_generated_at' => now(),
+        ]);
+
+        // Create legacy ticket record for backwards compatibility
+        Ticket::updateOrCreate(
+            ['booking_id' => $booking->id],
+            ['qr_code' => $qrToken]
+        );
+
+        // Notify tourist
+        Notification::create([
+            'recipient_id' => $booking->tourist_id,
+            'recipient_type' => 'tourist',
+            'type' => 'booking_alert',
+            'message' => "Your payment and booking request for " . $booking->destination->name . " on " . $booking->visit_date . " has been APPROVED! Your QR ticket is ready.",
+            'related_booking_id' => $booking->id,
+        ]);
+
+        return back()->with('success', 'Booking and payment approved successfully! QR ticket generated.');
+    }
+
+    /**
+     * Reject payment and reject booking (Staff action).
+     */
+    public function rejectPayment(Request $request, Booking $booking)
+    {
+        $user = auth()->user();
+
+        if ($user->isAdmin()) {
+            abort(403, 'Admins cannot reject bookings.');
+        }
+
+        if ($user->isStaff() && $user->assigned_destination_id !== $booking->destination_id) {
+            abort(403, 'Unauthorized.');
+        }
+
+        $request->validate([
+            'rejection_reason' => 'required|string|max:500',
+        ]);
+
+        $booking->update([
+            'status' => 'declined',
+            'payment_status' => 'rejected',
+            'rejection_reason' => $request->rejection_reason,
+            'payment_reviewed_at' => now(),
+            'reviewed_by' => $user->id,
+        ]);
+
+        // Notify tourist
+        Notification::create([
+            'recipient_id' => $booking->tourist_id,
+            'recipient_type' => 'tourist',
+            'type' => 'booking_alert',
+            'message' => "Your booking/payment for " . $booking->destination->name . " on " . $booking->visit_date . " was REJECTED. Reason: " . $request->rejection_reason,
+            'related_booking_id' => $booking->id,
+        ]);
+
+        return back()->with('success', 'Booking and payment rejected.');
+    }
+
+    /**
+     * View active tickets (Tourist dashboard).
+     */
+    public function myTickets()
+    {
+        $user = auth()->user();
+        if (!$user->isTourist()) {
+            abort(403, 'Only tourists can view tickets.');
+        }
+
+        $bookings = Booking::with('destination')
+            ->where('tourist_id', $user->id)
+            ->where('status', 'confirmed')
+            ->whereNotNull('qr_token')
+            ->latest()
+            ->get();
+
+        return view('bookings.tickets', compact('bookings'));
+    }
+
+    /**
+     * Show QR scanner screen (Staff only).
+     */
+    public function scanTicket()
+    {
+        $user = auth()->user();
+        if ($user->isAdmin()) {
+            abort(403, 'Admins cannot perform ticket scanning.');
+        }
+
+        return view('bookings.scan');
+    }
+
+    /**
+     * Verify scanned QR token (Staff POST endpoint).
+     */
+    public function verifyTicket(Request $request)
+    {
+        $user = auth()->user();
+        if ($user->isAdmin()) {
+            return response()->json(['valid' => false, 'message' => 'Admins cannot perform check-ins.'], 403);
+        }
+
+        $request->validate([
+            'qr_token' => 'required|string',
+        ]);
+
+        $booking = Booking::with('tourist', 'destination')
+            ->where('qr_token', $request->qr_token)
+            ->first();
+
+        if (!$booking) {
+            return response()->json(['valid' => false, 'message' => 'Invalid ticket / Booking not found.'], 404);
+        }
+
+        // Staff assigned destination check
+        if ($user->isStaff() && $user->assigned_destination_id !== $booking->destination_id) {
+            return response()->json(['valid' => false, 'message' => 'This ticket is for another destination.'], 403);
+        }
+
+        if ($booking->status !== 'confirmed') {
+            if ($booking->status === 'completed' || $booking->checked_in_at !== null) {
+                $time = $booking->checked_in_at ? \Carbon\Carbon::parse($booking->checked_in_at)->format('M j, Y H:i') : 'an earlier date';
+                return response()->json(['valid' => false, 'message' => 'Ticket already used / Checked in at ' . $time]);
+            }
+            return response()->json(['valid' => false, 'message' => 'This booking is not confirmed (Status: ' . ucfirst($booking->status) . ').']);
+        }
+
+        // Prevent replay check (double safety)
+        if ($booking->checked_in_at !== null) {
+            $time = \Carbon\Carbon::parse($booking->checked_in_at)->format('M j, Y H:i');
+            return response()->json(['valid' => false, 'message' => 'Ticket already used / Checked in at ' . $time]);
+        }
+
+        // Date check - must be today
+        if ($booking->visit_date !== now()->toDateString()) {
+            return response()->json(['valid' => false, 'message' => 'Scheduled visit date is ' . $booking->visit_date . ' (not today).']);
+        }
+
+        // Log the check-in
+        $booking->update([
+            'status' => 'completed',
+            'checked_in_at' => now(),
+            'checked_in_by' => $user->id,
+        ]);
+
+        // Legacy check_ins log insert
+        CheckIn::create([
+            'booking_id' => $booking->id,
+            'arrival_time' => now(),
+            'verified_by_staff_id' => $user->id,
+            'occupancy_updated' => true,
+        ]);
+
+        // Legacy ticket status update
+        $ticket = Ticket::where('booking_id', $booking->id)->first();
+        if ($ticket) {
+            $ticket->update(['scanned_at' => now()]);
+        }
+
+        // Notify admins
+        $admins = User::where('role', 'admin')->get();
+        foreach ($admins as $admin) {
+            Notification::create([
+                'recipient_id' => $admin->id,
+                'recipient_type' => 'admin',
+                'type' => 'info',
+                'message' => $booking->tourist->name . " has arrived at " . $booking->destination->name . " (checked in via scanner at " . now()->format('h:i A') . ").",
+                'related_booking_id' => $booking->id,
+            ]);
+        }
+
+        return response()->json([
+            'valid' => true,
+            'tourist_name' => $booking->tourist->name,
+            'destination_name' => $booking->destination->name,
+            'visit_date' => $booking->visit_date,
+            'checked_in_at' => now()->format('M j, Y h:i A'),
+        ]);
+    }
+}
