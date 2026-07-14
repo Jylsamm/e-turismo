@@ -36,7 +36,7 @@
         <div class="grid grid-cols-2 md:grid-cols-5 gap-4">
             @php
             $cards = [
-                ['label'=>'Total Bookings','value'=>$stats['total_bookings'],'color'=>'indigo'],
+                ['label'=>'Total Bookings','value'=>$stats['total_bookings'],'color'=>'brand'],
                 ['label'=>'Confirmed','value'=>$stats['confirmed'],'color'=>'green'],
                 ['label'=>'Declined','value'=>$stats['declined'],'color'=>'red'],
                 ['label'=>'Pending','value'=>$stats['pending'],'color'=>'amber'],
@@ -61,10 +61,10 @@
                 <div>
                     <div class="flex items-center justify-between text-sm mb-1">
                         <span class="font-medium text-gray-700">{{ $i + 1 }}. {{ $dest->name }}</span>
-                        <span class="text-indigo-600 font-bold">{{ $dest->total }}</span>
+                        <span class="text-brand-700 font-bold">{{ $dest->total }}</span>
                     </div>
                     <div class="w-full bg-gray-100 rounded-full h-2">
-                        <div class="bg-indigo-500 h-2 rounded-full" style="width: {{ ($dest->total / $max) * 100 }}%"></div>
+                        <div class="bg-brand-600 h-2 rounded-full" style="width: {{ ($dest->total / $max) * 100 }}%"></div>
                     </div>
                 </div>
                 @endforeach

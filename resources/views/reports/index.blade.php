@@ -16,7 +16,7 @@
                 <div>
                     <label class="block text-xs text-gray-500 mb-1 uppercase">Destination</label>
                     <select name="destination_id"
-                        class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-400 outline-none">
+                        class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-brand-400 outline-none">
                         <option value="">All Destinations</option>
                         @foreach($destinations as $dest)
                             <option value="{{ $dest->id }}" {{ $filters['destination_id'] == $dest->id ? 'selected' : '' }}>
@@ -28,16 +28,16 @@
                 <div>
                     <label class="block text-xs text-gray-500 mb-1 uppercase">Date From</label>
                     <input type="date" name="date_from" value="{{ $filters['date_from'] }}"
-                        class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-400 outline-none">
+                        class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-brand-400 outline-none">
                 </div>
                 <div>
                     <label class="block text-xs text-gray-500 mb-1 uppercase">Date To</label>
                     <input type="date" name="date_to" value="{{ $filters['date_to'] }}"
-                        class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-400 outline-none">
+                        class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-brand-400 outline-none">
                 </div>
                 <div class="flex items-end">
                     <button type="submit"
-                        class="w-full bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg py-2 text-sm font-medium transition">
+                        class="w-full bg-brand-700 hover:bg-brand-800 text-white rounded-lg py-2 text-sm font-medium transition">
                         Apply Filter
                     </button>
                 </div>
@@ -48,7 +48,7 @@
         <div class="grid grid-cols-2 md:grid-cols-5 gap-4">
             @php
             $cards = [
-                ['label'=>'Total Bookings','value'=>$stats['total_bookings'],'color'=>'indigo'],
+                ['label'=>'Total Bookings','value'=>$stats['total_bookings'],'color'=>'brand'],
                 ['label'=>'Confirmed','value'=>$stats['confirmed'],'color'=>'green'],
                 ['label'=>'Declined','value'=>$stats['declined'],'color'=>'red'],
                 ['label'=>'Pending','value'=>$stats['pending'],'color'=>'amber'],
@@ -72,7 +72,7 @@
                 <input type="hidden" name="date_to" value="{{ $filters['date_to'] }}">
                 <div class="col-span-2">
                     <label class="block text-xs text-gray-500 mb-1 uppercase">Report Type</label>
-                    <select name="type" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-400 outline-none">
+                    <select name="type" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-brand-400 outline-none">
                         <option value="monthly">Monthly</option>
                         <option value="weekly">Weekly</option>
                         <option value="daily">Daily</option>

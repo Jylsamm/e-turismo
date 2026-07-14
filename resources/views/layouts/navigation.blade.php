@@ -5,46 +5,57 @@
             <div class="flex">
                 <!-- Logo / Brand -->
                 <div class="shrink-0 flex items-center">
-                    <a href="{{ route('dashboard') }}" class="flex items-center gap-2">
-                        <img src="{{ asset('Pictures/LOGO/LOGO-eturismo.png') }}" alt="E-Turismo Logo" class="h-10 w-auto object-contain" />
+                    <a href="/" class="flex items-center gap-2">
+                        <x-application-logo class="h-12 w-auto object-contain" />
                     </a>
                 </div>
 
                 <!-- Navigation Links -->
                 <div class="hidden space-x-6 sm:-my-px sm:ms-10 sm:flex">
-                    <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
-                        Dashboard
-                    </x-nav-link>
+                    @if(Auth::user()->isStaff())
+                        <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
+                            Dashboard
+                        </x-nav-link>
+                        <x-nav-link :href="route('staff.bookings.index')" :active="request()->routeIs('staff.bookings.*')">
+                            Bookings
+                        </x-nav-link>
+                        <x-nav-link :href="route('checkins.create')" :active="request()->routeIs('checkins.*')">
+                            Check-In
+                        </x-nav-link>
+                        <x-nav-link :href="route('spots.index')" :active="request()->routeIs('spots.*')">
+                            Spot Status
+                        </x-nav-link>
+                        <x-nav-link :href="route('staff.walkins.create')" :active="request()->routeIs('staff.walkins.*')">
+                            Walk-In
+                        </x-nav-link>
 
-                    <x-nav-link :href="route('destinations.index')" :active="request()->routeIs('destinations.*')">
-                        Destinations
-                    </x-nav-link>
-
-                    @if(!Auth::user()->isAdmin())
-                    <x-nav-link :href="route('bookings.index')" :active="request()->routeIs('bookings.index')">
-                        Bookings
-                    </x-nav-link>
+                    @else
+                        <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
+                            Dashboard
+                        </x-nav-link>
+                        <x-nav-link :href="route('destinations.index')" :active="request()->routeIs('destinations.*')">
+                            Destinations
+                        </x-nav-link>
+                        @if(!Auth::user()->isAdmin())
+                            <x-nav-link :href="route('bookings.index')" :active="request()->routeIs('bookings.index')">
+                                Bookings
+                            </x-nav-link>
+                        @endif
                     @endif
 
                     @if(Auth::user()->isTourist())
-                    <x-nav-link :href="route('bookings.my-tickets')" :active="request()->routeIs('bookings.my-tickets')">
-                        My Tickets
-                    </x-nav-link>
-                    @endif
-
-                    @if(Auth::user()->isStaff())
-                    <x-nav-link :href="route('checkins.create')" :active="request()->routeIs('checkins.create')">
-                        Check-In
-                    </x-nav-link>
+                        <x-nav-link :href="route('bookings.my-tickets')" :active="request()->routeIs('bookings.my-tickets')">
+                            My Tickets
+                        </x-nav-link>
                     @endif
 
                     @if(Auth::user()->isAdmin())
-                    <x-nav-link :href="route('verification.admin')" :active="request()->routeIs('verification.admin')">
-                        Accounts &amp; Verification
-                    </x-nav-link>
-                    <x-nav-link :href="route('reports.index')" :active="request()->routeIs('reports.*')">
-                        Reports
-                    </x-nav-link>
+                        <x-nav-link :href="route('verification.admin')" :active="request()->routeIs('verification.admin')">
+                            Accounts &amp; Verification
+                        </x-nav-link>
+                        <x-nav-link :href="route('reports.index')" :active="request()->routeIs('reports.*')">
+                            Reports
+                        </x-nav-link>
                     @endif
                 </div>
             </div>
@@ -57,7 +68,7 @@
                     $unreadCount = \App\Models\Notification::where('recipient_id', Auth::id())->where('is_read', false)->count();
                 @endphp
                 <a href="{{ route('notifications.index') }}"
-                    class="relative inline-flex items-center text-gray-500 hover:text-indigo-700 transition">
+                    class="relative inline-flex items-center text-gray-500 hover:text-brand-700 transition">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6 6 0 00-5-5.917V4a1 1 0 10-2 0v1.083A6 6 0 006 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
@@ -120,17 +131,20 @@
     <div :class="{'block': open, 'hidden': ! open}" class="hidden sm:hidden">
         <div class="pt-2 pb-3 space-y-1">
             <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">Dashboard</x-responsive-nav-link>
-            <x-responsive-nav-link :href="route('destinations.index')" :active="request()->routeIs('destinations.*')">Destinations</x-responsive-nav-link>
-            @if(!Auth::user()->isAdmin())
-            <x-responsive-nav-link :href="route('bookings.index')" :active="request()->routeIs('bookings.index')">Bookings</x-responsive-nav-link>
+            @if(Auth::user()->isStaff())
+                <x-responsive-nav-link :href="route('staff.bookings.index')" :active="request()->routeIs('staff.bookings.*')">Bookings</x-responsive-nav-link>
+                <x-responsive-nav-link :href="route('checkins.create')" :active="request()->routeIs('checkins.*')">Check-In</x-responsive-nav-link>
+                <x-responsive-nav-link :href="route('spots.index')" :active="request()->routeIs('spots.*')">Spot Status</x-responsive-nav-link>
+                <x-responsive-nav-link :href="route('staff.walkins.create')" :active="request()->routeIs('staff.walkins.*')">Walk-In</x-responsive-nav-link>
+            @else
+                <x-responsive-nav-link :href="route('destinations.index')" :active="request()->routeIs('destinations.*')">Destinations</x-responsive-nav-link>
+                @if(!Auth::user()->isAdmin())
+                    <x-responsive-nav-link :href="route('bookings.index')" :active="request()->routeIs('bookings.index')">Bookings</x-responsive-nav-link>
+                @endif
             @endif
 
             @if(Auth::user()->isTourist())
-            <x-responsive-nav-link :href="route('bookings.my-tickets')" :active="request()->routeIs('bookings.my-tickets')">My Tickets</x-responsive-nav-link>
-            @endif
-
-            @if(Auth::user()->isStaff())
-            <x-responsive-nav-link :href="route('checkins.create')" :active="request()->routeIs('checkins.create')">Check-In</x-responsive-nav-link>
+                <x-responsive-nav-link :href="route('bookings.my-tickets')" :active="request()->routeIs('bookings.my-tickets')">My Tickets</x-responsive-nav-link>
             @endif
 
             @if(Auth::user()->isAdmin())
@@ -148,7 +162,7 @@
             <div class="px-4">
                 <div class="font-medium text-base text-gray-800">{{ Auth::user()->name }}</div>
                 <div class="font-medium text-sm text-gray-500">{{ Auth::user()->email }}</div>
-                <div class="text-xs bg-indigo-100 text-indigo-700 px-1.5 py-0.5 rounded-full capitalize inline-block mt-1">{{ Auth::user()->role }}</div>
+                <div class="text-xs bg-brand-100 text-brand-700 px-1.5 py-0.5 rounded-full capitalize inline-block mt-1">{{ Auth::user()->role }}</div>
             </div>
 
             <div class="mt-3 space-y-1">

@@ -1,592 +1,2694 @@
 <style>
-/* ── Date picker icon ── */
-input[type="date"]::-webkit-calendar-picker-indicator { cursor: pointer; opacity: .7; filter: invert(40%) sepia(80%) saturate(500%) hue-rotate(200deg); }
-input[type="date"]::-webkit-inner-spin-button { display: none; }
+  /* ── Hide Edge's native password reveal eye to prevent duplication with custom toggle ── */
+  input[type="password"]::-ms-reveal,
+  input[type="password"]::-ms-clear {
+    display: none;
+  }
 
-/* ── Camera container ── */
-.cam-box { background:#08111f; border-radius:1rem; overflow:hidden; border:1px solid #1e3a52; }
+  /* ── Date picker icon ── */
+  input[type="date"]::-webkit-calendar-picker-indicator {
+    cursor: pointer;
+    opacity: .7;
+    filter: invert(40%) sepia(80%) saturate(500%) hue-rotate(200deg);
+  }
 
-/* ── Teal dashed guide ── */
-.cam-guide-rect { fill:none; stroke:#14b8a6; stroke-width:2.5; stroke-dasharray:10 6; animation:teal-pulse 2.4s ease-in-out infinite; }
-@keyframes teal-pulse {
-  0%,100% { stroke:#14b8a6; stroke-opacity:.7; }
-  50%     { stroke:#34d399; stroke-opacity:1;  }
-}
+  input[type="date"]::-webkit-inner-spin-button {
+    display: none;
+  }
 
-/* ── Instruction pill ── */
-.cam-pill {
-  display:inline-flex; align-items:center; gap:8px;
-  background:#0f172a;
-  border: 1.5px solid #0d9488; color:#ffffff;
-  font-size:.78rem; font-weight:600; padding:.45rem 1rem;
-  border-radius:9999px; pointer-events:none; letter-spacing:.01em;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.5);
-  max-width: 90%;
-  text-align: center;
-}
-@keyframes scale-in {
-  0% { transform: scale(0.9); opacity: 0; }
-  100% { transform: scale(1); opacity: 1; }
-}
-.animate-scale {
-  animation: scale-in 0.25s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-}
+  /* ── Camera container ── */
+  .cam-box {
+    background: #08111f;
+    border-radius: 1rem;
+    overflow: hidden;
+    border: 1px solid #1e3a52;
+  }
 
-/* ── Bottom bar ── */
-.cam-bottom-bar {
-  display:flex; align-items:center; justify-content:space-between;
-  padding:.55rem .85rem;
-  background:rgba(8,17,31,.92);
-  border-top:1px solid rgba(20,184,166,.15);
-}
-.cam-orient-label {
-  display:flex; align-items:center; gap:5px;
-  font-size:.7rem; font-weight:600; color:#99f6e4;
-  letter-spacing:.04em; text-transform:uppercase;
-}
-.cam-flip-btn {
-  display:flex; align-items:center; gap:4px;
-  font-size:.7rem; font-weight:600; color:#94a3b8;
-  background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.1);
-  border-radius:6px; padding:.3rem .65rem; cursor:pointer;
-  transition:.18s; text-transform:uppercase; letter-spacing:.04em;
-}
-.cam-flip-btn:hover { background:rgba(20,184,166,.15); color:#f0fdfa; border-color:rgba(20,184,166,.4); }
+  /* ── Teal dashed guide ── */
+  .cam-guide-rect {
+    fill: none;
+    stroke: #14b8a6;
+    stroke-width: 2.5;
+    stroke-dasharray: 10 6;
+    animation: teal-pulse 2.4s ease-in-out infinite;
+  }
 
-/* ── Shutter ── */
-.cam-shutter {
-  width:52px; height:52px; border-radius:9999px; background:#fff;
-  border:4px solid #1e3a52; display:flex; align-items:center; justify-content:center;
-  cursor:pointer; transition:border-color .2s,transform .15s;
-  box-shadow:0 4px 16px rgba(0,0,0,.4); flex-shrink:0;
-}
-.cam-shutter:hover { border-color:#14b8a6; transform:scale(1.06); }
-.cam-shutter-dot { width:30px; height:30px; border-radius:9999px; background:#14b8a6; }
+  @keyframes teal-pulse {
 
-/* ── Denied state ── */
-.cam-denied { display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:2rem 1.5rem; gap:1rem; }
-.cam-denied-icon { color:#f87171; }
-.cam-denied h5   { color:#fecaca; font-weight:700; font-size:.9rem; }
-.cam-denied p    { color:#94a3b8; font-size:.75rem; line-height:1.5; max-width:26ch; }
-.cam-retry-btn  { padding:.5rem 1.2rem; background:rgba(248,113,113,.12); border:1px solid rgba(248,113,113,.4); color:#fca5a5; border-radius:8px; font-size:.75rem; font-weight:600; cursor:pointer; transition:.18s; }
-.cam-retry-btn:hover { background:rgba(248,113,113,.25); color:#fff; }
+    0%,
+    100% {
+      stroke: #14b8a6;
+      stroke-opacity: .7;
+    }
 
-/* ── Enable btn ── */
-.cam-enable-btn { padding:.5rem 1.3rem; background:#0d9488; color:#fff; border-radius:8px; font-size:.75rem; font-weight:700; border:none; cursor:pointer; transition:.18s; box-shadow:0 2px 12px rgba(20,184,166,.3); }
-.cam-enable-btn:hover { background:#0f766e; transform:translateY(-1px); }
+    50% {
+      stroke: #34d399;
+      stroke-opacity: 1;
+    }
+  }
 
-/* ── Captured badge ── */
-.cam-captured-badge { position:absolute; top:8px; left:8px; z-index:10; background:rgba(16,185,129,.92); color:#fff; font-size:.62rem; font-weight:800; padding:2px 8px; border-radius:9999px; letter-spacing:.06em; text-transform:uppercase; }
+  /* ── Instruction pill ── */
+  .cam-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: #0f172a;
+    border: 1.5px solid #0d9488;
+    color: #ffffff;
+    font-size: .78rem;
+    font-weight: 600;
+    padding: .45rem 1rem;
+    border-radius: 9999px;
+    pointer-events: none;
+    letter-spacing: .01em;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+    max-width: 90%;
+    text-align: center;
+  }
 
-/* ── DOB wrapper ── */
-.dob-wrapper { position:relative; }
-.dob-wrapper input[type="date"] { padding-right:2.5rem; }
-.dob-cal-icon { position:absolute; right:.65rem; top:50%; transform:translateY(-50%); pointer-events:none; color:#9ca3af; }
+  @keyframes scale-in {
+    0% {
+      transform: scale(0.9);
+      opacity: 0;
+    }
+
+    100% {
+      transform: scale(1);
+      opacity: 1;
+    }
+  }
+
+  .animate-scale {
+    animation: scale-in 0.25s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  }
+
+  /* ── Bottom bar ── */
+  .cam-bottom-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: .55rem .85rem;
+    background: rgba(8, 17, 31, .92);
+    border-top: 1px solid rgba(20, 184, 166, .15);
+  }
+
+  .cam-orient-label {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: .7rem;
+    font-weight: 600;
+    color: #99f6e4;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+  }
+
+  .cam-flip-btn {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: .7rem;
+    font-weight: 600;
+    color: #94a3b8;
+    background: rgba(255, 255, 255, .06);
+    border: 1px solid rgba(255, 255, 255, .1);
+    border-radius: 6px;
+    padding: .3rem .65rem;
+    cursor: pointer;
+    transition: .18s;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+  }
+
+  .cam-flip-btn:hover {
+    background: rgba(20, 184, 166, .15);
+    color: #f0fdfa;
+    border-color: rgba(20, 184, 166, .4);
+  }
+
+  /* ── Shutter ── */
+  .cam-shutter {
+    width: 52px;
+    height: 52px;
+    border-radius: 9999px;
+    background: #fff;
+    border: 4px solid #1e3a52;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: border-color .2s, transform .15s;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, .4);
+    flex-shrink: 0;
+  }
+
+  .cam-shutter:hover {
+    border-color: #14b8a6;
+    transform: scale(1.06);
+  }
+
+  .cam-shutter-dot {
+    width: 30px;
+    height: 30px;
+    border-radius: 9999px;
+    background: #14b8a6;
+  }
+
+  /* ── Denied state ── */
+  .cam-denied {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 2rem 1.5rem;
+    gap: 1rem;
+  }
+
+  .cam-denied-icon {
+    color: #f87171;
+  }
+
+  .cam-denied h5 {
+    color: #fecaca;
+    font-weight: 700;
+    font-size: .9rem;
+  }
+
+  .cam-denied p {
+    color: #94a3b8;
+    font-size: .75rem;
+    line-height: 1.5;
+    max-width: 26ch;
+  }
+
+  .cam-retry-btn {
+    padding: .5rem 1.2rem;
+    background: rgba(248, 113, 113, .12);
+    border: 1px solid rgba(248, 113, 113, .4);
+    color: #fca5a5;
+    border-radius: 8px;
+    font-size: .75rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: .18s;
+  }
+
+  .cam-retry-btn:hover {
+    background: rgba(248, 113, 113, .25);
+    color: #fff;
+  }
+
+  /* ── Enable btn ── */
+  .cam-enable-btn {
+    padding: .5rem 1.3rem;
+    background: #0d9488;
+    color: #fff;
+    border-radius: 8px;
+    font-size: .75rem;
+    font-weight: 700;
+    border: none;
+    cursor: pointer;
+    transition: .18s;
+    box-shadow: 0 2px 12px rgba(20, 184, 166, .3);
+  }
+
+  .cam-enable-btn:hover {
+    background: #0f766e;
+    transform: translateY(-1px);
+  }
+
+  /* ── Captured badge ── */
+  .cam-captured-badge {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    z-index: 10;
+    background: rgba(16, 185, 129, .92);
+    color: #fff;
+    font-size: .62rem;
+    font-weight: 800;
+    padding: 2px 8px;
+    border-radius: 9999px;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+  }
+
+  /* ── Sectioned form and OTP flow ── */
+  /* ── Step progress container: give nodes room so labels don't collide with circles ── */
+  .step-node {
+    position: relative;
+    text-align: center;
+    transition: all 0.3s ease;
+    min-height: 68px; /* ensures label has clear space below the circle */
+  }
+
+  .step-circle {
+    border-width: 2px;
+    border-style: solid;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    z-index: 2; /* keep circle above label/lock badge stacking issues */
+  }
+
+  .step-circle.active {
+    border-color: #10b981;
+    /* active: emerald-500 */
+    background-color: #ecfdf5;
+    /* active bg: emerald-50 */
+    color: #047857;
+    /* active text: emerald-700 */
+    box-shadow: 0 0 0 4px #d1fae5, 0 4px 10px rgba(16, 185, 129, 0.25);
+    transform: scale(1.06);
+  }
+
+  .step-circle.completed {
+    border-color: #10b981;
+    /* completed border: emerald-500 */
+    background-color: #10b981;
+    /* completed bg: emerald-500 */
+    color: #ffffff;
+    /* completed text: white */
+    box-shadow: 0 4px 8px rgba(16, 185, 129, 0.15);
+  }
+
+  .step-label {
+    position: absolute;
+    top: 48px; /* was fine in markup, but reinforce here so it can't be overridden/collapsed */
+    left: 50%;
+    transform: translateX(-50%);
+    width: max-content;
+    z-index: 1;
+    transition: color 0.3s ease, font-weight 0.3s ease;
+  }
+
+  .step-lock-badge {
+    z-index: 3; /* sit above the circle, not clipped or overlapping label text */
+  }
+
+  .step-label.active {
+    color: #0f172a;
+    /* dark slate */
+    font-weight: 800;
+  }
+
+  .step-label.completed {
+    color: #334155;
+    font-weight: 700;
+  }
+
+  .step-label.locked {
+    color: #94a3b8;
+    /* muted grey */
+    font-weight: 600;
+  }
+
+  .step-node.clickable {
+    cursor: pointer;
+  }
+
+  .step-node.locked-node {
+    cursor: not-allowed;
+  }
+
+  .section-block {
+    position: relative;
+    border: 1px solid #d1fae5;
+    border-radius: 1rem;
+    background: #ffffff;
+    padding: 1.2rem 1.25rem;
+    margin-bottom: 1.5rem;
+    transition: opacity .35s ease;
+  }
+
+  .section-block.section-locked {
+    opacity: .45;
+    pointer-events: none;
+  }
+
+  .section-block.section-locked::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(255, 255, 255, .55);
+    border-radius: 1rem;
+    pointer-events: none;
+  }
+
+  /* Verified collapsed state for Section 1 */
+  .section-block.section-verified {
+    border-color: #16a34a;
+    background: #f0fdf4;
+  }
+
+  .section-title {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: .75rem;
+    margin-bottom: 1rem;
+  }
+
+  .section-title h2 {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 800;
+    color: #0f172a;
+  }
+
+  .section-hint {
+    font-size: .825rem;
+    color: #475569;
+    margin-top: .25rem;
+  }
+
+  .otp-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: .75rem;
+    margin-top: .75rem;
+  }
+
+  .otp-input {
+    max-width: 12rem;
+  }
+
+  .otp-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: .4rem;
+    padding: .75rem 1rem;
+    border-radius: .85rem;
+    font-weight: 700;
+    color: #fff;
+    background: #16a34a;
+    border: none;
+    cursor: pointer;
+    transition: .2s ease;
+  }
+
+  .otp-button:disabled {
+    opacity: .55;
+    cursor: not-allowed;
+  }
+
+  .otp-message {
+    margin-top: .75rem;
+    font-size: .88rem;
+  }
+
+  /* OTP reveal row — hidden until code sent */
+  #otp-reveal-row {
+    overflow: hidden;
+    max-height: 0;
+    opacity: 0;
+    transition: max-height .45s cubic-bezier(.4, 0, .2, 1), opacity .35s ease, margin-top .35s ease;
+    margin-top: 0;
+  }
+
+  #otp-reveal-row.otp-visible {
+    max-height: 120px;
+    opacity: 1;
+    margin-top: .75rem;
+  }
+
+  /* Verified banner inside section 1 */
+  #email-verified-banner {
+    display: none;
+    align-items: center;
+    gap: .6rem;
+    padding: .65rem .9rem;
+    background: #dcfce7;
+    border: 1.5px solid #16a34a;
+    border-radius: .75rem;
+    margin-top: .75rem;
+    font-size: .88rem;
+    font-weight: 700;
+    color: #065f46;
+  }
+
+  #email-verified-banner.visible {
+    display: flex;
+  }
+
+  /* ── Name fields: auto-uppercase ── */
+  #first_name,
+  #last_name,
+  #middle_initial {
+    text-transform: uppercase;
+  }
+
+  /* ── DOB wrapper ── */
+  .dob-wrapper {
+    position: relative;
+  }
+
+  .dob-cal-icon {
+    position: absolute;
+    right: .65rem;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+    color: #9ca3af;
+  }
+
+  /* ── Custom Calendar Styles ── */
+  .custom-datepicker-container,
+  .custom-datepicker-container * {
+    box-sizing: border-box;
+  }
+
+  .custom-datepicker-container {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    margin-top: 8px;
+    width: 320px;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 1rem;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+    z-index: 100;
+    overflow: hidden;
+    user-select: none;
+    font-family: inherit;
+  }
+
+  .custom-datepicker-container.open {
+    display: block;
+    animation: datepicker-fade-in 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+
+  @keyframes datepicker-fade-in {
+    from {
+      opacity: 0;
+      transform: translateY(-4px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* Mobile Backdrop & Centered Modal */
+  @media (max-width: 640px) {
+    .custom-datepicker-backdrop {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.5);
+      backdrop-filter: blur(4px);
+      z-index: 99;
+    }
+
+    .custom-datepicker-backdrop.open {
+      display: block;
+    }
+
+    .custom-datepicker-container {
+      position: fixed !important;
+      top: 50% !important;
+      left: 50% !important;
+      transform: translate(-50%, -50%) !important;
+      margin-top: 0;
+      max-width: 90%;
+      width: 320px;
+      z-index: 100;
+    }
+
+    @keyframes datepicker-fade-in {
+      from {
+        opacity: 0;
+        transform: translate(-50%, -46%) scale(0.95);
+      }
+
+      to {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+      }
+    }
+  }
+
+  /* Header styles */
+  .datepicker-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 16px;
+    border-bottom: 1px solid #f1f5f9;
+    background-color: #f8fafc;
+  }
+
+  .datepicker-header button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+    background: #ffffff;
+    color: #475569;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .datepicker-header button:hover {
+    background: #f1f5f9;
+    color: #0f172a;
+  }
+
+  .datepicker-title-btn {
+    font-weight: 700;
+    font-size: 0.95rem;
+    color: #0f172a;
+    border: none !important;
+    background: transparent !important;
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    white-space: nowrap;
+    /* prevent year range from wrapping */
+    flex-shrink: 0;
+    flex: 1;
+  }
+
+  #dp-month-year-label {
+    white-space: nowrap;
+    /* keep "2000 – 2015" on one line */
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: inline-block;
+  }
+
+  .datepicker-title-btn:hover {
+    background: #e2e8f0 !important;
+  }
+
+  /* Day Grid view */
+  .datepicker-grid-header {
+    display: grid !important;
+    grid-template-columns: repeat(7, minmax(0, 1fr)) !important;
+    text-align: center;
+    padding: 8px 12px 4px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .datepicker-grid-days {
+    display: grid !important;
+    grid-template-columns: repeat(7, minmax(0, 1fr)) !important;
+    padding: 4px 12px 12px;
+    gap: 4px;
+  }
+
+  .datepicker-day-cell {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    height: 40px !important;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #334155;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+
+  .datepicker-day-cell:hover:not(.disabled) {
+    background-color: #ecfdf5;
+    color: #047857;
+  }
+
+  .datepicker-day-cell.today-outline {
+    border: 1.5px solid #10b981;
+    color: #047857;
+  }
+
+  .datepicker-day-cell.selected {
+    background-color: #10b981 !important;
+    color: #ffffff !important;
+  }
+
+  .datepicker-day-cell.other-month {
+    color: #94a3b8;
+    font-weight: 400;
+  }
+
+  .datepicker-day-cell.disabled {
+    color: #cbd5e1;
+    background-color: #f8fafc;
+    cursor: not-allowed;
+    text-decoration: line-through;
+    opacity: 0.6;
+  }
+
+  /* Year / Month grid views — 4-column grid, no scrolling */
+  .datepicker-selection-grid {
+    display: grid !important;
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+    gap: 6px;
+    padding: 12px 14px;
+    overflow: hidden;
+  }
+
+  /* Tablet: 3 columns */
+  @media (max-width: 480px) {
+    .datepicker-selection-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    }
+  }
+
+  /* Mobile: 2 columns */
+  @media (max-width: 360px) {
+    .datepicker-selection-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    }
+  }
+
+  .datepicker-select-item {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 8px 4px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: #334155;
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+    cursor: pointer;
+    transition: all 0.15s;
+    background: #ffffff;
+    text-align: center;
+    white-space: nowrap;
+  }
+
+  .datepicker-select-item:hover:not(.disabled) {
+    background: #ecfdf5;
+    border-color: #10b981;
+    color: #047857;
+  }
+
+  .datepicker-select-item.selected {
+    background: #10b981;
+    color: #ffffff;
+    border-color: #10b981;
+  }
+
+  .datepicker-select-item.disabled {
+    color: #cbd5e1;
+    background: #f8fafc;
+    cursor: not-allowed;
+    text-decoration: line-through;
+    opacity: 0.6;
+  }
+
+  /* Footer action buttons */
+  .datepicker-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 16px;
+    border-top: 1px solid #e2e8f0;
+    background-color: #f8fafc;
+  }
+
+  .datepicker-footer button {
+    padding: 6px 12px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+
+  .datepicker-btn-clear {
+    background: #ffffff;
+    border: 1px solid #cbd5e1;
+    color: #64748b;
+  }
+
+  .datepicker-btn-clear:hover {
+    background: #f1f5f9;
+    color: #334155;
+  }
+
+  .datepicker-btn-today {
+    background: #10b981;
+    border: 1px solid #10b981;
+    color: #ffffff;
+  }
+
+  .datepicker-btn-today:hover {
+    background: #059669;
+  }
+
+  .datepicker-btn-today:disabled {
+    display: none;
+    /* Hide if underage */
+  }
+
+  /* Visual custom cal trigger mouse state */
+  .dob-wrapper {
+    cursor: pointer;
+  }
+
+  .dob-wrapper input[readonly] {
+    cursor: pointer;
+    background-color: #ffffff !important;
+  }
 </style>
 
 <x-guest-layout>
-<form method="POST" action="{{ route('register') }}" enctype="multipart/form-data" id="reg-form">
-  @csrf
+  <!-- Back Button -->
+  <div class="mb-6">
+    <a href="{{ route('home') }}"
+      class="group inline-flex items-center gap-1.5 text-sm font-medium text-gray-600 bg-gray-100 hover:bg-gray-200 hover:text-gray-900 transition-all duration-200 px-3 py-1.5 rounded-full">
+      <svg class="w-4 h-4 transition-transform duration-200 group-hover:-translate-x-0.5" fill="currentColor"
+        viewBox="0 0 20 20">
+        <path fill-rule="evenodd"
+          d="M9.707 14.707a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414l4-4a1 1 0 111.414 1.414L7.414 9H15a1 1 0 110 2H7.414l2.293 2.293a1 1 0 010 1.414z"
+          clip-rule="evenodd" />
+      </svg>
+      Back
+    </a>
+  </div>
 
-  {{-- Name --}}
-  <div class="grid grid-cols-2 gap-3">
-    <div>
-      <x-input-label for="first_name" :value="__('First Name')" />
-      <x-text-input id="first_name" class="block mt-1 w-full" type="text" name="first_name" :value="old('first_name')" required autofocus autocomplete="given-name" />
-      <x-input-error :messages="$errors->get('first_name')" class="mt-2" />
+  <form method="POST" action="{{ route('register') }}" enctype="multipart/form-data" id="reg-form">
+    @csrf
+
+    <div class="mb-8 px-2 select-none">
+      <!-- Progress Indicator Container -->
+      <div class="w-full max-w-2xl mx-auto mt-4 px-4 pb-8">
+        <div class="relative flex items-center justify-between">
+          <!-- Background Connecting Line -->
+          <div class="absolute left-[32px] right-[32px] top-[20px] h-[3px] bg-gray-200 -translate-y-1/2 z-0 rounded"></div>
+          <!-- Active Filled Progress Line -->
+          <div id="step-progress-line"
+            class="absolute left-[32px] top-[20px] h-[3px] bg-emerald-600 -translate-y-1/2 z-0 rounded transition-all duration-500 ease-out"
+            style="width: 0%;"></div>
+
+          <!-- Step 1 -->
+          <div class="step-node flex flex-col items-center z-10 w-16 clickable" id="step-node-1"
+            onclick="handleStepClick('section-email', 0)">
+            <div
+              class="step-circle w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm transition-all duration-300 border-2 border-emerald-600 bg-emerald-50 text-emerald-800 ring-4 ring-emerald-100 shadow-[0_0_12px_rgba(16,185,129,0.25)] scale-105"
+              id="step-circle-1">
+              <span class="step-inner-val">1</span>
+              <!-- Lock Badge -->
+              <div
+                class="step-lock-badge absolute -top-1 -right-1 bg-slate-800 text-white rounded-full p-0.5 shadow-sm hidden"
+                style="font-size: 8px;">
+                <svg class="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
+                    d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                </svg>
+              </div>
+            </div>
+            <span
+              class="step-label text-[9px] sm:text-[11px] font-extrabold uppercase tracking-wider text-center text-slate-900 active"
+              id="step-label-1">Email</span>
+          </div>
+
+          <!-- Step 2 -->
+          <div class="step-node flex flex-col items-center z-10 w-16 locked-node" id="step-node-2"
+            onclick="handleStepClick('section-details', 1)">
+            <div
+              class="step-circle w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm transition-all duration-300 border-2 border-gray-300 bg-white text-gray-500 shadow-sm"
+              id="step-circle-2">
+              <span class="step-inner-val">2</span>
+              <!-- Lock Badge -->
+              <div class="step-lock-badge absolute -top-1 -right-1 bg-slate-800 text-white rounded-full p-0.5 shadow-sm"
+                style="font-size: 8px;">
+                <svg class="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
+                    d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                </svg>
+              </div>
+            </div>
+            <span
+              class="step-label text-[9px] sm:text-[11px] font-extrabold uppercase tracking-wider text-center text-gray-400 locked"
+              id="step-label-2">Details</span>
+          </div>
+
+          <!-- Step 3 -->
+          <div class="step-node flex flex-col items-center z-10 w-16 locked-node" id="step-node-3"
+            onclick="handleStepClick('section-identity', 2)">
+            <div
+              class="step-circle w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm transition-all duration-300 border-2 border-gray-300 bg-white text-gray-500 shadow-sm"
+              id="step-circle-3">
+              <span class="step-inner-val">3</span>
+              <!-- Lock Badge -->
+              <div class="step-lock-badge absolute -top-1 -right-1 bg-slate-800 text-white rounded-full p-0.5 shadow-sm"
+                style="font-size: 8px;">
+                <svg class="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
+                    d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                </svg>
+              </div>
+            </div>
+            <span
+              class="step-label text-[9px] sm:text-[11px] font-extrabold uppercase tracking-wider text-center text-gray-400 locked"
+              id="step-label-3">ID Check</span>
+          </div>
+
+          <!-- Step 4 -->
+          <div class="step-node flex flex-col items-center z-10 w-16 locked-node" id="step-node-4"
+            onclick="handleStepClick('section-password', 3)">
+            <div
+              class="step-circle w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm transition-all duration-300 border-2 border-gray-300 bg-white text-gray-500 shadow-sm"
+              id="step-circle-4">
+              <span class="step-inner-val">4</span>
+              <!-- Lock Badge -->
+              <div class="step-lock-badge absolute -top-1 -right-1 bg-slate-800 text-white rounded-full p-0.5 shadow-sm"
+                style="font-size: 8px;">
+                <svg class="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
+                    d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                </svg>
+              </div>
+            </div>
+            <span
+              class="step-label text-[9px] sm:text-[11px] font-extrabold uppercase tracking-wider text-center text-gray-400 locked"
+              id="step-label-4">Password</span>
+          </div>
+
+          <!-- Step 5 -->
+          <div class="step-node flex flex-col items-center z-10 w-16 locked-node" id="step-node-5"
+            onclick="handleStepClick('section-submit', 4)">
+            <div
+              class="step-circle w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm transition-all duration-300 border-2 border-gray-300 bg-white text-gray-500 shadow-sm"
+              id="step-circle-5">
+              <span class="step-inner-val">5</span>
+              <!-- Lock Badge -->
+              <div class="step-lock-badge absolute -top-1 -right-1 bg-slate-800 text-white rounded-full p-0.5 shadow-sm"
+                style="font-size: 8px;">
+                <svg class="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
+                    d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                </svg>
+              </div>
+            </div>
+            <span
+              class="step-label text-[9px] sm:text-[11px] font-extrabold uppercase tracking-wider text-center text-gray-400 locked"
+              id="step-label-5">Submit</span>
+          </div>
+        </div>
+      </div>
     </div>
-    <div>
-      <x-input-label for="last_name" :value="__('Last Name')" />
-      <x-text-input id="last_name" class="block mt-1 w-full" type="text" name="last_name" :value="old('last_name')" required autocomplete="family-name" />
-      <x-input-error :messages="$errors->get('last_name')" class="mt-2" />
-    </div>
-  </div>
 
-  <div class="mt-4">
-    <x-input-label for="middle_initial" :value="__('Middle Initial (optional)')" />
-    <x-text-input id="middle_initial" class="block mt-1 w-full" type="text" name="middle_initial" :value="old('middle_initial')" maxlength="5" placeholder="e.g. A" />
-    <x-input-error :messages="$errors->get('middle_initial')" class="mt-2" />
-  </div>
-
-  {{-- Email --}}
-  <div class="mt-4">
-    <x-input-label for="email" :value="__('Gmail Address')" />
-    <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required autocomplete="username" placeholder="yourname@gmail.com" />
-    <div id="email-check-msg" class="mt-1 text-xs font-semibold"></div>
-    <x-input-error :messages="$errors->get('email')" class="mt-2" />
-  </div>
-
-  {{-- Classification --}}
-  <div class="mt-4">
-    <x-input-label for="classification" :value="__('Visitor Classification')" />
-    <select id="classification" name="classification" class="block mt-1 w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" required>
-      <option value="" disabled selected>Select Classification</option>
-      <option value="Local"    {{ old('classification')=='Local'    ? 'selected' : '' }}>Local (Municipal Resident)</option>
-      <option value="Domestic" {{ old('classification')=='Domestic' ? 'selected' : '' }}>Domestic (National Resident)</option>
-      <option value="Foreign"  {{ old('classification')=='Foreign'  ? 'selected' : '' }}>Foreign (International Visitor)</option>
-    </select>
-    <x-input-error :messages="$errors->get('classification')" class="mt-2" />
-  </div>
-
-  {{-- 1. ID Type --}}
-  <div class="mt-4">
-    <x-input-label for="id_type" :value="__('ID Type')" />
-    <select id="id_type" name="id_type" class="block mt-1 w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" required>
-      <option value="" disabled selected>Select ID Type</option>
-      <option value="Passport"         {{ old('id_type')=='Passport'         ? 'selected' : '' }}>Passport</option>
-      <option value="National ID"      {{ old('id_type')=='National ID'      ? 'selected' : '' }}>National ID (PhilSys)</option>
-      <option value="Driver's License" {{ old('id_type')=="Driver's License" ? 'selected' : '' }}>Driver's License</option>
-      <option value="SSS ID"           {{ old('id_type')=='SSS ID'           ? 'selected' : '' }}>SSS ID</option>
-      <option value="GSIS ID"          {{ old('id_type')=='GSIS ID'          ? 'selected' : '' }}>GSIS ID</option>
-      <option value="PhilHealth ID"    {{ old('id_type')=='PhilHealth ID'    ? 'selected' : '' }}>PhilHealth ID</option>
-      <option value="Pag-IBIG ID"      {{ old('id_type')=='Pag-IBIG ID'      ? 'selected' : '' }}>Pag-IBIG ID</option>
-      <option value="Voter ID"         {{ old('id_type')=='Voter ID'         ? 'selected' : '' }}>Voter's ID</option>
-      <option value="Postal ID"        {{ old('id_type')=='Postal ID'        ? 'selected' : '' }}>Postal ID</option>
-      <option value="School ID"        {{ old('id_type')=='School ID'        ? 'selected' : '' }}>School / Student ID</option>
-      <option value="Barangay ID"      {{ old('id_type')=='Barangay ID'      ? 'selected' : '' }}>Barangay ID</option>
-      <option value="Company ID"       {{ old('id_type')=='Company ID'       ? 'selected' : '' }}>Company / Employee ID</option>
-    </select>
-    <x-input-error :messages="$errors->get('id_type')" class="mt-2" />
-  </div>
-
-  {{-- 2. ID Number / School Name --}}
-  <div class="mt-4" id="id-number-group">
-    <x-input-label for="id_number_input" :value="__('ID Number')" id="id-number-label" />
-    <x-text-input id="id_number_input" class="block mt-1 w-full" type="text" name="id_number" :value="old('id_number')" required placeholder="e.g. 2022-041633" />
-    <p id="id-number-hint" class="mt-1 text-xs text-gray-500 hidden">Enter your full school name (e.g. <em>J.H. Cerilles State College</em>). Do not use abbreviations.</p>
-    <x-input-error :messages="$errors->get('id_number')" class="mt-2" />
-  </div>
-
-  {{-- 3. Date of Birth (conditional) --}}
-  <div class="mt-4" id="dob-group">
-    <x-input-label for="dob" :value="__('Date of Birth')" id="dob-label" />
-    <div class="dob-wrapper mt-1">
-      <x-text-input id="dob" class="block w-full" type="date" name="dob" :value="old('dob')" />
-      <span class="dob-cal-icon">
-        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-      </span>
-    </div>
-    <p id="dob-hint" class="mt-1 text-xs text-gray-400 hidden">Not required for this ID type.</p>
-    <x-input-error :messages="$errors->get('dob')" class="mt-2" />
-  </div>
-
-  {{-- 4. Camera Capture --}}
-  <div class="mt-5">
-    <x-input-label :value="__('ID Photo Capture — Front + Back (Live Camera)')" />
-    <div class="cam-box mt-2" id="cam-box">
-
-      {{-- STATE A: not yet asked --}}
-      <div id="cam-state-pending" class="flex flex-col items-center justify-center text-center gap-4 px-6 py-10">
-        <div style="width:3.5rem;height:3.5rem;border-radius:9999px;background:rgba(13,148,136,0.18);border:1.5px solid rgba(20,184,166,0.5);display:flex;align-items:center;justify-content:center;color:#2dd4bf;">
-          <svg style="width:1.75rem;height:1.75rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/>
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"/>
+    <div class="section-block" id="section-email">
+      <div class="section-title">
+        <h2>Email Verification</h2>
+        <span id="email-verified-badge"
+          class="hidden text-xs font-bold text-green-700 bg-green-100 border border-green-300 px-3 py-1 rounded-full flex items-center gap-1">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" />
           </svg>
+          Verified
+        </span>
+      </div>
+
+      <div id="email-input-group">
+        <x-input-label for="email" :value="__('Gmail Address')" />
+        <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required
+          autocomplete="username" placeholder="yourname@gmail.com" autofocus />
+        <div id="email-check-msg" class="mt-1 text-xs font-semibold"></div>
+        <x-input-error :messages="$errors->get('email')" class="mt-2" />
+      </div>
+
+      {{-- Row 2: Get Code button (always visible once email valid) --}}
+      <div class="flex items-center gap-3 mt-3">
+        <button type="button" id="btn-get-code" class="otp-button" disabled>Get Code</button>
+      </div>
+
+      {{-- Row 3: OTP input + Verify — hidden until code is sent --}}
+      <div id="otp-reveal-row">
+        <div class="flex flex-wrap items-center gap-3">
+          <input id="otp_code"
+            class="otp-input block mt-0 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500"
+            type="text" name="otp_code" maxlength="6" placeholder="Enter 6-digit code" inputmode="numeric"
+            pattern="[0-9]*" autocomplete="one-time-code" />
+          <button type="button" id="btn-verify-code" class="otp-button">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            Verify
+          </button>
+        </div>
+        <p id="otp-error-inline" class="mt-1.5 text-xs font-semibold text-red-600 hidden"></p>
+      </div>
+
+      {{-- Verified banner --}}
+      <div id="email-verified-banner">
+        <svg class="w-5 h-5 text-green-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
+            d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+        <span id="email-verified-banner-text">Email verified — you can now fill in the rest of the form.</span>
+      </div>
+
+      <p id="otp-status-msg" class="otp-message text-gray-500">Enter your Gmail address and click <strong>Get
+          Code</strong>.</p>
+    </div>
+
+    <div class="section-block section-locked" id="section-details">
+      <div class="section-title">
+        <h2>Personal Details</h2>
+      </div>
+
+      {{-- Name --}}
+      <div class="grid grid-cols-2 gap-3">
+        <div>
+          <x-input-label for="first_name" :value="__('First Name')" />
+          <x-text-input id="first_name" class="block mt-1 w-full" type="text" name="first_name"
+            :value="old('first_name')" required autofocus autocomplete="given-name" />
+          <x-input-error :messages="$errors->get('first_name')" class="mt-2" />
         </div>
         <div>
-          <p style="color:#f8fafc; font-weight:600; font-size:.875rem;">Capture Your ID with Camera</p>
-          <p style="color:#cbd5e1; font-size:.75rem; margin-top:.25rem; line-height:1.6;">Your device camera will photograph your ID directly.</p>
-        </div>
-        <button type="button" id="btn-enable-camera" class="cam-enable-btn">
-          <span class="flex items-center gap-2">
-            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.069A1 1 0 0121 8.868V15.13a1 1 0 01-1.447.898L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
-            Enable Camera
-          </span>
-        </button>
-      </div>
-
-      {{-- STATE B: denied --}}
-      <div id="cam-state-denied" class="cam-denied hidden">
-        <div class="cam-denied-icon">
-          <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"/></svg>
-        </div>
-        <h5>Camera Access Denied</h5>
-        <p>Please allow camera access in your browser settings, then click Retry below.</p>
-        <div class="text-xs text-slate-500 bg-slate-900/60 border border-slate-700 rounded-lg px-4 py-2 text-left leading-relaxed" style="max-width:28ch">
-          <strong class="text-slate-400 block mb-1">How to enable:</strong>
-          <span class="block">• Chrome: <em>Address bar → 🔒 → Camera → Allow</em></span>
-          <span class="block">• Firefox: <em>Address bar → 🔒 → Camera → Allow</em></span>
-          <span class="block">• Safari: <em>Settings → Safari → Camera → Allow</em></span>
-        </div>
-        <button type="button" id="btn-retry-camera" class="cam-retry-btn">
-          <span class="flex items-center gap-1.5">
-            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 1121.21 7.89"/></svg>
-            Retry Camera Access
-          </span>
-        </button>
-      </div>
-
-      {{-- STATE C: live preview --}}
-      <div id="cam-state-active" class="hidden flex flex-col">
-        <div class="relative" style="aspect-ratio:4/3;background:#000;overflow:hidden;">
-          <video id="cam-video" autoplay playsinline muted class="w-full h-full object-cover"></video>
-          
-          {{-- Persistent Step & Side Badges --}}
-          <div class="absolute top-3 left-3 z-20 flex flex-row gap-2 pointer-events-none">
-            <span id="cam-step-badge" class="bg-indigo-600/90 text-white text-[10px] font-bold px-2 py-1 rounded shadow-md uppercase tracking-wider">Step 1 of 2</span>
-            <span id="cam-side-badge" class="bg-teal-500/90 text-white text-[10px] font-bold px-2 py-1 rounded shadow-md uppercase tracking-wider">Front ID</span>
-          </div>
-
-          {{-- Auto-advance Confirmation Overlay --}}
-          <div id="cam-transition-overlay" class="absolute inset-0 bg-slate-900/95 flex flex-col items-center justify-center text-center gap-3 z-30 hidden">
-            <div class="w-12 h-12 rounded-full bg-green-500 flex items-center justify-center text-white text-xl animate-scale shadow-lg">✓</div>
-            <p class="text-white font-bold text-sm">Front Captured Successfully!</p>
-            <p class="text-teal-300 text-xs">Automatically switching to Back of ID...</p>
-          </div>
-
-          {{-- SVG overlay --}}
-          <svg id="cam-guide-svg" class="absolute inset-0 w-full h-full pointer-events-none" xmlns="http://www.w3.org/2000/svg">
-            <defs>
-              <mask id="cam-guide-mask">
-                <rect width="100%" height="100%" fill="white"/>
-                <rect id="cam-guide-cutout" x="8%" y="12%" width="84%" height="76%" rx="14" fill="black"/>
-              </mask>
-            </defs>
-            <rect width="100%" height="100%" fill="rgba(8,17,31,0.7)" mask="url(#cam-guide-mask)"/>
-            <rect id="cam-guide-outline" x="8%" y="12%" width="84%" height="76%" rx="14" fill="none" stroke="#14b8a6" stroke-width="2.5" stroke-dasharray="10 6" class="cam-guide-rect"/>
-          </svg>
-          {{-- Instruction pill --}}
-          <div class="absolute bottom-4 inset-x-0 flex justify-center pointer-events-none z-10">
-            <span id="cam-pill" class="cam-pill">
-              <svg class="w-3.5 h-3.5 text-teal-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-              <span id="cam-pill-text">Hold steady to prevent blur</span>
-            </span>
-          </div>
-        </div>
-        {{-- Bottom bar --}}
-        <div class="cam-bottom-bar">
-          <div class="cam-orient-label">
-            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7"/></svg>
-            <span id="orient-label-text">Landscape Guide</span>
-          </div>
-          <button type="button" id="btn-shutter" class="cam-shutter" title="Capture photo">
-            <div class="cam-shutter-dot"></div>
-          </button>
-          <button type="button" id="btn-flip" class="cam-flip-btn">
-            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/></svg>
-            Flip
-          </button>
+          <x-input-label for="last_name" :value="__('Last Name')" />
+          <x-text-input id="last_name" class="block mt-1 w-full" type="text" name="last_name" :value="old('last_name')"
+            required autocomplete="family-name" />
+          <x-input-error :messages="$errors->get('last_name')" class="mt-2" />
         </div>
       </div>
 
-      {{-- STATE D: completion review state --}}
-      <div id="cam-state-captured" class="hidden flex flex-col">
-        <div class="p-3 bg-slate-900 border-b border-teal-950 text-center">
-          <span class="text-green-400 font-bold text-xs uppercase tracking-widest block flex items-center justify-center gap-1">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
-            ID capture complete
-          </span>
-        </div>
-        <div class="grid grid-cols-2 gap-3 p-3 bg-slate-950">
-          <div class="flex flex-col gap-1.5">
-            <span class="text-[10px] text-slate-400 font-bold tracking-wider uppercase text-center">Front side</span>
-            <div class="bg-black rounded-lg overflow-hidden border border-slate-800 relative">
-              <img id="cam-img-front-thumb" class="block w-full h-auto" alt="Front ID Preview" />
-              <span class="absolute top-1.5 right-1.5 bg-green-500 text-white rounded-full p-0.5 shadow">
-                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
-              </span>
-            </div>
-          </div>
-          <div class="flex flex-col gap-1.5">
-            <span class="text-[10px] text-slate-400 font-bold tracking-wider uppercase text-center">Back side</span>
-            <div class="bg-black rounded-lg overflow-hidden border border-slate-800 relative">
-              <img id="cam-img-back-thumb" class="block w-full h-auto" alt="Back ID Preview" />
-              <span class="absolute top-1.5 right-1.5 bg-green-500 text-white rounded-full p-0.5 shadow">
-                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
-              </span>
-            </div>
-          </div>
-        </div>
-        
-        {{-- Hidden element to keep original selector variables safe from JS errors --}}
-        <img id="cam-captured-img" class="hidden" alt="Merged Preview" />
+      <style>
+        /* Force input text to uppercase, but keep placeholders exact/lowercase where applicable */
+        .uppercase-input {
+          text-transform: uppercase;
+        }
 
-        <div class="cam-bottom-bar justify-center">
-          <button type="button" id="btn-retake" class="cam-flip-btn" style="color:#fb923c;border-color:rgba(251,146,60,.35);">
-            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 1121.21 7.89"/></svg>
-            Retake & Restart
-          </button>
+        .uppercase-input::placeholder {
+          text-transform: none !important;
+        }
+
+        .uppercase-input::-webkit-input-placeholder {
+          text-transform: none !important;
+        }
+
+        .uppercase-input::-moz-placeholder {
+          text-transform: none !important;
+        }
+      </style>
+      <script>
+        document.addEventListener('DOMContentLoaded', function () {
+          ['first_name', 'last_name', 'middle_initial'].forEach(id => {
+            const el = document.getElementById(id);
+            if (!el) return;
+            el.addEventListener('input', function () {
+              const pos = this.selectionStart;
+              this.value = this.value.toUpperCase();
+              if (id === 'middle_initial' && this.value.length > 1) {
+                this.value = this.value.slice(0, 1);
+              }
+              this.setSelectionRange(pos, pos);
+            });
+          });
+        });
+      </script>
+      <div class="mt-4 grid grid-cols-2 gap-3">
+        <div>
+          <x-input-label for="middle_initial" :value="__('Middle Initial (optional)')" />
+          <x-text-input id="middle_initial" class="block mt-1 w-full uppercase-input" type="text" name="middle_initial"
+            :value="old('middle_initial')" maxlength="1" placeholder="e.g. V." />
+          <x-input-error :messages="$errors->get('middle_initial')" class="mt-2" />
+        </div>
+        <div id="suffix-combobox" style="position:relative;">
+          <x-input-label for="suffix" :value="__('Suffix (optional)')" />
+          <div style="position:relative; margin-top:4px;">
+            <x-text-input id="suffix" class="block w-full uppercase-input" type="text" name="suffix"
+              :value="old('suffix')" maxlength="20" autocomplete="off" style="padding-right: 2.5rem;"
+              placeholder="e.g. Jr." />
+            <button type="button" tabindex="-1"
+              style="position:absolute; right:8px; top:50%; transform:translateY(-50%); background:none; border:none; padding:0; cursor:pointer; color:#6b7280; display:flex; align-items:center;"
+              onmousedown="event.preventDefault(); var inp=document.getElementById('suffix'); inp.focus(); if(window.suffixOpenDropdown) suffixOpenDropdown(inp);">
+              <svg xmlns="http://www.w3.org/2000/svg" style="width:16px; height:16px; pointer-events:none;"
+                viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd"
+                  d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                  clip-rule="evenodd" />
+              </svg>
+            </button>
+          </div>
+          <x-input-error :messages="$errors->get('suffix')" class="mt-2" />
         </div>
       </div>
 
+      {{-- Classification --}}
+      <div class="mt-4">
+        <x-input-label for="classification" :value="__('Visitor Classification')" />
+        <select id="classification" name="classification"
+          class="block mt-1 w-full border-gray-300 focus:border-brand-500 focus:ring-brand-500 rounded-md shadow-sm"
+          required>
+          <option value="" disabled selected>Select Classification</option>
+          <option value="Local" {{ old('classification') == 'Local' ? 'selected' : '' }}>Local (Municipal Resident)
+          </option>
+          <option value="Domestic" {{ old('classification') == 'Domestic' ? 'selected' : '' }}>Domestic (National
+            Resident)</option>
+          <option value="Foreign" {{ old('classification') == 'Foreign' ? 'selected' : '' }}>Foreign (International
+            Visitor)</option>
+        </select>
+        <x-input-error :messages="$errors->get('classification')" class="mt-2" />
+      </div>
     </div>
 
-    <input id="id_photo" name="id_photo" type="file" accept="image/jpeg" required class="sr-only" aria-hidden="true" tabindex="-1"/>
-    <p id="cam-error-msg"   class="mt-2 text-sm text-red-600  hidden"></p>
-    <p id="cam-success-msg" class="mt-2 text-sm text-green-600 hidden"></p>
-    <x-input-error :messages="$errors->get('id_photo')" class="mt-2" />
-  </div>
+    <div class="section-block section-locked" id="section-identity">
+      <div class="section-title">
+        <h2>Identity Verification</h2>
+      </div>
+      {{-- 1. ID Type --}}
+      <div class="mt-4">
+        <x-input-label for="id_type" :value="__('ID Type')" />
+        <select id="id_type" name="id_type"
+          class="block mt-1 w-full border-gray-300 focus:border-brand-500 focus:ring-brand-500 rounded-md shadow-sm"
+          required>
+          <option value="" disabled selected>Select ID Type</option>
+          <option value="Passport" {{ old('id_type') == 'Passport' ? 'selected' : '' }}>Passport</option>
+          <option value="National ID" {{ old('id_type') == 'National ID' ? 'selected' : '' }}>National ID (PhilSys)
+          </option>
+          <option value="Driver's License" {{ old('id_type') == "Driver's License" ? 'selected' : '' }}>Driver's License
+          </option>
+          <option value="SSS ID" {{ old('id_type') == 'SSS ID' ? 'selected' : '' }}>SSS ID</option>
+          <option value="GSIS ID" {{ old('id_type') == 'GSIS ID' ? 'selected' : '' }}>GSIS ID</option>
+          <option value="PhilHealth ID" {{ old('id_type') == 'PhilHealth ID' ? 'selected' : '' }}>PhilHealth ID</option>
+          <option value="Pag-IBIG ID" {{ old('id_type') == 'Pag-IBIG ID' ? 'selected' : '' }}>Pag-IBIG ID</option>
+          <option value="Voter ID" {{ old('id_type') == 'Voter ID' ? 'selected' : '' }}>Voter's ID</option>
+          <option value="Postal ID" {{ old('id_type') == 'Postal ID' ? 'selected' : '' }}>Postal ID</option>
+          <option value="School ID" {{ old('id_type') == 'School ID' ? 'selected' : '' }}>School / Student ID</option>
+          <option value="Barangay ID" {{ old('id_type') == 'Barangay ID' ? 'selected' : '' }}>Barangay ID</option>
+          <option value="Company ID" {{ old('id_type') == 'Company ID' ? 'selected' : '' }}>Company / Employee ID</option>
+        </select>
+        <x-input-error :messages="$errors->get('id_type')" class="mt-2" />
+      </div>
 
-  {{-- 5. Password --}}
-  <div class="mt-5">
-    <x-input-label for="password" :value="__('Password')" />
-    <x-text-input id="password" class="block mt-1 w-full" type="password" name="password" required autocomplete="new-password" />
-    <x-input-error :messages="$errors->get('password')" class="mt-2" />
-  </div>
+      {{-- 2. ID Number / School Name --}}
+      <div class="mt-4" id="id-number-group">
+        <x-input-label for="id_number_input" :value="__('ID Number')" id="id-number-label" />
+        <x-text-input id="id_number_input" class="block mt-1 w-full" type="text" name="id_number"
+          :value="old('id_number', old('school_name'))" required placeholder="e.g. 2242-0414-6523" />
+        <p id="id-number-hint" class="mt-1 text-xs text-gray-500 hidden">Enter your full school name. Do not use
+          abbreviations.</p>
+        <x-input-error :messages="$errors->get('id_number')" class="mt-2" />
+        <x-input-error :messages="$errors->get('school_name')" class="mt-2" />
+      </div>
 
-  {{-- 6. Confirm Password --}}
-  <div class="mt-4">
-    <x-input-label for="password_confirmation" :value="__('Confirm Password')" />
-    <x-text-input id="password_confirmation" class="block mt-1 w-full" type="password" name="password_confirmation" required autocomplete="new-password" />
-    <x-input-error :messages="$errors->get('password_confirmation')" class="mt-2" />
-  </div>
+      {{-- 3. Date of Birth (conditional) --}}
+      <div class="mt-4" id="dob-group">
+        <x-input-label for="dob_display" :value="__('Date of Birth')" id="dob-label" />
+        <div class="dob-wrapper mt-1 relative">
+          <!-- Text input with custom calendar trigger. Readonly to prevent invalid/garbage text input. -->
+          <input type="text" id="dob_display"
+            class="block w-full border-gray-300 focus:border-brand-500 focus:ring-brand-500 rounded-md shadow-sm"
+            readonly placeholder="Select Date of Birth" />
 
-  <div class="flex items-center justify-end mt-5">
-    <a class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" href="{{ route('login') }}">
-      {{ __('Already registered?') }}
-    </a>
-    <x-primary-button class="ms-4" id="submit-btn">{{ __('Create Account') }}</x-primary-button>
-  </div>
-</form>
+          <!-- Hidden field to submit standard date format to Laravel backend -->
+          <input type="hidden" id="dob" name="dob" :value="old('dob')" />
 
-<script>
-const ID_TYPES_WITH_DOB = new Set(['Passport','National ID',"Driver's License",'SSS ID','GSIS ID','PhilHealth ID','Pag-IBIG ID','Voter ID','Postal ID']);
+          <span class="dob-cal-icon">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round"
+                d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+            </svg>
+          </span>
 
-const idTypeSelect  = document.getElementById('id_type');
-const idLabel       = document.getElementById('id-number-label');
-const idInput       = document.getElementById('id_number_input');
-const idHint        = document.getElementById('id-number-hint');
-const dobGroup      = document.getElementById('dob-group');
-const dobInput      = document.getElementById('dob');
-const dobHint       = document.getElementById('dob-hint');
-const emailInput    = document.getElementById('email');
-const msgDiv        = document.getElementById('email-check-msg');
-const submitBtn     = document.getElementById('submit-btn');
-const statePending  = document.getElementById('cam-state-pending');
-const stateDenied   = document.getElementById('cam-state-denied');
-const stateActive   = document.getElementById('cam-state-active');
-const stateCaptured = document.getElementById('cam-state-captured');
-const camVideo      = document.getElementById('cam-video');
-const camCapImg     = document.getElementById('cam-captured-img');
-const orientLabel   = document.getElementById('orient-label-text');
-const pillText      = document.getElementById('cam-pill-text');
-const fileInput     = document.getElementById('id_photo');
-const camErrMsg     = document.getElementById('cam-error-msg');
-const camOkMsg      = document.getElementById('cam-success-msg');
+          <!-- Mobile Backdrop -->
+          <div id="dob-datepicker-backdrop" class="custom-datepicker-backdrop"></div>
 
-let stream          = null;
-let facingMode      = 'environment';
-let orientation     = 'landscape';
-let captured        = false;
-let pillTimer       = null;
-let debounce        = null;
-const PILLS = ['Hold steady to prevent blur','Align ID within the glowing frame','Ensure good lighting — avoid glare','All text must be clearly readable'];
-let pillIdx = 0;
+          <!-- Custom JS Calendar Dropdown Container -->
+          <div id="dob-datepicker-container" class="custom-datepicker-container">
+            <!-- Header -->
+            <div class="datepicker-header">
+              <button type="button" id="dp-prev-btn">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                </svg>
+              </button>
+              <button type="button" id="dp-title-btn" class="datepicker-title-btn">
+                <span id="dp-month-year-label">July 2026</span>
+                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7" />
+                </svg>
+              </button>
+              <button type="button" id="dp-next-btn">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                </svg>
+              </button>
+            </div>
 
-// ── Two-Step Capture Variables ─────────────────────────────
-let currentStep     = 1;
-let frontPhotoData  = null;
-let backPhotoData   = null;
+            <!-- View 1: Day View -->
+            <div id="dp-day-view">
+              <div class="datepicker-grid-header">
+                <span>Su</span><span>Mo</span><span>Tu</span><span>We</span><span>Th</span><span>Fr</span><span>Sa</span>
+              </div>
+              <div id="dp-days-container" class="datepicker-grid-days">
+                <!-- Javascript fills this -->
+              </div>
+            </div>
 
-// ── ID Type rules ──────────────────────────────────────────
-function applyIdType() {
-  const v = idTypeSelect.value;
-  if (v === 'School ID') {
-    idLabel.textContent = 'School Name'; idInput.placeholder = 'e.g. J.H. Cerilles State College'; idInput.name = 'school_name'; idHint.classList.remove('hidden');
-  } else {
-    idLabel.textContent = 'ID Number'; idInput.placeholder = 'e.g. 2022-041633'; idInput.name = 'id_number'; idHint.classList.add('hidden');
-  }
-  const needsDob = ID_TYPES_WITH_DOB.has(v);
-  dobInput.required = needsDob;
-  if (!needsDob) { dobInput.value = ''; dobHint.classList.remove('hidden'); dobGroup.style.opacity = '.6'; }
-  else           { dobHint.classList.add('hidden'); dobGroup.style.opacity = '1'; }
-}
-idTypeSelect.addEventListener('change', applyIdType);
-applyIdType();
+            <!-- View 2: Month View -->
+            <div id="dp-month-view" class="hidden">
+              <div class="datepicker-selection-grid" id="dp-months-container">
+                <!-- Javascript fills this -->
+              </div>
+            </div>
 
-// ── Form validity ──────────────────────────────────────────
-function checkValidity() {
-  const bad = msgDiv.className.includes('text-red-600');
-  submitBtn.disabled = (bad || !captured);
-  submitBtn.style.opacity = (bad || !captured) ? '.5' : '1';
-}
-checkValidity();
+            <!-- View 3: Year View -->
+            <div id="dp-year-view" class="hidden">
+              <div class="datepicker-selection-grid" id="dp-years-container">
+                <!-- Javascript fills this -->
+              </div>
+            </div>
 
-// ── Email check ────────────────────────────────────────────
-emailInput.addEventListener('input', function() {
-  clearTimeout(debounce);
-  const v = emailInput.value.trim();
-  if (!v) { msgDiv.textContent = ''; return; }
-  debounce = setTimeout(() => {
-    msgDiv.className = 'mt-1 text-xs font-semibold text-gray-500';
-    msgDiv.textContent = 'Checking…';
-    fetch("{{ route('email.check') }}", {
-      method:'POST', headers:{'Content-Type':'application/json','X-CSRF-TOKEN':'{{ csrf_token() }}'}, body:JSON.stringify({email:v})
-    }).then(r=>r.json()).then(d => {
-      if (!d.valid || !d.available) { msgDiv.className='mt-1 text-xs font-semibold text-red-600'; msgDiv.textContent='\u2717 '+d.message; }
-      else                          { msgDiv.className='mt-1 text-xs font-semibold text-green-600'; msgDiv.textContent='\u2713 '+d.message; }
-      checkValidity();
-    }).catch(()=>{ msgDiv.textContent=''; });
-  }, 400);
-});
+            <!-- Footer -->
+            <div class="datepicker-footer">
+              <button type="button" class="datepicker-btn-clear" id="dp-clear-btn">Clear</button>
+              <button type="button" class="datepicker-btn-today" id="dp-today-btn">Today</button>
+            </div>
+          </div>
+        </div>
+        <p id="dob-hint" class="mt-1 text-xs text-gray-400 hidden">Not required for this ID type.</p>
+        <x-input-error :messages="$errors->get('dob')" class="mt-2" />
+      </div>
 
-// ── Camera helpers ─────────────────────────────────────────
-function showState(name) {
-  [statePending,stateDenied,stateActive,stateCaptured].forEach(el=>el.classList.add('hidden'));
-  ({pending:statePending,denied:stateDenied,active:stateActive,captured:stateCaptured}[name]).classList.remove('hidden');
-}
-function stopStream() {
-  if (pillTimer) { clearInterval(pillTimer); pillTimer=null; }
-  if (stream)    { stream.getTracks().forEach(t=>t.stop()); stream=null; }
-  camVideo.srcObject = null;
-}
-function startPills() {
-  if (pillTimer) clearInterval(pillTimer);
-  pillIdx=0; pillText.textContent=PILLS[0];
-  pillTimer=setInterval(()=>{ pillIdx=(pillIdx+1)%PILLS.length; pillText.textContent=PILLS[pillIdx]; },3500);
-}
-function updateFrame() {
-  const svg=document.getElementById('cam-guide-svg');
-  if (!svg||stateActive.classList.contains('hidden')) return;
-  const r=svg.getBoundingClientRect(), W=r.width, H=r.height;
-  if (!W||!H) return;
-  let cW,cH;
-  if (orientation==='landscape') { cW=W*.84; cH=cW/1.586; if(cH>H*.78){cH=H*.78;cW=cH*1.586;} }
-  else                           { cH=H*.78; cW=cH/1.586; if(cW>W*.84){cW=W*.84;cH=cW*1.586;} }
-  const x=(W-cW)/2, y=(H-cH)/2;
-  ['cam-guide-cutout','cam-guide-outline'].forEach(id=>{
-    const el=document.getElementById(id); if(!el)return;
-    el.setAttribute('x',x); el.setAttribute('y',y); el.setAttribute('width',cW); el.setAttribute('height',cH);
-  });
-}
-window.addEventListener('resize', updateFrame);
+      {{-- 4. Camera Capture --}}
+      <div class="mt-5">
+        <span class="text-green-600">
+          <x-input-label :value="__('ID Photo Capture — Front + Back (Live Camera)')" style="color: green;" />
+        </span>
+        <div class="cam-box mt-2" id="cam-box">
 
-async function startCamera(){
-  camErrMsg.classList.add('hidden');camOkMsg.classList.add('hidden');stopStream();
-  if(!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia){
-    camErrMsg.textContent='Insecure Context: Camera access requires HTTPS or localhost. Try accessing via localhost or generate a local TLS cert.';
-    camErrMsg.classList.remove('hidden');
-    showState('pending');
-    return;
-  }
-  try{
-    stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:facingMode},width:{ideal:1920},height:{ideal:1080}},audio:false});
-    camVideo.srcObject=stream; showState('active'); setTimeout(updateFrame,150); startPills();
-    
-    // Update step UI for state
-    document.getElementById('cam-step-badge').textContent = `Step ${currentStep} of 2`;
-    document.getElementById('cam-side-badge').textContent = currentStep === 1 ? 'Front ID' : 'Back ID';
-    document.getElementById('cam-side-badge').className = currentStep === 1 
-      ? 'bg-teal-500/90 text-white text-[10px] font-bold px-2 py-1 rounded shadow-md uppercase tracking-wider'
-      : 'bg-indigo-500/90 text-white text-[10px] font-bold px-2 py-1 rounded shadow-md uppercase tracking-wider';
-  }catch(err){
-    if(err.name==='NotAllowedError'||err.name==='PermissionDeniedError'){showState('denied');}
-    else{camErrMsg.textContent='Camera error: '+(err.message||err.name)+'. Please refresh and try again.';camErrMsg.classList.remove('hidden');showState('pending');}
-  }
-}
+          {{-- STATE A: not yet asked --}}
+          <div id="cam-state-pending" class="flex flex-col items-center justify-center text-center gap-4 px-6 py-10">
+            <div
+              style="width:3.5rem;height:3.5rem;border-radius:9999px;background:rgba(13,148,136,0.18);border:1.5px solid rgba(20,184,166,0.5);display:flex;align-items:center;justify-content:center;color:#2dd4bf;">
+              <svg style="width:1.75rem;height:1.75rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+              </svg>
+            </div>
+            <div>
+              <p style="color:#f8fafc; font-weight:600; font-size:.875rem;">Capture Your ID with Camera</p>
+              <p style="color:#cbd5e1; font-size:.75rem; margin-top:.25rem; line-height:1.6;">Your device camera will
+                photograph your ID directly.</p>
+            </div>
+            <button type="button" id="btn-enable-camera" class="cam-enable-btn">
+              <span class="flex items-center gap-2">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M15 10l4.553-2.069A1 1 0 0121 8.868V15.13a1 1 0 01-1.447.898L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                </svg>
+                Enable Camera
+              </span>
+            </button>
+          </div>
 
-document.getElementById('btn-enable-camera').addEventListener('click', startCamera);
-document.getElementById('btn-retry-camera').addEventListener('click',  startCamera);
+          {{-- STATE B: denied --}}
+          <div id="cam-state-denied" class="cam-denied hidden">
+            <div class="cam-denied-icon">
+              <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" />
+              </svg>
+            </div>
+            <h5>Camera Access Denied</h5>
+            <p>Please allow camera access in your browser settings, then click Retry below.</p>
+            <div
+              class="text-xs text-slate-500 bg-slate-900/60 border border-slate-700 rounded-lg px-4 py-2 text-left leading-relaxed"
+              style="max-width:28ch">
+              <strong class="text-slate-400 block mb-1">How to enable:</strong>
+              <span class="block">• Chrome: <em>Address bar → 🔒 → Camera → Allow</em></span>
+              <span class="block">• Firefox: <em>Address bar → 🔒 → Camera → Allow</em></span>
+              <span class="block">• Safari: <em>Settings → Safari → Camera → Allow</em></span>
+            </div>
+            <button type="button" id="btn-retry-camera" class="cam-retry-btn">
+              <span class="flex items-center gap-1.5">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M4 4v5h.582m15.356 2A8.001 8.001 0 1121.21 7.89" />
+                </svg>
+                Retry Camera Access
+              </span>
+            </button>
+          </div>
 
-document.getElementById('btn-flip').addEventListener('click',()=>{
-  orientation=(orientation==='landscape')?'portrait':'landscape';
-  orientLabel.textContent=orientation==='landscape'?'Landscape Guide':'Portrait Guide';
-  updateFrame();
-});
+          {{-- STATE C: live preview --}}
+          <div id="cam-state-active" class="hidden flex flex-col">
+            <div class="relative" style="aspect-ratio:4/3;background:#000;overflow:hidden;">
+              <video id="cam-video" autoplay playsinline muted class="w-full h-full object-cover"></video>
 
-document.getElementById('btn-shutter').addEventListener('click',()=>{
-  if (!stream) return;
-  const vW=camVideo.videoWidth, vH=camVideo.videoHeight;
-  if (!vW||!vH) return;
+              {{-- Persistent Step & Side Badges --}}
+              <div class="absolute top-3 left-3 z-20 flex flex-row gap-2 pointer-events-none">
+                <span id="cam-step-badge"
+                  class="bg-brand-700/90 text-white text-[10px] font-bold px-2 py-1 rounded shadow-md uppercase tracking-wider">Step
+                  1 of 2</span>
+                <span id="cam-side-badge"
+                  class="bg-teal-500/90 text-white text-[10px] font-bold px-2 py-1 rounded shadow-md uppercase tracking-wider">Front
+                  ID</span>
+              </div>
 
-  const canvas=document.createElement('canvas');
-  canvas.width =vW;
-  canvas.height=vH;
-  canvas.getContext('2d').drawImage(camVideo, 0, 0, vW, vH);
+              {{-- Auto-advance Confirmation Overlay --}}
+              <div id="cam-transition-overlay"
+                class="absolute inset-0 bg-slate-900/95 flex flex-col items-center justify-center text-center gap-3 z-30 hidden">
+                <div
+                  class="w-12 h-12 rounded-full bg-green-500 flex items-center justify-center text-white text-xl animate-scale shadow-lg">
+                  ✓</div>
+                <p class="text-white font-bold text-sm">Front Captured Successfully!</p>
+                <p class="text-teal-300 text-xs">Automatically switching to Back of ID...</p>
+              </div>
 
-  try {
-    const url=canvas.toDataURL('image/jpeg',.95);
-    
-    if (currentStep === 1) {
-      frontPhotoData = url;
-      currentStep = 2;
-      
-      // Show auto-advance overlay
-      const transitionOverlay = document.getElementById('cam-transition-overlay');
-      transitionOverlay.classList.remove('hidden');
-      
-      // Auto-advance step UI text under the overlay
-      setTimeout(() => {
-        transitionOverlay.classList.add('hidden');
-        document.getElementById('cam-step-badge').textContent = 'Step 2 of 2';
-        document.getElementById('cam-side-badge').textContent = 'Back ID';
-        document.getElementById('cam-side-badge').className = 'bg-indigo-500/90 text-white text-[10px] font-bold px-2 py-1 rounded shadow-md uppercase tracking-wider';
-      }, 1500);
-      
-    } else {
-      backPhotoData = url;
-      
-      // Combine front and back images vertically into one single high-quality composite image
-      const compositeCanvas = document.createElement('canvas');
-      compositeCanvas.width = vW;
-      compositeCanvas.height = vH * 2;
-      
-      const ctx = compositeCanvas.getContext('2d');
-      
-      // Load both images onto the composite canvas
-      const imgFront = new Image();
-      imgFront.onload = function() {
-        ctx.drawImage(imgFront, 0, 0, vW, vH);
-        
-        const imgBack = new Image();
-        imgBack.onload = function() {
-          ctx.drawImage(imgBack, 0, vH, vW, vH);
-          
-          // Generate final base64 composite — quality 0.82 keeps file ~3–6 MB which OCR handles well
-          const compositeUrl = compositeCanvas.toDataURL('image/jpeg', .82);
-          camCapImg.src = compositeUrl;
-          
-          // Convert composite base64 to binary File object
-          const bin = atob(compositeUrl.split(',')[1]);
-          const bytes = new Uint8Array(bin.length);
-          for (let i = 0; i < bin.length; i++) {
-            bytes[i] = bin.charCodeAt(i);
-          }
-          const f = new File([bytes], `id_composite_${Date.now()}.jpg`, {type: 'image/jpeg'});
-          const dt = new DataTransfer();
-          dt.items.add(f);
-          fileInput.files = dt.files;
-          
-          // Update confirmation thumbnails
-          document.getElementById('cam-img-front-thumb').src = frontPhotoData;
-          document.getElementById('cam-img-back-thumb').src = backPhotoData;
-          
-          captured = true;
-          camOkMsg.textContent = '✓ Front and Back ID photos captured.';
-          camOkMsg.classList.remove('hidden');
-          stopStream();
-          showState('captured');
-          checkValidity();
-        };
-        imgBack.src = backPhotoData;
-      };
-      imgFront.src = frontPhotoData;
+              {{-- SVG overlay --}}
+              <svg id="cam-guide-svg" class="absolute inset-0 w-full h-full pointer-events-none"
+                xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                  <mask id="cam-guide-mask">
+                    <rect width="100%" height="100%" fill="white" />
+                    <rect id="cam-guide-cutout" x="8%" y="12%" width="84%" height="76%" rx="14" fill="black" />
+                  </mask>
+                </defs>
+                <rect width="100%" height="100%" fill="rgba(8,17,31,0.7)" mask="url(#cam-guide-mask)" />
+                <rect id="cam-guide-outline" x="8%" y="12%" width="84%" height="76%" rx="14" fill="none"
+                  stroke="#14b8a6" stroke-width="2.5" stroke-dasharray="10 6" class="cam-guide-rect" />
+              </svg>
+              {{-- Instruction pill --}}
+              <div class="absolute bottom-4 inset-x-0 flex justify-center pointer-events-none z-10">
+                <span id="cam-pill" class="cam-pill">
+                  <svg class="w-3.5 h-3.5 text-teal-400 flex-shrink-0" fill="none" stroke="currentColor"
+                    viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  <span id="cam-pill-text">Hold steady to prevent blur</span>
+                </span>
+              </div>
+            </div>
+            {{-- Bottom bar --}}
+            <div class="cam-bottom-bar">
+              <div class="cam-orient-label">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7" />
+                </svg>
+                <span id="orient-label-text">Landscape Guide</span>
+              </div>
+              <button type="button" id="btn-shutter" class="cam-shutter" title="Capture photo">
+                <div class="cam-shutter-dot"></div>
+              </button>
+              <button type="button" id="btn-flip" class="cam-flip-btn">
+                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+                </svg>
+                Flip
+              </button>
+            </div>
+          </div>
+
+          {{-- STATE D: completion review state --}}
+          <div id="cam-state-captured" class="hidden flex flex-col">
+            <div class="p-3 bg-slate-900 border-b border-teal-950 text-center">
+              <span
+                class="text-green-400 font-bold text-xs uppercase tracking-widest block flex items-center justify-center gap-1">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" />
+                </svg>
+                ID capture complete
+              </span>
+            </div>
+            <div class="grid grid-cols-2 gap-3 p-3 bg-slate-950">
+              <div class="flex flex-col gap-1.5">
+                <span class="text-[10px] text-slate-400 font-bold tracking-wider uppercase text-center">Front
+                  side</span>
+                <div class="bg-black rounded-lg overflow-hidden border border-slate-800 relative">
+                  <img id="cam-img-front-thumb" class="block w-full h-auto" alt="Front ID Preview" />
+                  <span class="absolute top-1.5 right-1.5 bg-green-500 text-white rounded-full p-0.5 shadow">
+                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" />
+                    </svg>
+                  </span>
+                </div>
+              </div>
+              <div class="flex flex-col gap-1.5">
+                <span class="text-[10px] text-slate-400 font-bold tracking-wider uppercase text-center">Back side</span>
+                <div class="bg-black rounded-lg overflow-hidden border border-slate-800 relative">
+                  <img id="cam-img-back-thumb" class="block w-full h-auto" alt="Back ID Preview" />
+                  <span class="absolute top-1.5 right-1.5 bg-green-500 text-white rounded-full p-0.5 shadow">
+                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" />
+                    </svg>
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            {{-- Hidden element to keep original selector variables safe from JS errors --}}
+            <img id="cam-captured-img" class="hidden" alt="Merged Preview" />
+
+            <div class="cam-bottom-bar justify-center">
+              <button type="button" id="btn-retake" class="cam-flip-btn"
+                style="color:#fb923c;border-color:rgba(251,146,60,.35);">
+                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M4 4v5h.582m15.356 2A8.001 8.001 0 1121.21 7.89" />
+                </svg>
+                Retake & Restart
+              </button>
+            </div>
+          </div>
+
+        </div>
+
+        <input id="id_photo" name="id_photo" type="file" accept="image/jpeg" required class="sr-only" aria-hidden="true"
+          tabindex="-1" />
+        <p id="cam-error-msg" class="mt-2 text-sm text-red-600  hidden"></p>
+        <p id="cam-success-msg" class="mt-2 text-sm text-green-600 hidden"></p>
+        <x-input-error :messages="$errors->get('id_photo')" class="mt-2" />
+      </div>
+    </div>
+
+    <div class="section-block section-locked" id="section-password">
+      <div class="section-title">
+        <h2>Account Security</h2>
+      </div>
+
+      {{-- 5. Password --}}
+      <div class="mb-4">
+        <x-input-label for="password" :value="__('Password')" />
+        <div class="relative mt-1">
+          <x-text-input id="password" class="block w-full pr-12" type="password" name="password" required
+            autocomplete="new-password" />
+          <button type="button" onclick="togglePassword('password', this)"
+            class="text-gray-400 hover:text-gray-600 focus:outline-none"
+            style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%);">
+            <svg class="w-5 h-5 eye-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256">
+              <path d="M128,56C48,56,16,128,16,128s32,72,112,72,112-72,112-72S208,56,128,56Z" fill="currentColor"
+                opacity="0.2"></path>
+              <path d="M128,56C48,56,16,128,16,128s32,72,112,72,112-72,112-72S208,56,128,56Z" fill="none"
+                stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"></path>
+              <circle cx="128" cy="128" r="32" fill="none" stroke="currentColor" stroke-linecap="round"
+                stroke-linejoin="round" stroke-width="16"></circle>
+            </svg>
+            <svg class="w-5 h-5 eye-slash-icon hidden" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256">
+              <path d="M53.9,190.4A105.8,105.8,0,0,1,16,128s32-72,112-72a114.3,114.3,0,0,1,55.3,14.2"
+                fill="currentColor" opacity="0.2"></path>
+              <path d="M109.8,155.6a32,32,0,0,1-37.4-37.4M240,128s-32,72-112,72a114.3,114.3,0,0,1-55.3-14.2" fill="none"
+                stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"></path>
+              <path d="M53.9,190.4A105.8,105.8,0,0,1,16,128s32-72,112-72a114.3,114.3,0,0,1,55.3,14.2" fill="none"
+                stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"></path>
+              <path d="M150.6,150.6a32,32,0,0,1-40.8-40.8" fill="none" stroke="currentColor" stroke-linecap="round"
+                stroke-linejoin="round" stroke-width="16"></path>
+              <line x1="40" y1="40" x2="216" y2="216" fill="none" stroke="currentColor" stroke-linecap="round"
+                stroke-linejoin="round" stroke-width="16"></line>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      {{-- 6. Confirm Password --}}
+      <div class="mb-2">
+        <x-input-label for="password_confirmation" :value="__('Confirm Password')" />
+        <div class="relative mt-1">
+          <x-text-input id="password_confirmation" class="block w-full pr-12" type="password"
+            name="password_confirmation" required autocomplete="new-password" />
+          <button type="button" onclick="togglePassword('password_confirmation', this)"
+            class="text-gray-400 hover:text-gray-600 focus:outline-none"
+            style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%);">
+            <svg class="w-5 h-5 eye-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256">
+              <path d="M128,56C48,56,16,128,16,128s32,72,112,72,112-72,112-72S208,56,128,56Z" fill="currentColor"
+                opacity="0.2"></path>
+              <path d="M128,56C48,56,16,128,16,128s32,72,112,72,112-72,112-72S208,56,128,56Z" fill="none"
+                stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"></path>
+              <circle cx="128" cy="128" r="32" fill="none" stroke="currentColor" stroke-linecap="round"
+                stroke-linejoin="round" stroke-width="16"></circle>
+            </svg>
+            <svg class="w-5 h-5 eye-slash-icon hidden" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256">
+              <path d="M53.9,190.4A105.8,105.8,0,0,1,16,128s32-72,112-72a114.3,114.3,0,0,1,55.3,14.2"
+                fill="currentColor" opacity="0.2"></path>
+              <path d="M109.8,155.6a32,32,0,0,1-37.4-37.4M240,128s-32,72-112,72a114.3,114.3,0,0,1-55.3-14.2" fill="none"
+                stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"></path>
+              <path d="M53.9,190.4A105.8,105.8,0,0,1,16,128s32-72,112-72a114.3,114.3,0,0,1,55.3,14.2" fill="none"
+                stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"></path>
+              <path d="M150.6,150.6a32,32,0,0,1-40.8-40.8" fill="none" stroke="currentColor" stroke-linecap="round"
+                stroke-linejoin="round" stroke-width="16"></path>
+              <line x1="40" y1="40" x2="216" y2="216" fill="none" stroke="currentColor" stroke-linecap="round"
+                stroke-linejoin="round" stroke-width="16"></line>
+            </svg>
+          </button>
+        </div>
+        <x-input-error :messages="$errors->get('password_confirmation')" class="mt-2" />
+      </div>
+
+      <div class="section-block section-locked" id="section-submit">
+        <div class="section-title">
+          <h2>Review & Submit</h2>
+        </div>
+        <div class="flex items-center justify-end mt-5">
+          <a class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-500"
+            href="{{ route('login') }}">
+            {{ __('Already registered?') }}
+          </a>
+          <x-primary-button class="ms-4" id="submit-btn">{{ __('Create Account') }}</x-primary-button>
+        </div>
+      </div>
+  </form>
+
+  <script>
+    const ID_TYPES_WITH_DOB = new Set(['Passport', 'National ID', "Driver's License", 'SSS ID', 'GSIS ID', 'PhilHealth ID', 'Pag-IBIG ID', 'Voter ID', 'Postal ID']);
+
+    // ── Name fields: force uppercase value as user types ───────
+    ['first_name', 'last_name', 'middle_initial'].forEach(id => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      el.addEventListener('input', function () {
+        const pos = this.selectionStart;
+        this.value = this.value.toUpperCase();
+        this.setSelectionRange(pos, pos);
+      });
+    });
+
+    const idTypeSelect = document.getElementById('id_type');
+    const idLabel = document.getElementById('id-number-label');
+    const idInput = document.getElementById('id_number_input');
+    const idHint = document.getElementById('id-number-hint');
+    const dobGroup = document.getElementById('dob-group');
+    const dobInput = document.getElementById('dob');
+    const dobHint = document.getElementById('dob-hint');
+    const emailInput = document.getElementById('email');
+    const msgDiv = document.getElementById('email-check-msg');
+    const btnGetCode = document.getElementById('btn-get-code');
+    const btnVerifyCode = document.getElementById('btn-verify-code');
+    const otpInput = document.getElementById('otp_code');
+    const otpStatus = document.getElementById('otp-status-msg');
+    const submitBtn = document.getElementById('submit-btn');
+    const sectionDetails = document.getElementById('section-details');
+    const sectionIdentity = document.getElementById('section-identity');
+    const sectionPassword = document.getElementById('section-password');
+    const sectionSubmit = document.getElementById('section-submit');
+    // stepPills removed
+    const statePending = document.getElementById('cam-state-pending');
+    const stateDenied = document.getElementById('cam-state-denied');
+    const stateActive = document.getElementById('cam-state-active');
+    const stateCaptured = document.getElementById('cam-state-captured');
+    const camVideo = document.getElementById('cam-video');
+    const camCapImg = document.getElementById('cam-captured-img');
+    const orientLabel = document.getElementById('orient-label-text');
+    const pillText = document.getElementById('cam-pill-text');
+    const fileInput = document.getElementById('id_photo');
+    const camErrMsg = document.getElementById('cam-error-msg');
+    const camOkMsg = document.getElementById('cam-success-msg');
+
+    let stream = null;
+    let facingMode = 'environment';
+    let orientation = 'landscape';
+    let captured = false;
+    let pillTimer = null;
+    let debounce = null;
+    const PILLS = ['Hold steady to prevent blur', 'Align ID within the glowing frame', 'Ensure good lighting — avoid glare', 'All text must be clearly readable'];
+    let pillIdx = 0;
+
+    // ── Two-Step Capture Variables ─────────────────────────────
+    let currentStep = 1;
+    let frontPhotoData = null;
+    let backPhotoData = null;
+
+    // ── ID Type rules ──────────────────────────────────────────
+    function applyIdType() {
+      const v = idTypeSelect.value;
+      if (v === 'School ID') {
+        idLabel.textContent = 'School Name'; idInput.placeholder = 'e.g. Zamboanga del Sur State University'; idInput.name = 'school_name'; idHint.classList.remove('hidden');
+      } else {
+        idLabel.textContent = 'ID Number'; idInput.placeholder = 'e.g. 2022-041633'; idInput.name = 'id_number'; idHint.classList.add('hidden');
+      }
+      const needsDob = ID_TYPES_WITH_DOB.has(v);
+      dobInput.required = needsDob;
+      if (!needsDob) { dobInput.value = ''; dobHint.classList.remove('hidden'); dobGroup.style.opacity = '.6'; }
+      else { dobHint.classList.add('hidden'); dobGroup.style.opacity = '1'; }
     }
-  } catch(e) {
-    camErrMsg.textContent = 'Failed to capture. Please try again.';
-    camErrMsg.classList.remove('hidden');
-  }
-});
+    idTypeSelect.addEventListener('change', applyIdType);
+    applyIdType();
 
-document.getElementById('btn-retake').addEventListener('click',()=>{
-  captured = false;
-  currentStep = 1;
-  frontPhotoData = null;
-  backPhotoData = null;
-  fileInput.value = '';
-  camOkMsg.classList.add('hidden');
-  checkValidity();
-  startCamera();
-});
+    // ── Form validity ──────────────────────────────────────────
+    let otpVerified = false;
+    let codeSent = false;
 
-document.getElementById('reg-form').addEventListener('submit', function(e){
-  if (msgDiv.className.includes('text-red-600')||!captured) { e.preventDefault(); return; }
-  stopStream();
-  const ov=document.createElement('div');
-  ov.className='fixed inset-0 z-50 flex items-center justify-center bg-slate-900/80 backdrop-blur-sm';
-  ov.innerHTML='<div class="text-center"><div class="text-6xl mb-4 animate-bounce">\u23f3</div><h2 class="text-2xl font-bold text-white mb-2">Reading Your ID...</h2><p class="text-teal-300 text-sm">This usually takes a few seconds.</p></div>';
-  document.body.appendChild(ov);
-  submitBtn.disabled=true; submitBtn.textContent='Processing…';
-});
-</script>
+    // Extra refs for new elements
+    const otpRevealRow = document.getElementById('otp-reveal-row');
+    const otpErrorInline = document.getElementById('otp-error-inline');
+    const emailVerifiedBanner = document.getElementById('email-verified-banner');
+    const emailVerifiedBannerText = document.getElementById('email-verified-banner-text');
+    const emailVerifiedBadge = document.getElementById('email-verified-badge');
+
+    function setLockSectionInputs(sectionEl, locked) {
+      sectionEl.querySelectorAll('input,select,textarea,button').forEach(el => {
+        if (locked) el.setAttribute('disabled', '');
+        else el.removeAttribute('disabled');
+      });
+    }
+
+    function checkValidity() {
+      const emailBad = msgDiv.className.includes('text-red-600');
+      const ready = !emailBad && captured && otpVerified;
+      submitBtn.disabled = !ready;
+      submitBtn.style.opacity = ready ? '1' : '.4';
+    }
+
+    const firstNameInput = document.getElementById('first_name');
+    const lastNameInput = document.getElementById('last_name');
+    const classificationSelect = document.getElementById('classification');
+    const passwordInput = document.getElementById('password');
+    const confirmPasswordInput = document.getElementById('password_confirmation');
+
+    function updateStepProgress() {
+      const step1_completed = otpVerified;
+
+      const step2_completed = step1_completed &&
+        firstNameInput.value.trim() !== '' &&
+        lastNameInput.value.trim() !== '' &&
+        classificationSelect.value !== '';
+
+      const needsDob = ID_TYPES_WITH_DOB.has(idTypeSelect.value);
+      const step3_completed = step2_completed &&
+        idTypeSelect.value !== '' &&
+        idInput.value.trim() !== '' &&
+        (!needsDob || dobInput.value !== '') &&
+        captured;
+
+      const step4_completed = step3_completed &&
+        passwordInput.value.length >= 8 &&
+        passwordInput.value === confirmPasswordInput.value;
+
+      const step5_completed = step4_completed; // Submit active
+
+      const states = [
+        { completed: step1_completed, active: !step1_completed, locked: false },
+        { completed: step2_completed, active: step1_completed && !step2_completed, locked: !step1_completed },
+        { completed: step3_completed, active: step2_completed && !step3_completed, locked: !step2_completed },
+        { completed: step4_completed, active: step3_completed && !step4_completed, locked: !step3_completed },
+        { completed: false, active: step4_completed, locked: !step4_completed }
+      ];
+
+      // Update UI for each step node
+      states.forEach((state, i) => {
+        const idx = i + 1;
+        const circle = document.getElementById(`step-circle-${idx}`);
+        const label = document.getElementById(`step-label-${idx}`);
+        const node = document.getElementById(`step-node-${idx}`);
+        const innerVal = node.querySelector('.step-inner-val');
+        const lockBadge = node.querySelector('.step-lock-badge');
+
+        // Reset classes
+        circle.classList.remove('active', 'completed');
+        label.classList.remove('active', 'completed', 'locked');
+        node.classList.remove('clickable', 'locked-node');
+
+        if (state.completed) {
+          circle.classList.add('completed');
+          label.classList.add('completed');
+          node.classList.add('clickable');
+          innerVal.innerHTML = '<svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>';
+          if (lockBadge) lockBadge.classList.add('hidden');
+        } else if (state.active) {
+          circle.classList.add('active');
+          label.classList.add('active');
+          node.classList.add('clickable');
+          innerVal.textContent = idx;
+          if (lockBadge) lockBadge.classList.add('hidden');
+        } else {
+          label.classList.add('locked');
+          node.classList.add('locked-node');
+          innerVal.textContent = idx;
+          if (lockBadge) lockBadge.classList.remove('hidden');
+        }
+      });
+
+      // Calculate filled progress line width
+      // Distance from node 1 to 5: 0%, 25%, 50%, 75%, 100%
+      let completedCount = 0;
+      if (step1_completed) completedCount = 1;
+      if (step2_completed) completedCount = 2;
+      if (step3_completed) completedCount = 3;
+      if (step4_completed) completedCount = 4;
+
+      const progressLine = document.getElementById('step-progress-line');
+      if (progressLine) {
+        progressLine.style.width = `${completedCount * 25}%`;
+      }
+
+      // Update section lock states and disabled inputs
+      // Section Details (Step 2 inputs)
+      const detailsLocked = !step1_completed;
+      sectionDetails.classList.toggle('section-locked', detailsLocked);
+      setLockSectionInputs(sectionDetails, detailsLocked);
+
+      // Section Identity (Step 3 inputs)
+      const identityLocked = !step2_completed;
+      sectionIdentity.classList.toggle('section-locked', identityLocked);
+      setLockSectionInputs(sectionIdentity, identityLocked);
+
+      // Section Password (Step 4 inputs)
+      const passwordLocked = !step3_completed;
+      sectionPassword.classList.toggle('section-locked', passwordLocked);
+      setLockSectionInputs(sectionPassword, passwordLocked);
+
+      // Section Submit (Step 5 inputs)
+      const submitLocked = !step4_completed;
+      sectionSubmit.classList.toggle('section-locked', submitLocked);
+      setLockSectionInputs(sectionSubmit, submitLocked);
+
+      // Check form overall validity to enable the submit button
+      checkValidity();
+    }
+
+    function handleStepClick(sectionId, stepIdx) {
+      // Only allow if not locked
+      const states = [
+        true, // Step 1 is always accessible
+        otpVerified, // Step 2 details is accessible if step 1 completed
+        otpVerified && firstNameInput.value.trim() !== '' && lastNameInput.value.trim() !== '' && classificationSelect.value !== '', // Step 3
+        // Step 4
+        otpVerified && firstNameInput.value.trim() !== '' && lastNameInput.value.trim() !== '' && classificationSelect.value !== '' && idTypeSelect.value !== '' && idInput.value.trim() !== '' && (!ID_TYPES_WITH_DOB.has(idTypeSelect.value) || dobInput.value !== '') && captured,
+        // Step 5
+        otpVerified && firstNameInput.value.trim() !== '' && lastNameInput.value.trim() !== '' && classificationSelect.value !== '' && idTypeSelect.value !== '' && idInput.value.trim() !== '' && (!ID_TYPES_WITH_DOB.has(idTypeSelect.value) || dobInput.value !== '') && captured && passwordInput.value.length >= 8 && passwordInput.value === confirmPasswordInput.value
+      ];
+
+      if (states[stepIdx]) {
+        const target = document.getElementById(sectionId);
+        if (target) {
+          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          // Focus first input
+          setTimeout(() => {
+            const firstInput = target.querySelector('input:not([disabled]),select:not([disabled])');
+            if (firstInput) firstInput.focus();
+          }, 500);
+        }
+      }
+    }
+
+    // Bind listeners to trigger updateStepProgress as user types/selects
+    [firstNameInput, lastNameInput, passwordInput, confirmPasswordInput, idInput].forEach(el => {
+      if (el) el.addEventListener('input', updateStepProgress);
+    });
+    [classificationSelect, idTypeSelect, dobInput].forEach(el => {
+      if (el) el.addEventListener('change', updateStepProgress);
+    });
+
+    // ── SessionStorage Persistence ─────────────────────────────
+    const SS_KEY = 'reg_form_state';
+
+    function saveFormState() {
+      const state = {
+        email: emailInput.value,
+        verifiedEmail: otpVerified ? emailInput.value : null,
+        first_name: (document.getElementById('first_name') || {}).value || '',
+        last_name: (document.getElementById('last_name') || {}).value || '',
+        middle_initial: (document.getElementById('middle_initial') || {}).value || '',
+        classification: (document.getElementById('classification') || {}).value || '',
+        id_type: idTypeSelect.value,
+        id_number: idInput.value,
+        dob: dobInput.value,
+        dob_display: (document.getElementById('dob_display') || {}).value || '',
+        password: passwordInput.value,
+        password_confirmation: confirmPasswordInput.value,
+      };
+      sessionStorage.setItem(SS_KEY, JSON.stringify(state));
+    }
+
+    function restoreFormState() {
+      let state;
+      try { state = JSON.parse(sessionStorage.getItem(SS_KEY)); } catch (e) { return; }
+      if (!state) return;
+
+      // Restore plain field values
+      if (state.first_name) { const el = document.getElementById('first_name'); if (el) el.value = state.first_name; }
+      if (state.last_name) { const el = document.getElementById('last_name'); if (el) el.value = state.last_name; }
+      if (state.middle_initial) { const el = document.getElementById('middle_initial'); if (el) el.value = state.middle_initial; }
+      if (state.suffix) { const el = document.getElementById('suffix'); if (el) el.value = state.suffix; }
+      if (state.classification) { const el = document.getElementById('classification'); if (el) el.value = state.classification; }
+      if (state.id_type) { idTypeSelect.value = state.id_type; applyIdType(); }
+      if (state.id_number) { idInput.value = state.id_number; }
+      if (state.dob) { dobInput.value = state.dob; }
+      if (state.dob_display) { const el = document.getElementById('dob_display'); if (el) el.value = state.dob_display; }
+      if (state.password) { passwordInput.value = state.password; }
+      if (state.password_confirmation) { confirmPasswordInput.value = state.password_confirmation; }
+
+      // Restore verified email state (skip OTP re-entry)
+      if (state.verifiedEmail) {
+        emailInput.value = state.verifiedEmail;
+        otpVerified = true;
+        codeSent = true;
+
+        // Show verified UI
+        emailInput.readOnly = true;
+        emailInput.style.background = '#f9fafb';
+        btnGetCode.disabled = true;
+        btnGetCode.style.display = 'none'; // Keep hidden after refresh
+        otpInput.disabled = true;
+        btnVerifyCode.disabled = true;
+
+        emailVerifiedBannerText.textContent = `✓ ${state.verifiedEmail} verified successfully!`;
+        emailVerifiedBanner.classList.add('visible');
+        document.getElementById('section-email').classList.add('section-verified');
+        if (emailVerifiedBadge) emailVerifiedBadge.classList.remove('hidden');
+
+        msgDiv.className = 'mt-1 text-xs font-semibold text-green-600';
+        msgDiv.textContent = '✓ Gmail address verified.';
+      } else if (state.email) {
+        emailInput.value = state.email;
+      }
+    }
+
+    // Bind save-on-change to all relevant fields
+    const _saveFields = ['first_name', 'last_name', 'middle_initial', 'suffix', 'classification', 'id_type', 'id_number_input', 'dob', 'password', 'password_confirmation'];
+    _saveFields.forEach(id => {
+      const el = document.getElementById(id);
+      if (el) {
+        el.addEventListener('input', saveFormState);
+        el.addEventListener('change', saveFormState);
+      }
+    });
+    // Also save after email verification and after DOB datepicker selection
+    if (dobInput) dobInput.addEventListener('change', saveFormState);
+    emailInput.addEventListener('input', saveFormState);
+
+    // Keep sessionStorage intact during submit so that if backend validation
+    // fails (e.g. password mismatch), the user's OTP verification isn't wiped out.
+    document.getElementById('reg-form').addEventListener('submit', function () {
+      // Intentionally not clearing SS_KEY here.
+    }, { once: true });
+
+    // ── Restore state immediately before init ──
+    restoreFormState();
+
+    // Initialise — ensure locked sections have disabled inputs from the start
+    setLockSectionInputs(sectionDetails, true);
+    setLockSectionInputs(sectionIdentity, true);
+    setLockSectionInputs(sectionPassword, true);
+    setLockSectionInputs(sectionSubmit, true);
+    checkValidity();
+    updateStepProgress();
+
+    // ── Email check ────────────────────────────────────────────
+    emailInput.addEventListener('input', function () {
+      clearTimeout(debounce);
+      const v = emailInput.value.trim();
+
+      // Reset OTP state only if a new email is typed and code wasn't sent yet
+      if (!codeSent) {
+        otpVerified = false;
+        btnGetCode.disabled = true;
+        otpStatus.textContent = 'Enter your Gmail address and click Get Code.';
+        otpStatus.className = 'otp-message text-gray-500';
+        updateStepProgress();
+      }
+
+      if (!v) { msgDiv.textContent = ''; return; }
+      debounce = setTimeout(() => {
+        msgDiv.className = 'mt-1 text-xs font-semibold text-gray-500';
+        msgDiv.textContent = 'Checking…';
+        fetch("{{ route('email.check') }}", {
+          method: 'POST', headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' }, body: JSON.stringify({ email: v })
+        }).then(r => r.json()).then(d => {
+          if (!d.valid || !d.available) {
+            msgDiv.className = 'mt-1 text-xs font-semibold text-red-600';
+            msgDiv.textContent = '\u2717 ' + d.message;
+            btnGetCode.disabled = true;
+          } else {
+            msgDiv.className = 'mt-1 text-xs font-semibold text-green-600';
+            msgDiv.textContent = '\u2713 ' + d.message;
+            if (!codeSent) btnGetCode.disabled = false;  // only enable if code not yet sent
+          }
+          checkValidity();
+        }).catch(() => {
+          msgDiv.textContent = '';
+          btnGetCode.disabled = true;
+        });
+      }, 400);
+    });
+
+    // ── OTP input: numeric-only mask + Enter-to-verify ─────────
+    otpInput.addEventListener('input', function () {
+      // Strip non-digits
+      this.value = this.value.replace(/\D/g, '').slice(0, 6);
+    });
+    otpInput.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter') { e.preventDefault(); btnVerifyCode.click(); }
+    });
+
+    // ── Helper: show/hide spinner on a button ──────────────────
+    function setButtonLoading(btn, loading, originalHTML) {
+      if (loading) {
+        btn.dataset.origHtml = btn.innerHTML;
+        btn.innerHTML = '<svg class="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"/></svg>&nbsp;' + originalHTML;
+        btn.disabled = true;
+      } else {
+        btn.innerHTML = btn.dataset.origHtml || originalHTML;
+      }
+    }
+
+    // ── Get Code ───────────────────────────────────────────────
+    btnGetCode.addEventListener('click', function () {
+      const email = emailInput.value.trim();
+      if (!email) return;
+
+      // Lock email input immediately
+      emailInput.readOnly = true;
+      emailInput.style.background = '#f9fafb';
+      btnGetCode.disabled = true;
+      btnGetCode.innerHTML = '<svg class="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"/></svg>&ensp;Sending…';
+
+      otpStatus.textContent = '';
+      otpStatus.className = 'otp-message text-gray-500';
+
+      fetch("{{ route('register.send_code') }}", {
+        method: 'POST', headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' }, body: JSON.stringify({ email })
+      }).then(async r => {
+        const d = await r.json();
+        if (!r.ok) {
+          // Failure — re-unlock email + button
+          emailInput.readOnly = false;
+          emailInput.style.background = '';
+          btnGetCode.innerHTML = 'Get Code';
+          btnGetCode.disabled = false;
+          otpStatus.textContent = d.message || 'Unable to send code.';
+          otpStatus.className = 'otp-message text-red-600';
+          return;
+        }
+        // Success
+        codeSent = true;
+        otpStatus.textContent = (d.message || 'Code sent!') + ' Check your Gmail inbox.';
+        otpStatus.className = 'otp-message text-green-600';
+
+        // Reveal OTP row with smooth transition
+        otpRevealRow.classList.add('otp-visible');
+        setTimeout(() => { otpInput.focus(); }, 400);
+
+        // Cooldown timer on Get Code button
+        let cooldown = d.cooldown || 60;
+        btnGetCode.textContent = `Resend in ${cooldown}s`;
+        const interval = setInterval(() => {
+          cooldown -= 1;
+          if (cooldown <= 0) {
+            clearInterval(interval);
+            btnGetCode.innerHTML = 'Resend Code';
+            btnGetCode.disabled = false;
+            return;
+          }
+          btnGetCode.textContent = `Resend in ${cooldown}s`;
+        }, 1000);
+      }).catch(() => {
+        emailInput.readOnly = false;
+        emailInput.style.background = '';
+        btnGetCode.innerHTML = 'Get Code';
+        btnGetCode.disabled = false;
+        otpStatus.textContent = 'Unable to send code at this time.';
+        otpStatus.className = 'otp-message text-red-600';
+      });
+    });
+
+    // ── Verify Code ────────────────────────────────────────────
+    btnVerifyCode.addEventListener('click', function () {
+      const email = emailInput.value.trim();
+      const code = otpInput.value.trim();
+
+      otpErrorInline.classList.add('hidden');
+      otpErrorInline.textContent = '';
+
+      if (!email || code.length !== 6) {
+        otpErrorInline.textContent = 'Please enter the full 6-digit code.';
+        otpErrorInline.classList.remove('hidden');
+        otpInput.focus();
+        return;
+      }
+
+      btnVerifyCode.disabled = true;
+      btnVerifyCode.innerHTML = '<svg class="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"/></svg>&ensp;Verifying…';
+      otpStatus.textContent = '';
+
+      fetch("{{ route('register.verify_code') }}", {
+        method: 'POST', headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' }, body: JSON.stringify({ email, code })
+      }).then(async r => {
+        const d = await r.json();
+        if (!r.ok) {
+          otpErrorInline.textContent = d.message || 'Invalid code — please try again.';
+          otpErrorInline.classList.remove('hidden');
+          btnVerifyCode.innerHTML = '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg> Verify';
+          btnVerifyCode.disabled = false;
+          otpInput.focus();
+          return;
+        }
+
+        // ── SUCCESS ──
+        otpVerified = true;
+
+        // Hide OTP row smoothly
+        otpRevealRow.classList.remove('otp-visible');
+
+        // Hide status msg, show banner
+        otpStatus.textContent = '';
+        emailVerifiedBannerText.textContent = `✓ ${emailInput.value.trim()} verified successfully!`;
+        emailVerifiedBanner.classList.add('visible');
+
+        // Lock everything in section 1 permanently
+        emailInput.readOnly = true;
+        btnGetCode.disabled = true;
+        btnGetCode.style.display = 'none'; // Hide Get Code after successful verification
+        otpInput.disabled = true;
+        btnVerifyCode.disabled = true;
+
+        // Mark section 1 as verified visually
+        document.getElementById('section-email').classList.add('section-verified');
+        emailVerifiedBadge.classList.remove('hidden');
+
+        updateStepProgress();
+        saveFormState(); // Persist verified state so refresh doesn't reset wizard
+
+        // Auto-scroll to section 2
+        setTimeout(() => {
+          sectionDetails.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          // Focus first visible input in section 2
+          const firstInput = sectionDetails.querySelector('input:not([disabled]),select:not([disabled])');
+          if (firstInput) firstInput.focus();
+        }, 500);
+
+      }).catch(() => {
+        otpErrorInline.textContent = 'Unable to verify code at this time. Please try again.';
+        otpErrorInline.classList.remove('hidden');
+        btnVerifyCode.innerHTML = '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg> Verify';
+        btnVerifyCode.disabled = false;
+      });
+    });
+
+    // ── Camera helpers ─────────────────────────────────────────
+    function showState(name) {
+      [statePending, stateDenied, stateActive, stateCaptured].forEach(el => el.classList.add('hidden'));
+      ({ pending: statePending, denied: stateDenied, active: stateActive, captured: stateCaptured }[name]).classList.remove('hidden');
+    }
+    function stopStream() {
+      if (pillTimer) { clearInterval(pillTimer); pillTimer = null; }
+      if (stream) { stream.getTracks().forEach(t => t.stop()); stream = null; }
+      camVideo.srcObject = null;
+    }
+    function startPills() {
+      if (pillTimer) clearInterval(pillTimer);
+      pillIdx = 0; pillText.textContent = PILLS[0];
+      pillTimer = setInterval(() => { pillIdx = (pillIdx + 1) % PILLS.length; pillText.textContent = PILLS[pillIdx]; }, 3500);
+    }
+    function updateFrame() {
+      const svg = document.getElementById('cam-guide-svg');
+      if (!svg || stateActive.classList.contains('hidden')) return;
+      const r = svg.getBoundingClientRect(), W = r.width, H = r.height;
+      if (!W || !H) return;
+      let cW, cH;
+      if (orientation === 'landscape') { cW = W * .84; cH = cW / 1.586; if (cH > H * .78) { cH = H * .78; cW = cH * 1.586; } }
+      else { cH = H * .78; cW = cH / 1.586; if (cW > W * .84) { cW = W * .84; cH = cW * 1.586; } }
+      const x = (W - cW) / 2, y = (H - cH) / 2;
+      ['cam-guide-cutout', 'cam-guide-outline'].forEach(id => {
+        const el = document.getElementById(id); if (!el) return;
+        el.setAttribute('x', x); el.setAttribute('y', y); el.setAttribute('width', cW); el.setAttribute('height', cH);
+      });
+    }
+    window.addEventListener('resize', updateFrame);
+
+    async function startCamera() {
+      camErrMsg.classList.add('hidden'); camOkMsg.classList.add('hidden'); stopStream();
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        camErrMsg.textContent = 'Insecure Context: Camera access requires HTTPS or localhost. Try accessing via localhost or generate a local TLS cert.';
+        camErrMsg.classList.remove('hidden');
+        showState('pending');
+        return;
+      }
+      try {
+        stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: { ideal: facingMode }, width: { ideal: 1920 }, height: { ideal: 1080 } }, audio: false });
+        camVideo.srcObject = stream; showState('active'); setTimeout(updateFrame, 150); startPills();
+
+        // Update step UI for state
+        document.getElementById('cam-step-badge').textContent = `Step ${currentStep} of 2`;
+        document.getElementById('cam-side-badge').textContent = currentStep === 1 ? 'Front ID' : 'Back ID';
+        document.getElementById('cam-side-badge').className = currentStep === 1
+          ? 'bg-teal-500/90 text-white text-[10px] font-bold px-2 py-1 rounded shadow-md uppercase tracking-wider'
+          : 'bg-brand-600/90 text-white text-[10px] font-bold px-2 py-1 rounded shadow-md uppercase tracking-wider';
+      } catch (err) {
+        if (err.name === 'NotAllowedError' || err.name === 'PermissionDeniedError') { showState('denied'); }
+        else { camErrMsg.textContent = 'Camera error: ' + (err.message || err.name) + '. Please refresh and try again.'; camErrMsg.classList.remove('hidden'); showState('pending'); }
+      }
+    }
+
+    document.getElementById('btn-enable-camera').addEventListener('click', startCamera);
+    document.getElementById('btn-retry-camera').addEventListener('click', startCamera);
+
+    document.getElementById('btn-flip').addEventListener('click', () => {
+      orientation = (orientation === 'landscape') ? 'portrait' : 'landscape';
+      orientLabel.textContent = orientation === 'landscape' ? 'Landscape Guide' : 'Portrait Guide';
+      updateFrame();
+    });
+
+    document.getElementById('btn-shutter').addEventListener('click', () => {
+      if (!stream) return;
+      const vW = camVideo.videoWidth, vH = camVideo.videoHeight;
+      if (!vW || !vH) return;
+
+      const canvas = document.createElement('canvas');
+      canvas.width = vW;
+      canvas.height = vH;
+      canvas.getContext('2d').drawImage(camVideo, 0, 0, vW, vH);
+
+      try {
+        const url = canvas.toDataURL('image/jpeg', .95);
+
+        if (currentStep === 1) {
+          frontPhotoData = url;
+          currentStep = 2;
+
+          // Show auto-advance overlay
+          const transitionOverlay = document.getElementById('cam-transition-overlay');
+          transitionOverlay.classList.remove('hidden');
+
+          // Auto-advance step UI text under the overlay
+          setTimeout(() => {
+            transitionOverlay.classList.add('hidden');
+            document.getElementById('cam-step-badge').textContent = 'Step 2 of 2';
+            document.getElementById('cam-side-badge').textContent = 'Back ID';
+            document.getElementById('cam-side-badge').className = 'bg-brand-600/90 text-white text-[10px] font-bold px-2 py-1 rounded shadow-md uppercase tracking-wider';
+          }, 1500);
+
+        } else {
+          backPhotoData = url;
+
+          // Combine front and back images vertically into one single high-quality composite image
+          const compositeCanvas = document.createElement('canvas');
+          compositeCanvas.width = vW;
+          compositeCanvas.height = vH * 2;
+
+          const ctx = compositeCanvas.getContext('2d');
+
+          // Load both images onto the composite canvas
+          const imgFront = new Image();
+          imgFront.onload = function () {
+            ctx.drawImage(imgFront, 0, 0, vW, vH);
+
+            const imgBack = new Image();
+            imgBack.onload = function () {
+              ctx.drawImage(imgBack, 0, vH, vW, vH);
+
+              // Generate final base64 composite — quality 0.82 keeps file ~3–6 MB which OCR handles well
+              const compositeUrl = compositeCanvas.toDataURL('image/jpeg', .82);
+              camCapImg.src = compositeUrl;
+
+              // Convert composite base64 to binary File object
+              const bin = atob(compositeUrl.split(',')[1]);
+              const bytes = new Uint8Array(bin.length);
+              for (let i = 0; i < bin.length; i++) {
+                bytes[i] = bin.charCodeAt(i);
+              }
+              const f = new File([bytes], `id_composite_${Date.now()}.jpg`, { type: 'image/jpeg' });
+              const dt = new DataTransfer();
+              dt.items.add(f);
+              fileInput.files = dt.files;
+
+              // Update confirmation thumbnails
+              document.getElementById('cam-img-front-thumb').src = frontPhotoData;
+              document.getElementById('cam-img-back-thumb').src = backPhotoData;
+
+              captured = true;
+              camOkMsg.textContent = '✓ Front and Back ID photos captured.';
+              camOkMsg.classList.remove('hidden');
+              stopStream();
+              showState('captured');
+              updateStepProgress();
+            };
+            imgBack.src = backPhotoData;
+          };
+          imgFront.src = frontPhotoData;
+        }
+      } catch (e) {
+        camErrMsg.textContent = 'Failed to capture. Please try again.';
+        camErrMsg.classList.remove('hidden');
+      }
+    });
+
+    document.getElementById('btn-retake').addEventListener('click', () => {
+      captured = false;
+      currentStep = 1;
+      frontPhotoData = null;
+      backPhotoData = null;
+      fileInput.value = '';
+      camOkMsg.classList.add('hidden');
+      updateStepProgress();
+      startCamera();
+    });
+
+    // ── Custom Datepicker JS Implementation ───────────────────
+    (function () {
+      const dobInput = document.getElementById('dob');
+      const dobDisplay = document.getElementById('dob_display');
+      const wrapper = document.querySelector('.dob-wrapper');
+      const container = document.getElementById('dob-datepicker-container');
+      const backdrop = document.getElementById('dob-datepicker-backdrop');
+
+      const prevBtn = document.getElementById('dp-prev-btn');
+      const nextBtn = document.getElementById('dp-next-btn');
+      const titleBtn = document.getElementById('dp-title-btn');
+      const monthYearLabel = document.getElementById('dp-month-year-label');
+
+      const dayView = document.getElementById('dp-day-view');
+      const monthView = document.getElementById('dp-month-view');
+      const yearView = document.getElementById('dp-year-view');
+
+      const daysContainer = document.getElementById('dp-days-container');
+      const monthsContainer = document.getElementById('dp-months-container');
+      const yearsContainer = document.getElementById('dp-years-container');
+
+      const clearBtn = document.getElementById('dp-clear-btn');
+      const todayBtn = document.getElementById('dp-today-btn');
+
+      let currentDate = new Date(); // Tracks navigation view
+      let selectedDate = null;       // Tracks currently selected date
+      let currentView = 'day';       // 'day' | 'month' | 'year'
+      let decadeStartYear = 2000;    // Tracks the base year for year grid navigation
+
+      const monthNames = [
+        'January', 'February', 'March', 'April', 'May', 'June',
+        'July', 'August', 'September', 'October', 'November', 'December'
+      ];
+
+      // Helper: check if date is valid (must be 12+ and not in the future)
+      function isUnderageOrFuture(date) {
+        const today = new Date();
+        // Reset times for date comparisons
+        today.setHours(0, 0, 0, 0);
+        const checkDate = new Date(date);
+        checkDate.setHours(0, 0, 0, 0);
+
+        if (checkDate > today) return true; // Future date
+
+        // Check 12 years constraint
+        const minAgeDate = new Date(today.getFullYear() - 12, today.getMonth(), today.getDate());
+        return checkDate > minAgeDate; // Under 12
+      }
+
+      // Parse initial date value from hidden input if present
+      function parseInitialDate() {
+        if (dobInput.value) {
+          const parts = dobInput.value.split('-');
+          if (parts.length === 3) {
+            const parsed = new Date(parts[0], parts[1] - 1, parts[2]);
+            if (!isNaN(parsed.getTime())) {
+              selectedDate = parsed;
+              currentDate = new Date(parsed);
+              // Format display
+              const dd = String(parsed.getDate()).padStart(2, '0');
+              const mm = String(parsed.getMonth() + 1).padStart(2, '0');
+              const yyyy = parsed.getFullYear();
+              dobDisplay.value = `${dd}/${mm}/${yyyy}`;
+            }
+          }
+        }
+      }
+      parseInitialDate();
+
+      // Open / Close functions
+      function openPicker() {
+        if (dobInput.hasAttribute('disabled')) return;
+
+        container.classList.add('open');
+        if (backdrop) backdrop.classList.add('open');
+
+        // Reset to day view on open
+        currentView = 'day';
+        switchView('day');
+        render();
+      }
+
+      function closePicker() {
+        container.classList.remove('open');
+        if (backdrop) backdrop.classList.remove('open');
+      }
+
+      function togglePicker() {
+        if (container.classList.contains('open')) {
+          closePicker();
+        } else {
+          openPicker();
+        }
+      }
+
+      // Click outside to close
+      document.addEventListener('click', function (e) {
+        if (container.classList.contains('open')) {
+          if (!wrapper.contains(e.target)) {
+            closePicker();
+          }
+        }
+      });
+
+      dobDisplay.addEventListener('click', function (e) {
+        e.stopPropagation();
+        togglePicker();
+      });
+
+      // Switch between day, month, and year selection panels
+      function switchView(view) {
+        currentView = view;
+        dayView.classList.toggle('hidden', view !== 'day');
+        monthView.classList.toggle('hidden', view !== 'month');
+        yearView.classList.toggle('hidden', view !== 'year');
+
+        if (view === 'day') {
+          prevBtn.style.visibility = 'visible';
+          nextBtn.style.visibility = 'visible';
+        } else if (view === 'month') {
+          prevBtn.style.visibility = 'hidden';
+          nextBtn.style.visibility = 'hidden';
+        } else if (view === 'year') {
+          prevBtn.style.visibility = 'visible';
+          nextBtn.style.visibility = 'visible';
+        }
+      }
+
+      // Title click shifts view levels: day -> month -> year
+      titleBtn.addEventListener('click', function (e) {
+        e.stopPropagation();
+        if (currentView === 'day') {
+          switchView('month');
+          render();
+        } else if (currentView === 'month') {
+          switchView('year');
+          // Align decade start to nearest 16-year page boundary
+          decadeStartYear = currentDate.getFullYear() - (currentDate.getFullYear() % 16);
+          render();
+        } else {
+          switchView('day');
+          render();
+        }
+      });
+
+      prevBtn.addEventListener('click', function (e) {
+        e.stopPropagation();
+        if (currentView === 'day') {
+          currentDate.setMonth(currentDate.getMonth() - 1);
+        } else if (currentView === 'year') {
+          decadeStartYear -= 16; // step back one full 4×4 page
+        }
+        render();
+      });
+
+      nextBtn.addEventListener('click', function (e) {
+        e.stopPropagation();
+        if (currentView === 'day') {
+          currentDate.setMonth(currentDate.getMonth() + 1);
+        } else if (currentView === 'year') {
+          decadeStartYear += 16; // step forward one full 4×4 page
+        }
+        render();
+      });
+
+      // Render method
+      function render() {
+        if (currentView === 'day') {
+          renderDays();
+        } else if (currentView === 'month') {
+          renderMonths();
+        } else if (currentView === 'year') {
+          renderYears();
+        }
+      }
+
+      // ── Render Day Selector Grid ──
+      function renderDays() {
+        monthYearLabel.textContent = `${monthNames[currentDate.getMonth()]} ${currentDate.getFullYear()}`;
+        daysContainer.innerHTML = '';
+
+        const year = currentDate.getFullYear();
+        const month = currentDate.getMonth();
+
+        // First day of current month
+        const firstDayIndex = new Date(year, month, 1).getDay();
+        // Total days in current month
+        const totalDays = new Date(year, month + 1, 0).getDate();
+        // Total days in previous month
+        const prevTotalDays = new Date(year, month, 0).getDate();
+
+        // Render remaining days of previous month
+        for (let i = firstDayIndex - 1; i >= 0; i--) {
+          const cellDate = new Date(year, month - 1, prevTotalDays - i);
+          const cell = createDayCell(prevTotalDays - i, cellDate, true);
+          daysContainer.appendChild(cell);
+        }
+
+        // Render current month days
+        for (let i = 1; i <= totalDays; i++) {
+          const cellDate = new Date(year, month, i);
+          const cell = createDayCell(i, cellDate, false);
+          daysContainer.appendChild(cell);
+        }
+
+        // Render starting days of next month to pad the grid (needs 42 total cells)
+        const remainingCells = 42 - daysContainer.children.length;
+        for (let i = 1; i <= remainingCells; i++) {
+          const cellDate = new Date(year, month + 1, i);
+          const cell = createDayCell(i, cellDate, true);
+          daysContainer.appendChild(cell);
+        }
+
+        // Handle "Today" button state in footer
+        const today = new Date();
+        todayBtn.disabled = isUnderageOrFuture(today);
+      }
+
+      function createDayCell(dayNum, date, isOtherMonth) {
+        const cell = document.createElement('div');
+        cell.className = 'datepicker-day-cell';
+        cell.textContent = dayNum;
+
+        if (isOtherMonth) {
+          cell.classList.add('other-month');
+        }
+
+        // Highlight today subtly (outline only)
+        const today = new Date();
+        if (date.getDate() === today.getDate() && date.getMonth() === today.getMonth() && date.getFullYear() === today.getFullYear()) {
+          cell.classList.add('today-outline');
+        }
+
+        // Highlight selected date
+        if (selectedDate && date.getDate() === selectedDate.getDate() && date.getMonth() === selectedDate.getMonth() && date.getFullYear() === selectedDate.getFullYear()) {
+          cell.classList.add('selected');
+        }
+
+        // Disable if underage or future
+        if (isUnderageOrFuture(date)) {
+          cell.classList.add('disabled');
+        } else {
+          cell.addEventListener('click', function (e) {
+            e.stopPropagation();
+            selectDate(date);
+            closePicker();
+          });
+        }
+
+        return cell;
+      }
+
+      // ── Render Month Selector Grid ──
+      function renderMonths() {
+        monthYearLabel.textContent = `${currentDate.getFullYear()}`;
+        monthsContainer.innerHTML = '';
+
+        monthNames.forEach((monthName, index) => {
+          const cell = document.createElement('div');
+          cell.className = 'datepicker-select-item';
+          cell.textContent = monthName.slice(0, 3); // 3-letter abbreviation
+
+          // Highlight current month
+          if (index === currentDate.getMonth()) {
+            cell.classList.add('selected');
+          }
+
+          cell.addEventListener('click', function (e) {
+            e.stopPropagation();
+            currentDate.setMonth(index);
+            switchView('day');
+            render();
+          });
+
+          monthsContainer.appendChild(cell);
+        });
+      }
+
+      // ── Render Year Selector Grid (4×4 = 16 years per page) ──
+      function renderYears() {
+        const endYear = decadeStartYear + 15;
+        // Use non-breaking space + en-dash + non-breaking space to prevent any line-wrap
+        monthYearLabel.textContent = `${decadeStartYear} – ${endYear}`;
+        yearsContainer.innerHTML = '';
+
+        for (let yr = decadeStartYear; yr <= endYear; yr++) {
+          const cell = document.createElement('div');
+          cell.className = 'datepicker-select-item';
+          cell.textContent = yr;
+
+          // Highlight selected or current year
+          if (yr === currentDate.getFullYear()) {
+            cell.classList.add('selected');
+          }
+
+          // Check if the entire year is in the future
+          const today = new Date();
+          if (yr > today.getFullYear()) {
+            cell.classList.add('disabled');
+          } else {
+            cell.addEventListener('click', function (e) {
+              e.stopPropagation();
+              currentDate.setFullYear(yr);
+              switchView('month');
+              render();
+            });
+          }
+
+          yearsContainer.appendChild(cell);
+        }
+      }
+
+      // Select date action
+      function selectDate(date) {
+        selectedDate = date;
+
+        // Write standard yyyy-mm-dd to hidden field
+        const yyyy = date.getFullYear();
+        const mm = String(date.getMonth() + 1).padStart(2, '0');
+        const dd = String(date.getDate()).padStart(2, '0');
+        dobInput.value = `${yyyy}-${mm}-${dd}`;
+
+        // Write human readable dd/mm/yyyy to display field
+        dobDisplay.value = `${dd}/${mm}/${yyyy}`;
+
+        // Dispatch events to trigger validation
+        dobInput.dispatchEvent(new Event('input', { bubbles: true }));
+        dobInput.dispatchEvent(new Event('change', { bubbles: true }));
+      }
+
+      // Clear action
+      clearBtn.addEventListener('click', function (e) {
+        e.stopPropagation();
+        selectedDate = null;
+        dobInput.value = '';
+        dobDisplay.value = '';
+
+        // Dispatch events to trigger validation
+        dobInput.dispatchEvent(new Event('input', { bubbles: true }));
+        dobInput.dispatchEvent(new Event('change', { bubbles: true }));
+
+        closePicker();
+      });
+
+      // Today action (selects today's date if valid)
+      todayBtn.addEventListener('click', function (e) {
+        e.stopPropagation();
+        const today = new Date();
+        if (!isUnderageOrFuture(today)) {
+          selectDate(today);
+          closePicker();
+        }
+      });
+
+      // Update display dynamically if external JS changes hidden input value (e.g. autofill)
+      const observer = new MutationObserver(() => {
+        parseInitialDate();
+      });
+      observer.observe(dobInput, { attributes: true, attributeFilter: ['value'] });
+    })();
+
+    document.getElementById('reg-form').addEventListener('submit', function (e) {
+      if (msgDiv.className.includes('text-red-600') || !captured) { e.preventDefault(); return; }
+      stopStream();
+      const ov = document.createElement('div');
+      ov.className = 'fixed inset-0 z-50 flex items-center justify-center bg-slate-900/80 backdrop-blur-sm';
+      ov.innerHTML = '<div class="text-center"><div class="text-6xl mb-4 animate-bounce">\u23f3</div><h2 class="text-2xl font-bold text-white mb-2">Reading Your ID...</h2><p class="text-teal-300 text-sm">This usually takes a few seconds.</p></div>';
+      document.body.appendChild(ov);
+      submitBtn.disabled = true; submitBtn.textContent = 'Processing…';
+    });
+
+    function togglePassword(inputId, btn) {
+      const input = document.getElementById(inputId);
+      const eye = btn.querySelector('.eye-icon');
+      const eyeSlash = btn.querySelector('.eye-slash-icon');
+      if (input.type === 'password') {
+        input.type = 'text';
+        eye.classList.add('hidden');
+        eyeSlash.classList.remove('hidden');
+      } else {
+        input.type = 'password';
+        eye.classList.remove('hidden');
+        eyeSlash.classList.add('hidden');
+      }
+    }
+  </script>
+
+  <script>
+    (function () {
+      var OPTIONS = ['Jr.', 'Sr.', 'II', 'III', 'IV', 'N/A'];
+
+      function initSuffixDropdown() {
+        var suffixInput = document.getElementById('suffix');
+        var chevronBtn = document.querySelector('#suffix-combobox button');
+        if (!suffixInput) return;
+
+        /* ── Build portal entirely in JS and append to body ──
+           This ensures it's never inside overflow:hidden / opacity containers. */
+        var portal = document.createElement('div');
+        portal.id = 'suffix-portal';
+        Object.assign(portal.style, {
+          display: 'none',
+          position: 'fixed',
+          zIndex: '99999',
+          background: '#ffffff',
+          border: '1px solid #d1d5db',
+          borderRadius: '6px',
+          boxShadow: '0 8px 24px rgba(0,0,0,0.14)',
+          minWidth: '140px',
+          overflow: 'hidden',
+        });
+
+        var ul = document.createElement('ul');
+        Object.assign(ul.style, { margin: '0', padding: '4px 0', listStyle: 'none' });
+
+        OPTIONS.forEach(function (opt) {
+          var li = document.createElement('li');
+          li.dataset.value = opt;
+          Object.assign(li.style, {
+            cursor: 'pointer',
+            padding: '9px 14px',
+            fontSize: '0.875rem',
+            fontWeight: '500',
+            color: '#111827',   /* solid near-black — no opacity issues */
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px',
+            userSelect: 'none',
+          });
+
+          /* green check icon */
+          var checkSvg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+          checkSvg.setAttribute('viewBox', '0 0 20 20');
+          checkSvg.setAttribute('fill', '#10b981');
+          Object.assign(checkSvg.style, { width: '14px', height: '14px', flexShrink: '0', visibility: 'hidden' });
+          var checkPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+          checkPath.setAttribute('fill-rule', 'evenodd');
+          checkPath.setAttribute('d', 'M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z');
+          checkPath.setAttribute('clip-rule', 'evenodd');
+          checkSvg.appendChild(checkPath);
+
+          /* label */
+          var span = document.createElement('span');
+          span.style.flex = '1';
+          span.textContent = opt;
+
+          li.appendChild(checkSvg);
+          li.appendChild(span);
+
+          /* hover */
+          li.addEventListener('mouseover', function () {
+            li.style.background = '#f0fdf4';
+            li.style.color = '#065f46';
+          });
+          li.addEventListener('mouseout', function () {
+            li.style.background = '';
+            li.style.color = '#111827';
+          });
+
+          /* select — preventDefault stops blur from firing before click completes */
+          li.addEventListener('mousedown', function (e) {
+            e.preventDefault();
+            suffixInput.value = opt;
+            suffixInput.dispatchEvent(new Event('input', { bubbles: true }));
+            suffixInput.dispatchEvent(new Event('change', { bubbles: true }));
+            syncChecks();
+            hidePortal();
+          });
+
+          ul.appendChild(li);
+        });
+
+        portal.appendChild(ul);
+        document.body.appendChild(portal);
+
+        /* ── Helpers ── */
+        function syncChecks() {
+          var cur = suffixInput.value.trim();
+          ul.querySelectorAll('li').forEach(function (li) {
+            var chk = li.querySelector('svg');
+            if (chk) chk.style.visibility = (li.dataset.value === cur) ? 'visible' : 'hidden';
+          });
+        }
+
+        function reposition() {
+          var r = suffixInput.getBoundingClientRect();
+          portal.style.top = (r.bottom + 4) + 'px';
+          portal.style.left = r.left + 'px';
+          portal.style.width = r.width + 'px';
+        }
+
+        function showPortal() {
+          syncChecks();
+          reposition();
+          portal.style.display = 'block';
+        }
+
+        function hidePortal() {
+          portal.style.display = 'none';
+        }
+
+        /* ── Input events ── */
+        suffixInput.addEventListener('focus', showPortal);
+        suffixInput.addEventListener('blur', function () {
+          setTimeout(hidePortal, 150);
+        });
+
+        /* ── Chevron button toggle ── */
+        if (chevronBtn) {
+          chevronBtn.addEventListener('mousedown', function (e) {
+            e.preventDefault();
+            if (portal.style.display === 'none') {
+              suffixInput.focus();
+              showPortal();
+            } else {
+              hidePortal();
+            }
+          });
+        }
+
+        /* ── Keep portal aligned on scroll/resize ── */
+        window.addEventListener('scroll', function () { if (portal.style.display !== 'none') reposition(); }, true);
+        window.addEventListener('resize', function () { if (portal.style.display !== 'none') reposition(); });
+
+        /* ── Outside click closes portal ── */
+        document.addEventListener('mousedown', function (e) {
+          if (!portal.contains(e.target) && !e.target.closest('#suffix-combobox')) {
+            hidePortal();
+          }
+        });
+      }
+
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initSuffixDropdown);
+      } else {
+        initSuffixDropdown();
+      }
+    })();
+  </script>
 </x-guest-layout>

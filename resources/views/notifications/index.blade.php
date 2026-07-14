@@ -5,7 +5,7 @@
             @if($notifications->total() > 0)
             <form action="{{ route('notifications.read-all') }}" method="POST">
                 @csrf
-                <button class="text-sm text-indigo-600 hover:underline">Mark all as read</button>
+                <button class="text-sm text-brand-700 hover:underline">Mark all as read</button>
             </form>
             @endif
         </div>
@@ -18,7 +18,7 @@
         @endif
 
         @forelse($notifications as $notif)
-        <div class="bg-white rounded-xl shadow-sm border-l-4 {{ $notif->is_read ? 'border-gray-200' : 'border-indigo-500' }} p-5 flex items-start justify-between gap-4">
+        <div class="bg-white rounded-xl shadow-sm border-l-4 {{ $notif->is_read ? 'border-gray-200' : 'border-brand-600' }} p-5 flex items-start justify-between gap-4">
             <div class="flex-1">
                 <p class="text-sm {{ $notif->is_read ? 'text-gray-500' : 'text-gray-800 font-medium' }}">
                     @php
@@ -31,7 +31,7 @@
             @if(!$notif->is_read)
             <form action="{{ route('notifications.read', $notif) }}" method="POST">
                 @csrf @method('PATCH')
-                <button class="text-xs text-indigo-500 hover:text-indigo-700 whitespace-nowrap">Mark read</button>
+                <button class="text-xs text-brand-600 hover:text-brand-800 whitespace-nowrap">Mark read</button>
             </form>
             @else
             <span class="text-xs text-gray-300">Read</span>

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jul 10, 2026 at 09:17 AM
+-- Generation Time: Jul 14, 2026 at 07:01 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -49,6 +49,43 @@ CREATE TABLE `bookings` (
   `checked_in_at` timestamp NULL DEFAULT NULL,
   `checked_in_by` bigint(20) UNSIGNED DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `bookings`
+--
+
+INSERT INTO `bookings` (`id`, `tourist_id`, `destination_id`, `visit_date`, `status`, `decline_reason`, `decided_by_staff_id`, `created_at`, `updated_at`, `gcash_reference_number`, `payment_screenshot_path`, `payment_status`, `rejection_reason`, `payment_submitted_at`, `payment_reviewed_at`, `reviewed_by`, `qr_token`, `qr_generated_at`, `checked_in_at`, `checked_in_by`) VALUES
+(61, 1, 5, '2026-07-15', 'confirmed', NULL, NULL, '2026-07-14 15:32:36', '2026-07-14 15:32:36', NULL, NULL, 'approved', NULL, NULL, NULL, NULL, 'QR000001', '2026-07-14 15:32:36', NULL, NULL),
+(62, 2, 5, '2026-07-18', 'confirmed', NULL, 7, '2026-07-14 15:32:36', '2026-07-14 07:49:37', NULL, NULL, 'pending', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(63, 3, 5, '2026-07-20', 'confirmed', NULL, NULL, '2026-07-14 15:32:36', '2026-07-14 15:32:36', NULL, NULL, 'approved', NULL, NULL, NULL, NULL, 'QR000003', '2026-07-14 15:32:36', NULL, NULL),
+(64, 4, 5, '2026-07-23', 'cancelled', NULL, NULL, '2026-07-14 15:32:36', '2026-07-14 15:32:36', NULL, NULL, 'rejected', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(65, 5, 5, '2026-07-17', 'completed', NULL, NULL, '2026-07-14 15:32:36', '2026-07-14 15:32:36', NULL, NULL, 'approved', NULL, NULL, NULL, NULL, 'QR000005', '2026-07-14 15:32:36', NULL, NULL),
+(66, 6, 5, '2026-07-21', 'confirmed', NULL, NULL, '2026-07-14 15:32:36', '2026-07-14 15:32:36', NULL, NULL, 'approved', NULL, NULL, NULL, NULL, 'QR000006', '2026-07-14 15:32:36', NULL, NULL),
+(67, 7, 5, '2026-07-25', 'confirmed', NULL, 7, '2026-07-14 15:32:36', '2026-07-14 08:34:19', NULL, NULL, 'pending', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(68, 8, 5, '2026-07-16', 'confirmed', NULL, NULL, '2026-07-14 15:32:36', '2026-07-14 15:32:36', NULL, NULL, 'approved', NULL, NULL, NULL, NULL, 'QR000008', '2026-07-14 15:32:36', NULL, NULL),
+(69, 9, 5, '2026-07-27', 'completed', NULL, NULL, '2026-07-14 15:32:36', '2026-07-14 15:32:36', NULL, NULL, 'approved', NULL, NULL, NULL, NULL, 'QR000009', '2026-07-14 15:32:36', NULL, NULL),
+(70, 10, 5, '2026-07-29', 'confirmed', NULL, NULL, '2026-07-14 15:32:36', '2026-07-14 15:32:36', NULL, NULL, 'approved', NULL, NULL, NULL, NULL, 'QR000010', '2026-07-14 15:32:36', NULL, NULL),
+(71, 11, 5, '2026-08-01', 'pending', NULL, NULL, '2026-07-14 15:32:36', '2026-07-14 15:32:36', NULL, NULL, 'pending', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(72, 12, 5, '2026-08-03', 'confirmed', NULL, NULL, '2026-07-14 15:32:36', '2026-07-14 15:32:36', NULL, NULL, 'approved', NULL, NULL, NULL, NULL, 'QR000012', '2026-07-14 15:32:36', NULL, NULL),
+(73, 13, 5, '2026-08-05', 'completed', NULL, NULL, '2026-07-14 15:32:36', '2026-07-14 15:32:36', NULL, NULL, 'approved', NULL, NULL, NULL, NULL, 'QR000013', '2026-07-14 15:32:36', NULL, NULL),
+(74, 14, 5, '2026-08-07', 'cancelled', NULL, NULL, '2026-07-14 15:32:36', '2026-07-14 15:32:36', NULL, NULL, 'rejected', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(75, 15, 5, '2026-08-09', 'confirmed', NULL, NULL, '2026-07-14 15:32:36', '2026-07-14 15:32:36', NULL, NULL, 'approved', NULL, NULL, NULL, NULL, 'QR000015', '2026-07-14 15:32:36', NULL, NULL),
+(76, 16, 5, '2026-08-10', 'pending', NULL, NULL, '2026-07-14 15:32:36', '2026-07-14 15:32:36', NULL, NULL, 'pending', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(77, 17, 5, '2026-08-12', 'confirmed', NULL, NULL, '2026-07-14 15:32:36', '2026-07-14 15:32:36', NULL, NULL, 'approved', NULL, NULL, NULL, NULL, 'QR000017', '2026-07-14 15:32:36', NULL, NULL),
+(78, 18, 5, '2026-08-14', 'completed', NULL, NULL, '2026-07-14 15:32:36', '2026-07-14 15:32:36', NULL, NULL, 'approved', NULL, NULL, NULL, NULL, 'QR000018', '2026-07-14 15:32:36', NULL, NULL),
+(79, 19, 5, '2026-08-16', 'confirmed', NULL, NULL, '2026-07-14 15:32:36', '2026-07-14 15:32:36', NULL, NULL, 'approved', NULL, NULL, NULL, NULL, 'QR000019', '2026-07-14 15:32:36', NULL, NULL),
+(80, 20, 5, '2026-08-18', 'pending', NULL, NULL, '2026-07-14 15:32:36', '2026-07-14 15:32:36', NULL, NULL, 'pending', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(81, 21, 5, '2026-08-20', 'confirmed', NULL, NULL, '2026-07-14 15:32:36', '2026-07-14 15:32:36', NULL, NULL, 'approved', NULL, NULL, NULL, NULL, 'QR000021', '2026-07-14 15:32:36', NULL, NULL),
+(82, 22, 5, '2026-08-22', 'completed', NULL, NULL, '2026-07-14 15:32:36', '2026-07-14 15:32:36', NULL, NULL, 'approved', NULL, NULL, NULL, NULL, 'QR000022', '2026-07-14 15:32:36', NULL, NULL),
+(83, 23, 5, '2026-08-24', 'confirmed', NULL, NULL, '2026-07-14 15:32:36', '2026-07-14 15:32:36', NULL, NULL, 'approved', NULL, NULL, NULL, NULL, 'QR000023', '2026-07-14 15:32:36', NULL, NULL),
+(84, 24, 5, '2026-08-26', 'cancelled', NULL, NULL, '2026-07-14 15:32:36', '2026-07-14 15:32:36', NULL, NULL, 'rejected', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(85, 25, 5, '2026-08-28', 'pending', NULL, NULL, '2026-07-14 15:32:36', '2026-07-14 15:32:36', NULL, NULL, 'pending', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(86, 26, 5, '2026-08-30', 'confirmed', NULL, NULL, '2026-07-14 15:32:36', '2026-07-14 15:32:36', NULL, NULL, 'approved', NULL, NULL, NULL, NULL, 'QR000026', '2026-07-14 15:32:36', NULL, NULL),
+(87, 27, 5, '2026-09-02', 'completed', NULL, NULL, '2026-07-14 15:32:36', '2026-07-14 15:32:36', NULL, NULL, 'approved', NULL, NULL, NULL, NULL, 'QR000027', '2026-07-14 15:32:36', NULL, NULL),
+(88, 28, 5, '2026-09-04', 'confirmed', NULL, NULL, '2026-07-14 15:32:36', '2026-07-14 15:32:36', NULL, NULL, 'approved', NULL, NULL, NULL, NULL, 'QR000028', '2026-07-14 15:32:36', NULL, NULL),
+(89, 29, 5, '2026-09-06', 'pending', NULL, NULL, '2026-07-14 15:32:36', '2026-07-14 15:32:36', NULL, NULL, 'pending', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(90, 30, 5, '2026-09-08', 'confirmed', NULL, NULL, '2026-07-14 15:32:36', '2026-07-14 15:32:36', NULL, NULL, 'approved', NULL, NULL, NULL, NULL, 'QR000030', '2026-07-14 15:32:36', NULL, NULL),
+(91, 2, 5, '2026-07-21', 'confirmed', NULL, 7, '2026-07-14 08:16:24', '2026-07-14 08:19:20', '8042132002937', 'payment_screenshots/TnJzGHnPBicLbPX17N83F8WHAAYb6jueqSKfTxLy.jpg', 'pending_verification', NULL, '2026-07-14 08:19:20', NULL, NULL, NULL, NULL, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -102,7 +139,29 @@ CREATE TABLE `destinations` (
 --
 
 INSERT INTO `destinations` (`id`, `name`, `initials`, `location`, `capacity`, `description`, `photos`, `availability_status`, `created_at`, `updated_at`) VALUES
-(5, 'Lake Maragang', 'LM', 'Limas, Tigbao, Zamboanga del Sur', 100, NULL, NULL, 'Available', '2026-07-06 00:18:42', '2026-07-06 00:18:42');
+(5, 'Lake Maragang', 'LM', 'Limas, Tigbao, Zamboanga del Sur', 100, NULL, 'destination_photos/TIiIoxzpfJFGSY1RDhpd1EcjwR0xAPOfmkoouiEt.jpg', 'Available', '2026-07-06 00:18:42', '2026-07-14 06:57:24');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `destination_images`
+--
+
+CREATE TABLE `destination_images` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `destination_id` bigint(20) UNSIGNED NOT NULL,
+  `path` varchar(255) NOT NULL,
+  `is_primary` tinyint(1) NOT NULL DEFAULT 0,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `destination_images`
+--
+
+INSERT INTO `destination_images` (`id`, `destination_id`, `path`, `is_primary`, `created_at`, `updated_at`) VALUES
+(1, 5, 'destination_photos/TIiIoxzpfJFGSY1RDhpd1EcjwR0xAPOfmkoouiEt.jpg', 1, '2026-07-14 06:57:24', '2026-07-14 06:57:24');
 
 -- --------------------------------------------------------
 
@@ -151,7 +210,11 @@ INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
 (12, '2026_07_05_000001_add_dob_to_users_table', 4),
 (13, '2026_07_06_000001_add_is_manually_verified_to_users_table', 5),
 (14, '2026_07_09_175237_add_gcash_and_qr_fields_to_bookings_table', 6),
-(15, '2026_07_09_183710_add_contact_and_name_fields_to_users_table', 7);
+(15, '2026_07_09_183710_add_contact_and_name_fields_to_users_table', 7),
+(16, '2026_07_13_000001_add_processing_status_to_users_table', 8),
+(17, '2026_07_13_161030_add_suffix_to_users_table', 9),
+(18, '2026_07_14_145034_create_destination_images_table', 10),
+(19, '2026_07_14_165523_create_walk_ins_table', 11);
 
 -- --------------------------------------------------------
 
@@ -170,6 +233,16 @@ CREATE TABLE `notifications` (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `notifications`
+--
+
+INSERT INTO `notifications` (`id`, `recipient_id`, `recipient_type`, `type`, `message`, `related_booking_id`, `is_read`, `created_at`, `updated_at`) VALUES
+(1, 2, 'tourist', 'booking_alert', 'Your booking for Lake Maragang on 2026-07-18 has been CONFIRMED! Your QR ticket code is: LM976695.', 62, 1, '2026-07-14 07:49:37', '2026-07-14 08:13:55'),
+(2, 7, 'staff', 'booking_alert', 'New booking request from JYLSAM for Lake Maragang on 2026-07-21.', 91, 0, '2026-07-14 08:16:24', '2026-07-14 08:16:24'),
+(3, 2, 'tourist', 'booking_alert', 'Your booking for Lake Maragang on 2026-07-21 has been CONFIRMED! Your QR ticket code is: LM666744.', 91, 0, '2026-07-14 08:17:32', '2026-07-14 08:17:32'),
+(4, 7, 'tourist', 'booking_alert', 'Your booking for Lake Maragang on 2026-07-25 has been CONFIRMED! Your QR ticket code is: LM781432.', 67, 0, '2026-07-14 08:34:19', '2026-07-14 08:34:19');
 
 -- --------------------------------------------------------
 
@@ -219,6 +292,15 @@ CREATE TABLE `tickets` (
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+--
+-- Dumping data for table `tickets`
+--
+
+INSERT INTO `tickets` (`id`, `booking_id`, `qr_code`, `scanned_at`, `created_at`, `updated_at`) VALUES
+(1, 62, 'LM976695', NULL, '2026-07-14 07:49:37', '2026-07-14 07:49:37'),
+(2, 91, 'LM666744', NULL, '2026-07-14 08:17:32', '2026-07-14 08:17:32'),
+(3, 67, 'LM781432', NULL, '2026-07-14 08:34:19', '2026-07-14 08:34:19');
+
 -- --------------------------------------------------------
 
 --
@@ -229,6 +311,7 @@ CREATE TABLE `users` (
   `id` bigint(20) UNSIGNED NOT NULL,
   `name` varchar(255) NOT NULL,
   `last_name` varchar(255) DEFAULT NULL,
+  `suffix` varchar(20) DEFAULT NULL,
   `middle_initial` varchar(10) DEFAULT NULL,
   `dob` date DEFAULT NULL,
   `email` varchar(255) NOT NULL,
@@ -241,7 +324,7 @@ CREATE TABLE `users` (
   `id_number` varchar(255) DEFAULT NULL,
   `id_photo` varchar(255) DEFAULT NULL,
   `is_manually_verified` tinyint(1) NOT NULL DEFAULT 0,
-  `id_verification_status` enum('unverified','pending','verified','rejected') NOT NULL DEFAULT 'unverified',
+  `id_verification_status` varchar(20) NOT NULL DEFAULT 'unverified',
   `ready_to_complete_requirements` tinyint(1) NOT NULL DEFAULT 0,
   `id_verification_score` decimal(5,2) DEFAULT NULL,
   `id_verification_notes` text DEFAULT NULL,
@@ -256,13 +339,29 @@ CREATE TABLE `users` (
 -- Dumping data for table `users`
 --
 
-INSERT INTO `users` (`id`, `name`, `last_name`, `middle_initial`, `dob`, `email`, `email_verified_at`, `password`, `role`, `contact`, `classification`, `id_type`, `id_number`, `id_photo`, `is_manually_verified`, `id_verification_status`, `ready_to_complete_requirements`, `id_verification_score`, `id_verification_notes`, `id_verified_at`, `assigned_destination_id`, `remember_token`, `created_at`, `updated_at`) VALUES
-(1, 'Administrator', NULL, NULL, NULL, 'admin2@eturismo.gov', '2026-07-05 01:50:56', '$2y$12$lYVgCSi48kAQPVW9ax4w1eqIU7R3mXqnwS2pHTUVx8Ld7sXTxiDsi', 'admin', NULL, NULL, NULL, NULL, NULL, 0, 'verified', 0, NULL, NULL, '2026-07-05 01:53:24', NULL, NULL, '2026-07-05 01:49:29', '2026-07-05 01:53:24'),
-(2, 'jylsam M. quirog', 'quirog', 'M.', '2004-12-10', 'jylsam123@gmail.com', '2026-07-05 04:50:47', '$2y$12$sXrf8ia6DKfHaswMeD3hBuPIkJUFcWXCYF9.8QPMTCgipeKeWgbtm', 'tourist', NULL, 'Local', 'School ID', '2022-041633', 'id_photos/1783245704_2d6ed43b-f01e-47ce-b616-8910397fa53c.jpg', 0, 'verified', 1, 100.00, 'Name match: 100% (found) | ID Number: 100% (found) | DOB: Skipped — this ID type does not print a date of birth', '2026-07-05 05:23:04', NULL, NULL, '2026-07-05 02:01:46', '2026-07-05 05:23:04'),
-(4, 'Glowen Tanaman', 'Tanaman', NULL, '2005-09-22', 'glowentanamanmil08@gmail.com', '2026-07-05 23:46:06', '$2y$12$4zFMvfaGSg5/CU.xrG/Rj.abtHM3Nax0kzd0dXqyGjmaUrefV.sna', 'tourist', NULL, 'Local', 'Driver\'s License', 'J03-22-301233', 'id_photos/1783323689_id_composite_1783323641703.jpg', 0, 'verified', 1, 100.00, 'Name match: 100% (found) | ID Number: 100% (found) | DOB: Found', '2026-07-05 23:41:44', NULL, '4aQi1tEX9AlwLxpUmnDrvvhASbckp24ZM67bcwlLWvN9Xyz93yjxYLnDC7Du', '2026-07-05 23:41:31', '2026-07-05 23:46:06'),
-(5, 'Glowen Tanaman', 'Tanaman', NULL, '1992-11-06', 'boncalesdanryljames@gmail.com', '2026-07-06 00:05:14', '$2y$12$K0VGFrOwOZEVaNxheKexwu/7w6tH6gUbjwi/VLILxxzAlMV2KCf16', 'tourist', NULL, 'Local', 'Driver\'s License', 'J03-22-44472', 'id_photos/1783324327_id_composite_1783324281097.jpg', 0, 'rejected', 1, 0.00, 'Name match: 0% (not found) | ID Number: 0% (not found) | DOB: Not Found', NULL, NULL, NULL, '2026-07-05 23:52:09', '2026-07-06 00:05:14'),
-(6, 'Danryl James B. Usa', 'James', 'B.', '2000-03-03', 'danrylboncales@gmail.com', '2026-07-06 00:13:46', '$2y$12$RGIFzF733qEbs3chewbBBu2.mWCmTNxnCv7WLNQ0gH6MRjzVDO7xq', 'tourist', NULL, 'Local', 'School ID', 'J.H. Cerilles State College', 'id_photos/1783325566_id_composite_1783325552302.jpg', 0, 'rejected', 1, 0.00, 'OCR_READ_ERROR: Photo is too blurry, dark, or unsupported format.', NULL, NULL, NULL, '2026-07-06 00:12:47', '2026-07-06 00:15:26'),
-(7, 'jylsam quirog', 'quirog', NULL, NULL, 'staff1@eturismo.gov', '2026-07-09 18:44:01', '$2y$12$uFeKOW4ZUwyjtFcQPx7bWeJg3hFeWRVfKUtc6DwO.KkjAFywlaZ0y', 'staff', '09854754736', NULL, NULL, NULL, NULL, 1, 'verified', 0, 100.00, 'Status manually updated by Admin.', '2026-07-09 10:39:55', 5, NULL, '2026-07-09 10:38:11', '2026-07-09 10:39:55');
+INSERT INTO `users` (`id`, `name`, `last_name`, `suffix`, `middle_initial`, `dob`, `email`, `email_verified_at`, `password`, `role`, `contact`, `classification`, `id_type`, `id_number`, `id_photo`, `is_manually_verified`, `id_verification_status`, `ready_to_complete_requirements`, `id_verification_score`, `id_verification_notes`, `id_verified_at`, `assigned_destination_id`, `remember_token`, `created_at`, `updated_at`) VALUES
+(1, 'TOURISM', 'PERSONNEL', NULL, NULL, '2026-07-01', 'admin@eturismo.com', '2026-07-05 01:50:56', '$2y$12$CHN284cR51/Uujjqi21FH.kVn0Doli2ellYVxicNhKyMYRcWOeK0.', 'admin', NULL, 'Local', NULL, NULL, NULL, 0, 'verified', 0, NULL, NULL, '2026-07-05 01:53:24', NULL, 'eT0DV2yrZzU2esh0y6V3W9ZvoMF76cIgyyU0GuzpYfLmcd8LGntoGxT2Kt7o', '2026-07-05 01:49:29', '2026-07-05 01:53:24'),
+(2, 'JYLSAM', 'QUIROG', NULL, 'M.', '2004-12-10', 'jylsam123@gmail.com', '2026-07-05 04:50:47', '$2y$12$sXrf8ia6DKfHaswMeD3hBuPIkJUFcWXCYF9.8QPMTCgipeKeWgbtm', 'tourist', NULL, 'Local', 'School ID', '2022-041633', 'id_photos/1783245704_2d6ed43b-f01e-47ce-b616-8910397fa53c.jpg', 0, 'verified', 1, 100.00, 'Name match: 100% (found) | ID Number: 100% (found) | DOB: Skipped — this ID type does not print a date of birth', '2026-07-05 05:23:04', NULL, 'CadwB1YWunJRUSzmFDITa1AYS2TNWK8NsCUAqLFgf8BPI7y3RCxSbnDr6f73', '2026-07-05 02:01:46', '2026-07-05 05:23:04'),
+(7, 'STAFF', 'LM', NULL, NULL, '2026-07-01', 'staff@eturismo.com', '2026-07-09 18:44:01', '$2y$12$uFeKOW4ZUwyjtFcQPx7bWeJg3hFeWRVfKUtc6DwO.KkjAFywlaZ0y', 'staff', '09854754736', NULL, NULL, NULL, NULL, 1, 'verified', 0, 100.00, 'Status manually updated by Admin.', '2026-07-09 10:39:55', 5, '16C4OZAIZaRg7rILqTUfsndeOW5EqZWi6lf68Jl3WbRCOUMNgJXUPXZsL7Le', '2026-07-09 10:38:11', '2026-07-09 10:39:55');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `walk_ins`
+--
+
+CREATE TABLE `walk_ins` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `destination_id` bigint(20) UNSIGNED NOT NULL,
+  `name` varchar(255) NOT NULL,
+  `age` int(11) NOT NULL,
+  `contact_number` varchar(255) DEFAULT NULL,
+  `email` varchar(255) DEFAULT NULL,
+  `classification` varchar(255) NOT NULL,
+  `registered_by_staff_id` bigint(20) UNSIGNED NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Indexes for dumped tables
@@ -299,6 +398,13 @@ ALTER TABLE `check_ins`
 --
 ALTER TABLE `destinations`
   ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `destination_images`
+--
+ALTER TABLE `destination_images`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `destination_images_destination_id_foreign` (`destination_id`);
 
 --
 -- Indexes for table `jobs`
@@ -352,6 +458,14 @@ ALTER TABLE `users`
   ADD KEY `users_destination_fk` (`assigned_destination_id`);
 
 --
+-- Indexes for table `walk_ins`
+--
+ALTER TABLE `walk_ins`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `walk_ins_destination_id_foreign` (`destination_id`),
+  ADD KEY `walk_ins_registered_by_staff_id_foreign` (`registered_by_staff_id`);
+
+--
 -- AUTO_INCREMENT for dumped tables
 --
 
@@ -359,7 +473,7 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `bookings`
 --
 ALTER TABLE `bookings`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=92;
 
 --
 -- AUTO_INCREMENT for table `check_ins`
@@ -374,6 +488,12 @@ ALTER TABLE `destinations`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
+-- AUTO_INCREMENT for table `destination_images`
+--
+ALTER TABLE `destination_images`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
 -- AUTO_INCREMENT for table `jobs`
 --
 ALTER TABLE `jobs`
@@ -383,13 +503,13 @@ ALTER TABLE `jobs`
 -- AUTO_INCREMENT for table `migrations`
 --
 ALTER TABLE `migrations`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
 
 --
 -- AUTO_INCREMENT for table `notifications`
 --
 ALTER TABLE `notifications`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `reports`
@@ -401,13 +521,19 @@ ALTER TABLE `reports`
 -- AUTO_INCREMENT for table `tickets`
 --
 ALTER TABLE `tickets`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+
+--
+-- AUTO_INCREMENT for table `walk_ins`
+--
+ALTER TABLE `walk_ins`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
 -- Constraints for dumped tables
@@ -429,6 +555,12 @@ ALTER TABLE `bookings`
 ALTER TABLE `check_ins`
   ADD CONSTRAINT `checkins_booking_fk` FOREIGN KEY (`booking_id`) REFERENCES `bookings` (`id`) ON DELETE CASCADE,
   ADD CONSTRAINT `checkins_staff_fk` FOREIGN KEY (`verified_by_staff_id`) REFERENCES `users` (`id`) ON DELETE SET NULL;
+
+--
+-- Constraints for table `destination_images`
+--
+ALTER TABLE `destination_images`
+  ADD CONSTRAINT `destination_images_destination_id_foreign` FOREIGN KEY (`destination_id`) REFERENCES `destinations` (`id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `notifications`
@@ -455,6 +587,13 @@ ALTER TABLE `tickets`
 --
 ALTER TABLE `users`
   ADD CONSTRAINT `users_destination_fk` FOREIGN KEY (`assigned_destination_id`) REFERENCES `destinations` (`id`) ON DELETE SET NULL;
+
+--
+-- Constraints for table `walk_ins`
+--
+ALTER TABLE `walk_ins`
+  ADD CONSTRAINT `walk_ins_destination_id_foreign` FOREIGN KEY (`destination_id`) REFERENCES `destinations` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `walk_ins_registered_by_staff_id_foreign` FOREIGN KEY (`registered_by_staff_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

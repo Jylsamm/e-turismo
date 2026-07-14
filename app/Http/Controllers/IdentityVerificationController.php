@@ -6,6 +6,7 @@ use App\Models\User;
 use App\Models\Destination;
 use App\Services\IdentityVerificationService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
@@ -32,6 +33,11 @@ class IdentityVerificationController extends Controller
         ]);
 
         $user = auth()->user();
+
+        if (RateLimiter::tooManyAttempts('id-verify:' . $user->id, 3)) {
+            return back()->with('error', 'Too many verification attempts today. Try again tomorrow.');
+        }
+        RateLimiter::hit('id-verify:' . $user->id, 86400);
 
         if (!in_array($user->id_verification_status, ['unverified', 'rejected'])) {
             return back()->with('error', 'Your identity is already verified or under review.');

@@ -16,7 +16,67 @@ class CheckInController extends Controller
      */
     public function create()
     {
-        return view('checkins.create');
+        $user = auth()->user();
+        if ($user->isAdmin()) {
+            abort(403, 'Admins cannot access the check-in screen.');
+        }
+
+        $destination = \App\Models\Destination::find($user->assigned_destination_id);
+        $stats = $this->getLiveStatsData($destination);
+
+        return view('checkins.create', compact('destination', 'stats'));
+    }
+
+    /**
+     * Fetch real-time check-in stats for AJAX refresh.
+     */
+    public function stats()
+    {
+        $user = auth()->user();
+        if (!$user || $user->isAdmin()) {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
+
+        $destination = \App\Models\Destination::find($user->assigned_destination_id);
+        $stats = $this->getLiveStatsData($destination);
+
+        return response()->json($stats);
+    }
+
+    private function getLiveStatsData($destination)
+    {
+        if (!$destination) {
+            return [
+                'today_checkins' => 0,
+                'pending_arrivals' => 0,
+                'current_visitors' => 0,
+                'destination_name' => 'No assigned spot'
+            ];
+        }
+
+        $todayStart = now()->startOfDay();
+        $todayEnd = now()->endOfDay();
+
+        // Today's Checkins (Completed check-ins today)
+        $todayCheckins = CheckIn::whereHas('booking', function ($q) use ($destination) {
+            $q->where('destination_id', $destination->id);
+        })->whereBetween('arrival_time', [$todayStart, $todayEnd])->count();
+
+        // Pending Arrivals (Confirmed bookings for today that haven't checked in yet)
+        $pendingArrivals = Booking::where('destination_id', $destination->id)
+            ->where('status', 'confirmed')
+            ->whereDate('visit_date', today())
+            ->count();
+
+        // Current Visitors (Proxy count matching active check-ins today)
+        $currentVisitors = $todayCheckins;
+
+        return [
+            'today_checkins' => $todayCheckins,
+            'pending_arrivals' => $pendingArrivals,
+            'current_visitors' => $currentVisitors,
+            'destination_name' => $destination->name
+        ];
     }
 
     /**

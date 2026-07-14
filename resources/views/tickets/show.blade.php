@@ -7,10 +7,10 @@
         <!-- Ticket Card -->
         <div class="bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-100 print:shadow-none print:border-none">
             <!-- Header Banner -->
-            <div class="bg-gradient-to-r from-indigo-600 to-purple-600 px-6 py-6 text-white text-center">
+            <div class="bg-et-gradient px-6 py-6 text-white text-center">
                 <span class="text-xs font-semibold uppercase tracking-wider bg-white/20 px-3 py-1 rounded-full">E-Turismo Digital Pass</span>
                 <h2 class="text-2xl font-bold mt-2">{{ $booking->destination?->name }}</h2>
-                <p class="text-indigo-100 text-sm mt-1">{{ $booking->destination?->location }}</p>
+                <p class="text-brand-100 text-sm mt-1">{{ $booking->destination?->location }}</p>
             </div>
 
             <!-- Content -->
@@ -22,7 +22,7 @@
                 
                 <div class="space-y-1">
                     <p class="text-xs uppercase text-gray-400 font-semibold tracking-wider">Ticket Code</p>
-                    <p class="text-xl font-mono font-bold text-indigo-700">{{ $ticket->qr_code }}</p>
+                    <p class="text-xl font-mono font-bold text-brand-800">{{ $ticket->qr_code }}</p>
                 </div>
 
                 <div class="border-t border-dashed border-gray-200 my-6"></div>
@@ -56,7 +56,7 @@
                 <a href="{{ route('bookings.index') }}" class="flex-1 text-center bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 font-medium py-2.5 px-4 rounded-xl text-sm transition">
                     Back to Bookings
                 </a>
-                <button onclick="window.print()" class="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2.5 px-4 rounded-xl text-sm transition shadow-lg shadow-indigo-600/20">
+                <button onclick="window.print()" class="flex-1 bg-brand-700 hover:bg-brand-800 text-white font-medium py-2.5 px-4 rounded-xl text-sm transition shadow-lg shadow-brand-700/20">
                     Print Ticket
                 </button>
             </div>

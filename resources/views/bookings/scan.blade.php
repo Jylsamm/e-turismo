@@ -13,14 +13,14 @@
             {{-- Scanner Window --}}
             <div class="relative bg-gray-900 rounded-2xl overflow-hidden aspect-video border border-gray-800 flex items-center justify-center">
                 <div id="reader" class="w-full h-full"></div>
-                <div id="scanner-overlay" class="absolute inset-0 border-2 border-indigo-500/50 rounded-2xl pointer-events-none flex items-center justify-center">
-                    <div class="w-48 h-48 border-2 border-dashed border-indigo-400 rounded-xl animate-pulse"></div>
+                <div id="scanner-overlay" class="absolute inset-0 border-2 border-brand-500/50 rounded-2xl pointer-events-none flex items-center justify-center">
+                    <div class="w-48 h-48 border-2 border-dashed border-brand-400 rounded-xl animate-pulse"></div>
                 </div>
             </div>
 
             {{-- Controls --}}
             <div class="mt-4 flex justify-center gap-3">
-                <button onclick="startScanning()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs px-4 py-2 rounded-xl transition">
+                <button onclick="startScanning()" class="bg-brand-700 hover:bg-brand-800 text-white font-bold text-xs px-4 py-2 rounded-xl transition">
                     🔄 Start/Switch Camera
                 </button>
                 <button onclick="stopScanning()" class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold text-xs px-4 py-2 rounded-xl transition">
@@ -105,7 +105,7 @@
             resultBox.classList.remove('hidden');
             resultBox.innerHTML = `
                 <div class="p-4 rounded-xl bg-gray-50 border border-gray-200 flex items-center justify-center gap-3">
-                    <svg class="animate-spin h-5 w-5 text-indigo-600" fill="none" viewBox="0 0 24 24">
+                    <svg class="animate-spin h-5 w-5 text-brand-600" fill="none" viewBox="0 0 24 24">
                         <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                         <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                     </svg>

@@ -25,4 +25,14 @@ class Destination extends Model
     {
         return $this->hasMany(Booking::class);
     }
+
+    public function images()
+    {
+        return $this->hasMany(DestinationImage::class)->orderByDesc('is_primary');
+    }
+
+    public function primaryImage()
+    {
+        return $this->hasOne(DestinationImage::class)->where('is_primary', true);
+    }
 }

@@ -9,6 +9,7 @@ use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\TicketController;
+use App\Http\Controllers\Auth\RegistrationOtpController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -40,6 +41,14 @@ Route::post('/check-email', function (\Illuminate\Http\Request $request) {
     
     return response()->json(['valid' => true, 'available' => true, 'message' => 'Gmail is available.']);
 })->name('email.check');
+
+Route::post('/register/send-code', [RegistrationOtpController::class, 'sendCode'])
+    ->middleware('guest')
+    ->name('register.send_code');
+
+Route::post('/register/verify-code', [RegistrationOtpController::class, 'verifyCode'])
+    ->middleware('guest')
+    ->name('register.verify_code');
 
 /*
 |--------------------------------------------------------------------------
@@ -105,6 +114,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::middleware('can:staff-or-admin')->group(function () {
         // Check-in scanner
         Route::get('/checkin', [CheckInController::class, 'create'])->name('checkins.create');
+        Route::get('/checkin/stats', [CheckInController::class, 'stats'])->name('checkins.stats');
         Route::post('/checkin', [CheckInController::class, 'store'])->name('checkins.store');
 
         // Booking management (confirm/decline) — Staff-scoped to their destination
@@ -115,6 +125,22 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('/bookings/{booking}/approve-payment', [BookingController::class, 'approvePayment'])->name('bookings.approve-payment');
         Route::post('/bookings/{booking}/reject-payment', [BookingController::class, 'rejectPayment'])->name('bookings.reject-payment');
         Route::post('/staff/verify-ticket', [BookingController::class, 'verifyTicket'])->name('staff.verify-ticket');
+
+        // New Staff Refactored Routes
+        Route::get('/staff/bookings', [\App\Http\Controllers\StaffBookingController::class, 'index'])->name('staff.bookings.index');
+        Route::get('/staff/bookings/{booking}', [\App\Http\Controllers\StaffBookingController::class, 'show'])->name('staff.bookings.show');
+
+        // Walk-in Registration Routes
+        Route::get('/staff/walkins/create', [\App\Http\Controllers\WalkInController::class, 'create'])->name('staff.walkins.create');
+        Route::post('/staff/walkins', [\App\Http\Controllers\WalkInController::class, 'store'])->name('staff.walkins.store');
+
+        // Spots routes — spots.index auto-redirects to the correct spot
+        Route::get('/spots', [\App\Http\Controllers\SpotController::class, 'redirect'])->name('spots.index');
+        Route::get('/spots/{destination}', [\App\Http\Controllers\SpotController::class, 'dashboard'])->name('spots.dashboard');
+        Route::patch('/spots/{destination}', [\App\Http\Controllers\SpotController::class, 'update'])->name('spots.update');
+        Route::post('/spots/{destination}/images', [\App\Http\Controllers\SpotController::class, 'uploadImage'])->name('spots.images.upload');
+        Route::delete('/spots/images/{image}', [\App\Http\Controllers\SpotController::class, 'deleteImage'])->name('spots.images.delete');
+        Route::post('/spots/images/{image}/primary', [\App\Http\Controllers\SpotController::class, 'setPrimary'])->name('spots.images.primary');
     });
 
     /*
@@ -134,8 +160,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         // Reports
         Route::get('/reports', [ReportController::class, 'index'])->name('reports.index');
         Route::post('/reports/generate', [ReportController::class, 'generate'])->name('reports.generate');
-        Route::get('/reports/{report}', [ReportController::class, 'show'])->name('reports.show');
         Route::get('/reports/export', [ReportController::class, 'export'])->name('reports.export');
+        Route::get('/reports/{report}', [ReportController::class, 'show'])->name('reports.show');
 
         // Identity Verification admin review
         Route::get('/admin/verifications', [IdentityVerificationController::class, 'adminIndex'])->name('verification.admin');

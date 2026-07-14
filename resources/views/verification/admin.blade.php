@@ -30,7 +30,7 @@
             {{-- Navigation Tabs --}}
             <div class="border-b border-gray-200">
                 <nav class="-mb-px flex space-x-8" aria-label="Tabs">
-                    <button onclick="switchTab('reviews')" id="tab-btn-reviews" class="tab-btn border-indigo-500 text-indigo-600 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">
+                    <button onclick="switchTab('reviews')" id="tab-btn-reviews" class="tab-btn border-brand-700 text-brand-800 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">
                         🔍 ID Verification Reviews
                     </button>
                     <button onclick="switchTab('accounts')" id="tab-btn-accounts" class="tab-btn border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">
@@ -218,7 +218,7 @@
                                     <td class="px-4 py-3">
                                         <span class="px-2.5 py-1 rounded text-xs font-semibold capitalize
                                             {{ $user->isAdmin() ? 'bg-red-50 text-red-700' : '' }}
-                                            {{ $user->isStaff() ? 'bg-indigo-50 text-indigo-700' : '' }}
+                                            {{ $user->isStaff() ? 'bg-brand-50 text-brand-700' : '' }}
                                             {{ $user->isTourist() ? 'bg-teal-50 text-teal-700' : '' }}
                                         ">
                                             {{ $user->role }}
@@ -228,11 +228,9 @@
                                         @if($user->isTourist())
                                             <p><strong>ID:</strong> {{ $user->id_type ?? 'None' }}</p>
                                             <p><strong>No:</strong> {{ $user->id_number ?? 'None' }}</p>
-                                            @if($user->dob)
-                                            <p><strong>DOB:</strong> {{ $user->dob->format('M j, Y') }}</p>
-                                            @endif
+                                            <p><strong>DOB:</strong> {{ $user->dob ? $user->dob->format('M j, Y') : 'N/A' }} (Age: {{ $user->age }})</p>
                                         @elseif($user->isStaff() && $user->assignedDestination)
-                                            <p class="text-indigo-600 font-semibold">📍 {{ $user->assignedDestination->name }}</p>
+                                            <p class="text-brand-700 font-semibold">📍 {{ $user->assignedDestination->name }}</p>
                                         @else
                                             —
                                         @endif
@@ -249,7 +247,7 @@
                                             {{ $st }}
                                         </span>
                                         @if($user->is_manually_verified)
-                                        <span class="block text-[10px] text-indigo-600 font-semibold mt-1">🔒 Manually Verified</span>
+                                        <span class="block text-[10px] text-brand-700 font-semibold mt-1">🔒 Manually Verified</span>
                                         @endif
                                     </td>
                                     <td class="px-4 py-3 max-w-xs text-xs text-gray-500 break-words">
@@ -261,13 +259,13 @@
                                         <form method="POST" action="{{ route('admin.accounts.update_status', $user) }}" class="space-y-1">
                                             @csrf
                                             <div class="flex gap-1.5">
-                                                <select name="status" class="text-xs border border-gray-300 rounded px-2 py-1 bg-white focus:outline-none focus:ring-1 focus:ring-indigo-500">
+                                                <select name="status" class="text-xs border border-gray-300 rounded px-2 py-1 bg-white focus:outline-none focus:ring-1 focus:ring-brand-500">
                                                     <option value="verified" {{ $st === 'verified' ? 'selected' : '' }}>Verify</option>
                                                     <option value="pending" {{ $st === 'pending' ? 'selected' : '' }}>Pending</option>
                                                     <option value="rejected" {{ $st === 'rejected' ? 'selected' : '' }}>Reject</option>
                                                     <option value="unverified" {{ $st === 'unverified' ? 'selected' : '' }}>Unverify</option>
                                                 </select>
-                                                <button type="submit" class="px-2 py-1 bg-indigo-600 text-white rounded text-xs font-medium hover:bg-indigo-700 transition">
+                                                <button type="submit" class="px-2 py-1 bg-brand-700 text-white rounded text-xs font-medium hover:bg-brand-800 transition">
                                                     Update
                                                 </button>
                                             </div>
@@ -299,7 +297,7 @@
                         {{-- Role / Type --}}
                         <div>
                             <label class="block text-sm font-semibold text-gray-700 mb-1">Account Role</label>
-                            <select id="reg-role" name="role" onchange="toggleFormRoleFields()" class="w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" required>
+                            <select id="reg-role" name="role" onchange="toggleFormRoleFields()" class="w-full border-gray-300 focus:border-brand-500 focus:ring-brand-500 rounded-md shadow-sm" required>
                                 <option value="tourist" selected>Tourist</option>
                                 <option value="staff">Staff (Tourist Spot Staff)</option>
                             </select>
@@ -309,15 +307,15 @@
                         <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
                             <div>
                                 <label class="block text-sm font-semibold text-gray-700 mb-1">First Name</label>
-                                <input type="text" name="first_name" value="{{ old('first_name') }}" class="w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" required />
+                                <input type="text" name="first_name" value="{{ old('first_name') }}" class="w-full border-gray-300 focus:border-brand-500 focus:ring-brand-500 rounded-md shadow-sm" required />
                             </div>
                             <div>
                                 <label class="block text-sm font-semibold text-gray-700 mb-1">Last Name</label>
-                                <input type="text" name="last_name" value="{{ old('last_name') }}" class="w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" required />
+                                <input type="text" name="last_name" value="{{ old('last_name') }}" class="w-full border-gray-300 focus:border-brand-500 focus:ring-brand-500 rounded-md shadow-sm" required />
                             </div>
                             <div>
                                 <label class="block text-sm font-semibold text-gray-700 mb-1">Middle Initial</label>
-                                <input type="text" name="middle_initial" placeholder="e.g. A" maxlength="2" value="{{ old('middle_initial') }}" class="w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" />
+                                <input type="text" name="middle_initial" placeholder="e.g. A" maxlength="2" value="{{ old('middle_initial') }}" class="w-full border-gray-300 focus:border-brand-500 focus:ring-brand-500 rounded-md shadow-sm" />
                             </div>
                         </div>
 
@@ -325,11 +323,11 @@
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <div>
                                 <label class="block text-sm font-semibold text-gray-700 mb-1">Email Address</label>
-                                <input type="email" name="email" value="{{ old('email') }}" class="w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" required />
+                                <input type="email" name="email" value="{{ old('email') }}" class="w-full border-gray-300 focus:border-brand-500 focus:ring-brand-500 rounded-md shadow-sm" required />
                             </div>
                             <div>
                                 <label class="block text-sm font-semibold text-gray-700 mb-1">Contact Number (Optional)</label>
-                                <input type="text" name="contact" placeholder="e.g. 09123456789" value="{{ old('contact') }}" class="w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" />
+                                <input type="text" name="contact" placeholder="e.g. 09123456789" value="{{ old('contact') }}" class="w-full border-gray-300 focus:border-brand-500 focus:ring-brand-500 rounded-md shadow-sm" />
                             </div>
                         </div>
 
@@ -337,22 +335,22 @@
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <div>
                                 <label class="block text-sm font-semibold text-gray-700 mb-1">Password</label>
-                                <input type="password" name="password" class="w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" required />
+                                <input type="password" name="password" class="w-full border-gray-300 focus:border-brand-500 focus:ring-brand-500 rounded-md shadow-sm" required />
                             </div>
                             <div>
                                 <label class="block text-sm font-semibold text-gray-700 mb-1">Confirm Password</label>
-                                <input type="password" name="password_confirmation" class="w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" required />
+                                <input type="password" name="password_confirmation" class="w-full border-gray-300 focus:border-brand-500 focus:ring-brand-500 rounded-md shadow-sm" required />
                             </div>
                         </div>
 
                         {{-- ── TOURIST ONLY FIELDS ── --}}
                         <div id="tourist-fields" class="space-y-6 border-t pt-4">
-                            <h4 class="font-bold text-sm text-indigo-700">Tourist Identity details</h4>
+                            <h4 class="font-bold text-sm text-brand-700">Tourist Identity details</h4>
                             
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 <div>
                                     <label class="block text-sm font-semibold text-gray-700 mb-1">Classification</label>
-                                    <select name="classification" class="w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm">
+                                    <select name="classification" class="w-full border-gray-300 focus:border-brand-500 focus:ring-brand-500 rounded-md shadow-sm">
                                         <option value="Local" selected>Local (Municipal Resident)</option>
                                         <option value="Domestic">Domestic (National Resident)</option>
                                         <option value="Foreign">Foreign (International Visitor)</option>
@@ -360,14 +358,14 @@
                                 </div>
                                 <div>
                                     <label class="block text-sm font-semibold text-gray-700 mb-1">Date of Birth</label>
-                                    <input type="date" name="dob" value="{{ old('dob') }}" class="w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" />
+                                    <input type="date" name="dob" value="{{ old('dob') }}" class="w-full border-gray-300 focus:border-brand-500 focus:ring-brand-500 rounded-md shadow-sm" />
                                 </div>
                             </div>
 
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 <div>
                                     <label class="block text-sm font-semibold text-gray-700 mb-1">ID Type</label>
-                                    <select name="id_type" class="w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm">
+                                    <select name="id_type" class="w-full border-gray-300 focus:border-brand-500 focus:ring-brand-500 rounded-md shadow-sm">
                                         <option value="National ID" selected>National ID (PhilSys)</option>
                                         <option value="Passport">Passport</option>
                                         <option value="Driver's License">Driver's License</option>
@@ -377,18 +375,18 @@
                                 </div>
                                 <div>
                                     <label class="block text-sm font-semibold text-gray-700 mb-1">ID Number / School Name</label>
-                                    <input type="text" name="id_number" placeholder="e.g. 2022-041633" value="{{ old('id_number') }}" class="w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" />
+                                    <input type="text" name="id_number" placeholder="e.g. 2022-041633" value="{{ old('id_number') }}" class="w-full border-gray-300 focus:border-brand-500 focus:ring-brand-500 rounded-md shadow-sm" />
                                 </div>
                             </div>
                         </div>
 
                         {{-- ── STAFF ONLY FIELDS ── --}}
                         <div id="staff-fields" class="space-y-6 border-t pt-4 hidden">
-                            <h4 class="font-bold text-sm text-indigo-700">Staff Assignment details</h4>
+                            <h4 class="font-bold text-sm text-brand-700">Staff Assignment details</h4>
 
                             <div>
                                 <label class="block text-sm font-semibold text-gray-700 mb-1">Assigned Destination Spot</label>
-                                <select name="assigned_destination_id" class="w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm">
+                                <select name="assigned_destination_id" class="w-full border-gray-300 focus:border-brand-500 focus:ring-brand-500 rounded-md shadow-sm">
                                     <option value="">None / Unassigned</option>
                                     @foreach($destinations as $dest)
                                         <option value="{{ $dest->id }}">{{ $dest->name }}</option>
@@ -398,7 +396,7 @@
                         </div>
 
                         <div class="flex justify-end pt-4 border-t">
-                            <button type="submit" class="px-6 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-sm font-semibold shadow-sm transition">
+                            <button type="submit" class="px-6 py-2.5 bg-brand-700 hover:bg-brand-800 text-white rounded-lg text-sm font-semibold shadow-sm transition">
                                 Create Account
                             </button>
                         </div>
@@ -417,7 +415,7 @@
             
             // Remove active style from all tab buttons
             document.querySelectorAll('.tab-btn').forEach(btn => {
-                btn.classList.remove('border-indigo-500', 'text-indigo-600');
+                btn.classList.remove('border-brand-700', 'text-brand-800');
                 btn.classList.add('border-transparent', 'text-gray-500');
             });
 
@@ -426,7 +424,7 @@
 
             // Apply active button styles
             const activeBtn = document.getElementById('tab-btn-' + tabId);
-            activeBtn.classList.add('border-indigo-500', 'text-indigo-600');
+            activeBtn.classList.add('border-brand-700', 'text-brand-800');
             activeBtn.classList.remove('border-transparent', 'text-gray-500');
 
             // Save tab state to localStorage so it stays on page reload/form submit

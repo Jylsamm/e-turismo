@@ -12,14 +12,35 @@
         {{-- Verification Banner --}}
         @php
             $status = auth()->user()->id_verification_status ?? 'unverified';
-            // Pending: show full banner only on first dashboard visit per session
+            // Pending/processing: show full banner only on first dashboard visit per session
             $pendingBannerSeen = session()->has('pending_banner_seen');
-            if ($status === 'pending' && !$pendingBannerSeen) {
+            if (in_array($status, ['pending', 'processing']) && !$pendingBannerSeen) {
                 session(['pending_banner_seen' => true]);
             }
         @endphp
 
-        @if($status === 'unverified')
+        @if($status === 'processing')
+            {{-- Shown immediately after registration while OCR runs in background --}}
+            <div class="bg-indigo-50 border-l-4 border-indigo-400 p-4 rounded-r-lg shadow-sm" id="verification-banner">
+                <div class="flex items-start justify-between">
+                    <div class="flex items-center">
+                        <div class="flex-shrink-0">
+                            <svg class="h-5 w-5 text-indigo-500 animate-spin" fill="none" viewBox="0 0 24 24">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
+                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"/>
+                            </svg>
+                        </div>
+                        <div class="ml-3">
+                            <h3 class="text-sm font-medium text-indigo-800">Your ID is being verified…</h3>
+                            <p class="text-sm text-indigo-700 mt-1">This usually takes under a minute. Refresh the page to check the latest status.</p>
+                        </div>
+                    </div>
+                    <div>
+                        <button onclick="window.location.reload()" class="text-sm font-semibold text-indigo-800 hover:text-indigo-600 bg-indigo-100 px-3 py-1.5 rounded-lg border border-indigo-200">Refresh ↻</button>
+                    </div>
+                </div>
+            </div>
+        @elseif($status === 'unverified')
             {{-- Always show — user needs to act --}}
             <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded-r-lg shadow-sm" id="verification-banner">
                 <div class="flex items-start justify-between">
@@ -110,13 +131,13 @@
         @endif
 
         {{-- Explore Destinations CTA --}}
-        <div class="bg-gradient-to-r from-indigo-600 to-purple-600 rounded-2xl p-8 text-white flex items-center justify-between">
+        <div class="bg-et-gradient rounded-2xl p-8 text-white flex items-center justify-between">
             <div>
                 <h2 class="text-2xl font-bold">Explore Tourist Destinations</h2>
-                <p class="text-indigo-200 mt-1">Browse available destinations and book your next adventure.</p>
+                <p class="text-brand-100 mt-1">Browse available destinations and book your next adventure.</p>
             </div>
             <a href="{{ route('destinations.index') }}"
-                class="bg-white text-indigo-700 font-semibold px-6 py-3 rounded-xl hover:bg-indigo-50 transition text-sm">
+                class="bg-white text-brand-900 font-semibold px-6 py-3 rounded-xl hover:bg-brand-50 transition text-sm">
                 Browse Destinations →
             </a>
         </div>
@@ -126,7 +147,7 @@
             <div class="bg-white rounded-xl shadow overflow-hidden">
                 <div class="px-6 py-4 border-b flex items-center justify-between">
                     <h2 class="font-semibold text-gray-700">My Bookings</h2>
-                    <a href="{{ route('bookings.index') }}" class="text-sm text-indigo-600 hover:underline">View all →</a>
+                    <a href="{{ route('bookings.index') }}" class="text-sm text-brand-700 hover:underline">View all →</a>
                 </div>
                 <ul class="divide-y divide-gray-100">
                     @forelse($myBookings as $booking)
@@ -136,7 +157,7 @@
                             <p class="text-xs text-gray-400">{{ $booking->visit_date }}</p>
                             @if($booking->ticket)
                             <p class="text-xs mt-0.5">
-                                <a href="{{ route('tickets.show', $booking->ticket) }}" class="text-indigo-600 font-mono hover:underline inline-flex items-center gap-1">
+                                <a href="{{ route('tickets.show', $booking->ticket) }}" class="text-brand-700 font-mono hover:underline inline-flex items-center gap-1">
                                     <span>View QR: {{ $booking->ticket->qr_code }}</span>
                                 </a>
                             </p>
@@ -167,7 +188,7 @@
                             <p class="text-xs text-gray-400">{{ $dest->location }}</p>
                         </div>
                         <a href="{{ route('bookings.create', $dest) }}"
-                            class="text-xs bg-indigo-100 text-indigo-700 px-3 py-1.5 rounded-full font-medium hover:bg-indigo-200 transition">
+                            class="text-xs bg-brand-100 text-brand-700 px-3 py-1.5 rounded-full font-medium hover:bg-brand-200 transition">
                             Book Now
                         </a>
                     </li>

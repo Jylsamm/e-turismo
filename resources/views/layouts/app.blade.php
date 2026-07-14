@@ -12,10 +12,18 @@
         <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
 
         <!-- Favicon -->
-        <link rel="icon" type="image/png" href="{{ asset('Pictures/LOGO/LOGO-eturismo.png') }}">
+        @php($faviconUrl = asset('Pictures/LOGO/LOGO-eturismo.png') . '?v=' . filemtime(public_path('Pictures/LOGO/LOGO-eturismo.png')))
+        <link rel="icon" type="image/png" sizes="32x32" href="{{ $faviconUrl }}">
+        <link rel="shortcut icon" href="{{ $faviconUrl }}">
+        <link rel="apple-touch-icon" href="{{ $faviconUrl }}">
 
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
+
+        <!-- Tabler Icons -->
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css" />
+
+        @stack('head')
     </head>
     <body class="font-sans antialiased">
 
@@ -37,5 +45,6 @@
                 {{ $slot }}
             </main>
         </div>
+        @stack('scripts')
     </body>
 </html>

@@ -35,4 +35,16 @@ return [
         ],
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | OCR.space API
+    |--------------------------------------------------------------------------
+    | Used by IdentityVerificationService to extract text from uploaded ID photos.
+    | Obtain a free key at https://ocr.space/ocrapi/freekey
+    | Paid plans support files up to 25 MB (required for composite camera photos).
+    */
+    'ocr' => [
+        'key' => env('OCR_SPACE_API_KEY'),
+    ],
+
 ];

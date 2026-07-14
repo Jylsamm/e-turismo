@@ -147,13 +147,16 @@ class BookingController extends Controller
             abort(403, 'Unauthorized.');
         }
 
-        $request->validate([
-            'decline_reason' => 'required|string|max:500',
-        ]);
+        $reason = $request->input('reason_category');
+        $details = $request->input('decline_reason');
+        $combinedReason = $reason;
+        if (!empty($details)) {
+            $combinedReason .= ' - ' . $details;
+        }
 
         $booking->update([
             'status' => 'declined',
-            'decline_reason' => $request->decline_reason,
+            'decline_reason' => $combinedReason,
             'decided_by_staff_id' => $user->id,
         ]);
 

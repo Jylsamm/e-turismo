@@ -22,6 +22,7 @@ class User extends Authenticatable implements MustVerifyEmail
         'name',
         'last_name',
         'middle_initial',
+        'suffix',
         'dob',
         'email',
         'email_verified_at',
@@ -44,6 +45,18 @@ class User extends Authenticatable implements MustVerifyEmail
     public function isAdmin(): bool
     {
         return $this->role === 'admin';
+    }
+
+    /**
+     * Get the user's age based on their date of birth.
+     * Returns 'N/A' if dob is not set.
+     */
+    public function getAgeAttribute()
+    {
+        if (!$this->dob) {
+            return 'N/A';
+        }
+        return \Carbon\Carbon::parse($this->dob)->age;
     }
 
     public function isStaff(): bool
@@ -90,6 +103,11 @@ class User extends Authenticatable implements MustVerifyEmail
     public function notifications()
     {
         return $this->hasMany(Notification::class, 'recipient_id');
+    }
+
+    public function sendEmailVerificationNotification()
+    {
+        // OTP registration verifies the email in-page, so disable Laravel's default email verification link notification.
     }
 
     /**

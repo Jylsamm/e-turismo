@@ -6,23 +6,23 @@
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Fraunces:ital,wght@0,600;1,600&display=swap');
 
         :root {
-            --teal:       #0d9488;
-            --teal-light: #14b8a6;
-            --teal-dark:  #0f766e;
-            --ocean:      #0891b2;
-            --sand:       #f59e0b;
+            --teal:       #16a34a;
+            --teal-light: #4ade80;
+            --teal-dark:  #166534;
+            --ocean:      #22c55e;
+            --sand:       #a3e635;
             --emerald:    #10b981;
             --rose:       #f43f5e;
-            --indigo:     #6366f1;
-            --bg:         #f0fdfc;
-            --border:     #ccfbf1;
-            --text-1:     #134e4a;
+            --indigo:     #0B3D2E;
+            --bg:         #f0fdf4;
+            --border:     #dcfce7;
+            --text-1:     #0B3D2E;
             --text-2:     #374151;
             --text-3:     #6b7280;
             --text-4:     #9ca3af;
             --t:          0.22s cubic-bezier(0.4,0,0.2,1);
             --sh-card:    0 2px 12px rgba(0,0,0,.07);
-            --sh-lg:      0 12px 40px rgba(13,148,136,.18);
+            --sh-lg:      0 12px 40px rgba(22,197,94,.18);
             --r-sm: 8px; --r-md: 14px; --r-lg: 20px; --r-xl: 28px;
         }
 
@@ -30,7 +30,7 @@
 
         /* ── Hero ── */
         .dest-hero {
-            background: linear-gradient(135deg, #0d9488 0%, #0891b2 55%, #6366f1 100%);
+            background: linear-gradient(135deg, #0B3D2E 0%, #166534 40%, #16a34a 70%, #4ADE80 100%);
             padding: 52px 24px 68px;
             text-align: center;
             position: relative;

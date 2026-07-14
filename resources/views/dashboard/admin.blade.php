@@ -14,7 +14,7 @@
         <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
             @php
             $cards = [
-                ['label' => 'Total Tourists', 'value' => $stats['total_tourists'], 'color' => 'indigo'],
+                ['label' => 'Total Tourists', 'value' => $stats['total_tourists'], 'color' => 'brand'],
                 ['label' => 'Destinations', 'value' => $stats['total_destinations'], 'color' => 'emerald'],
                 ['label' => 'Pending Bookings', 'value' => $stats['pending_bookings'], 'color' => 'amber'],
                 ['label' => 'Confirmed', 'value' => $stats['confirmed_bookings'], 'color' => 'green'],
@@ -35,7 +35,7 @@
             <div class="lg:col-span-2 bg-white rounded-xl shadow overflow-hidden">
                 <div class="px-6 py-4 border-b flex items-center justify-between">
                     <h2 class="font-semibold text-gray-700">Recent Bookings</h2>
-                    <a href="{{ route('bookings.index') }}" class="text-sm text-indigo-600 hover:underline">View all →</a>
+                    <a href="{{ route('bookings.index') }}" class="text-sm text-brand-700 hover:underline">View all →</a>
                 </div>
                 <div class="overflow-x-auto">
                     <table class="w-full text-sm">
@@ -77,7 +77,7 @@
                         @forelse($topDestinations as $dest)
                         <li class="flex items-center justify-between text-sm">
                             <span class="text-gray-700 font-medium">{{ $dest->name }}</span>
-                            <span class="text-indigo-600 font-bold">{{ $dest->bookings_count }} bookings</span>
+                            <span class="text-brand-700 font-bold">{{ $dest->bookings_count }} bookings</span>
                         </li>
                         @empty
                         <li class="text-gray-400 text-sm">No data yet.</li>
@@ -88,8 +88,8 @@
                 <div class="bg-white rounded-xl shadow p-5">
                     <h2 class="font-semibold text-gray-700 mb-3">Quick Actions</h2>
                     <div class="space-y-2">
-                        <a href="{{ route('destinations.create') }}" class="block w-full text-center bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg py-2 text-sm font-medium transition">+ Add Destination</a>
-                        <a href="{{ route('reports.index') }}" class="block w-full text-center bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg py-2 text-sm font-medium transition">📊 Generate Report</a>
+                        <a href="{{ route('destinations.create') }}" class="block w-full text-center bg-brand-700 hover:bg-brand-800 text-white rounded-lg py-2 text-sm font-medium transition shadow-sm">+ Add Destination</a>
+                        <a href="{{ route('reports.index') }}" class="block w-full text-center bg-emerald-700 hover:bg-emerald-800 text-white rounded-lg py-2 text-sm font-medium transition shadow-sm">📊 Generate Report</a>
                     </div>
                 </div>
             </div>

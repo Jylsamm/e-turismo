@@ -1,3 +1,60 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* ============================================================
+   E-TURISMO — GREEN GRADIENT DESIGN SYSTEM
+   Palette:
+     --green-950  #052e16  (darkest)
+     --green-900  #0B3D2E  (deep emerald — primary dark)
+     --green-800  #166534
+     --green-700  #15803d
+     --green-600  #16a34a  (primary brand green)
+     --green-500  #22c55e
+     --green-400  #4ADE80  (fresh mint — gradient end)
+     --green-300  #86efac
+     --green-200  #bbf7d0
+     --green-100  #dcfce7
+     --green-50   #f0fdf4  (lightest)
+     --lime-400   #a3e635  (accent lime)
+============================================================ */
+
+@layer base {
+  :root {
+    --et-dark:      #0B3D2E;
+    --et-dark-2:    #166534;
+    --et-primary:   #16a34a;
+    --et-mid:       #22c55e;
+    --et-light:     #4ADE80;
+    --et-lighter:   #86efac;
+    --et-pale:      #dcfce7;
+    --et-bg:        #f0fdf4;
+    --et-lime:      #a3e635;
+    --et-gradient:  linear-gradient(135deg, #0B3D2E 0%, #166534 40%, #16a34a 70%, #4ADE80 100%);
+    --et-gradient-hover: linear-gradient(135deg, #052e16 0%, #0B3D2E 40%, #15803d 70%, #22c55e 100%);
+    --et-gradient-light: linear-gradient(135deg, #22c55e 0%, #4ADE80 60%, #a3e635 100%);
+  }
+}
+
+/* ── Global body background ── */
+@layer base {
+  body {
+    background-color: var(--et-bg);
+  }
+}
+
+/* ── Hero gradient ── */
+@layer utilities {
+  .bg-et-gradient {
+    background: var(--et-gradient);
+  }
+  .bg-et-gradient-hover:hover {
+    background: var(--et-gradient-hover);
+  }
+  .bg-et-gradient-light {
+    background: var(--et-gradient-light);
+  }
+  .text-et-primary { color: var(--et-primary); }
+  .text-et-dark    { color: var(--et-dark); }
+  .border-et-primary { border-color: var(--et-primary); }
+}
