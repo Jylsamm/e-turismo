@@ -14,6 +14,20 @@ class Destination extends Model
         'description',
         'photos',
         'availability_status',
+        'checkin_latitude',
+        'checkin_longitude',
+        'checkin_radius',
+        'last_updated_by',
+    ];
+
+    /**
+     * Cast coordinates to float so they are never returned as strings.
+     * Blade templates and JSON responses will both get proper numeric values.
+     */
+    protected $casts = [
+        'checkin_latitude'  => 'float',
+        'checkin_longitude' => 'float',
+        'checkin_radius'    => 'integer',
     ];
 
     public function staff()

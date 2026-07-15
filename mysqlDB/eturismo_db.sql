@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jul 14, 2026 at 07:01 PM
+-- Generation Time: Jul 15, 2026 at 05:37 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -55,7 +55,7 @@ CREATE TABLE `bookings` (
 --
 
 INSERT INTO `bookings` (`id`, `tourist_id`, `destination_id`, `visit_date`, `status`, `decline_reason`, `decided_by_staff_id`, `created_at`, `updated_at`, `gcash_reference_number`, `payment_screenshot_path`, `payment_status`, `rejection_reason`, `payment_submitted_at`, `payment_reviewed_at`, `reviewed_by`, `qr_token`, `qr_generated_at`, `checked_in_at`, `checked_in_by`) VALUES
-(61, 1, 5, '2026-07-15', 'confirmed', NULL, NULL, '2026-07-14 15:32:36', '2026-07-14 15:32:36', NULL, NULL, 'approved', NULL, NULL, NULL, NULL, 'QR000001', '2026-07-14 15:32:36', NULL, NULL),
+(61, 1, 5, '2026-07-15', 'completed', NULL, NULL, '2026-07-14 15:32:36', '2026-07-15 03:54:00', NULL, NULL, 'approved', NULL, NULL, NULL, NULL, 'QR000001', '2026-07-14 15:32:36', '2026-07-15 03:54:00', 7),
 (62, 2, 5, '2026-07-18', 'confirmed', NULL, 7, '2026-07-14 15:32:36', '2026-07-14 07:49:37', NULL, NULL, 'pending', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
 (63, 3, 5, '2026-07-20', 'confirmed', NULL, NULL, '2026-07-14 15:32:36', '2026-07-14 15:32:36', NULL, NULL, 'approved', NULL, NULL, NULL, NULL, 'QR000003', '2026-07-14 15:32:36', NULL, NULL),
 (64, 4, 5, '2026-07-23', 'cancelled', NULL, NULL, '2026-07-14 15:32:36', '2026-07-14 15:32:36', NULL, NULL, 'rejected', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
@@ -130,6 +130,10 @@ CREATE TABLE `destinations` (
   `description` text DEFAULT NULL,
   `photos` text DEFAULT NULL,
   `availability_status` varchar(255) NOT NULL DEFAULT 'Available',
+  `checkin_latitude` decimal(10,6) DEFAULT NULL,
+  `checkin_longitude` decimal(10,6) DEFAULT NULL,
+  `checkin_radius` int(11) NOT NULL DEFAULT 100,
+  `last_updated_by` varchar(255) DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -138,8 +142,8 @@ CREATE TABLE `destinations` (
 -- Dumping data for table `destinations`
 --
 
-INSERT INTO `destinations` (`id`, `name`, `initials`, `location`, `capacity`, `description`, `photos`, `availability_status`, `created_at`, `updated_at`) VALUES
-(5, 'Lake Maragang', 'LM', 'Limas, Tigbao, Zamboanga del Sur', 100, NULL, 'destination_photos/TIiIoxzpfJFGSY1RDhpd1EcjwR0xAPOfmkoouiEt.jpg', 'Available', '2026-07-06 00:18:42', '2026-07-14 06:57:24');
+INSERT INTO `destinations` (`id`, `name`, `initials`, `location`, `capacity`, `description`, `photos`, `availability_status`, `checkin_latitude`, `checkin_longitude`, `checkin_radius`, `last_updated_by`, `created_at`, `updated_at`) VALUES
+(5, 'Lake Maragang', 'LM', '7043, Limas, Tigbao, Zamboanga del Sur, Philippines', 100, NULL, NULL, 'Available', 7.819258, 123.288880, 100, 'STAFF', '2026-07-06 00:18:42', '2026-07-14 21:16:40');
 
 -- --------------------------------------------------------
 
@@ -155,13 +159,6 @@ CREATE TABLE `destination_images` (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
---
--- Dumping data for table `destination_images`
---
-
-INSERT INTO `destination_images` (`id`, `destination_id`, `path`, `is_primary`, `created_at`, `updated_at`) VALUES
-(1, 5, 'destination_photos/TIiIoxzpfJFGSY1RDhpd1EcjwR0xAPOfmkoouiEt.jpg', 1, '2026-07-14 06:57:24', '2026-07-14 06:57:24');
 
 -- --------------------------------------------------------
 
@@ -214,7 +211,12 @@ INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
 (16, '2026_07_13_000001_add_processing_status_to_users_table', 8),
 (17, '2026_07_13_161030_add_suffix_to_users_table', 9),
 (18, '2026_07_14_145034_create_destination_images_table', 10),
-(19, '2026_07_14_165523_create_walk_ins_table', 11);
+(19, '2026_07_14_165523_create_walk_ins_table', 11),
+(20, '2026_07_15_000001_add_checkin_coords_to_destinations_table', 12),
+(21, '2026_07_15_000002_add_checkin_radius_to_destinations_table', 13),
+(22, '2026_07_15_000003_add_last_updated_by_to_destinations_table', 14),
+(23, '2026_07_15_000004_add_duration_days_to_walk_ins_table', 15),
+(24, '2026_07_15_000005_add_performance_indexes_to_tables', 16);
 
 -- --------------------------------------------------------
 
@@ -240,9 +242,9 @@ CREATE TABLE `notifications` (
 
 INSERT INTO `notifications` (`id`, `recipient_id`, `recipient_type`, `type`, `message`, `related_booking_id`, `is_read`, `created_at`, `updated_at`) VALUES
 (1, 2, 'tourist', 'booking_alert', 'Your booking for Lake Maragang on 2026-07-18 has been CONFIRMED! Your QR ticket code is: LM976695.', 62, 1, '2026-07-14 07:49:37', '2026-07-14 08:13:55'),
-(2, 7, 'staff', 'booking_alert', 'New booking request from JYLSAM for Lake Maragang on 2026-07-21.', 91, 0, '2026-07-14 08:16:24', '2026-07-14 08:16:24'),
+(2, 7, 'staff', 'booking_alert', 'New booking request from JYLSAM for Lake Maragang on 2026-07-21.', 91, 1, '2026-07-14 08:16:24', '2026-07-15 06:35:11'),
 (3, 2, 'tourist', 'booking_alert', 'Your booking for Lake Maragang on 2026-07-21 has been CONFIRMED! Your QR ticket code is: LM666744.', 91, 0, '2026-07-14 08:17:32', '2026-07-14 08:17:32'),
-(4, 7, 'tourist', 'booking_alert', 'Your booking for Lake Maragang on 2026-07-25 has been CONFIRMED! Your QR ticket code is: LM781432.', 67, 0, '2026-07-14 08:34:19', '2026-07-14 08:34:19');
+(4, 7, 'tourist', 'booking_alert', 'Your booking for Lake Maragang on 2026-07-25 has been CONFIRMED! Your QR ticket code is: LM781432.', 67, 1, '2026-07-14 08:34:19', '2026-07-15 06:35:09');
 
 -- --------------------------------------------------------
 
@@ -340,9 +342,9 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `name`, `last_name`, `suffix`, `middle_initial`, `dob`, `email`, `email_verified_at`, `password`, `role`, `contact`, `classification`, `id_type`, `id_number`, `id_photo`, `is_manually_verified`, `id_verification_status`, `ready_to_complete_requirements`, `id_verification_score`, `id_verification_notes`, `id_verified_at`, `assigned_destination_id`, `remember_token`, `created_at`, `updated_at`) VALUES
-(1, 'TOURISM', 'PERSONNEL', NULL, NULL, '2026-07-01', 'admin@eturismo.com', '2026-07-05 01:50:56', '$2y$12$CHN284cR51/Uujjqi21FH.kVn0Doli2ellYVxicNhKyMYRcWOeK0.', 'admin', NULL, 'Local', NULL, NULL, NULL, 0, 'verified', 0, NULL, NULL, '2026-07-05 01:53:24', NULL, 'eT0DV2yrZzU2esh0y6V3W9ZvoMF76cIgyyU0GuzpYfLmcd8LGntoGxT2Kt7o', '2026-07-05 01:49:29', '2026-07-05 01:53:24'),
-(2, 'JYLSAM', 'QUIROG', NULL, 'M.', '2004-12-10', 'jylsam123@gmail.com', '2026-07-05 04:50:47', '$2y$12$sXrf8ia6DKfHaswMeD3hBuPIkJUFcWXCYF9.8QPMTCgipeKeWgbtm', 'tourist', NULL, 'Local', 'School ID', '2022-041633', 'id_photos/1783245704_2d6ed43b-f01e-47ce-b616-8910397fa53c.jpg', 0, 'verified', 1, 100.00, 'Name match: 100% (found) | ID Number: 100% (found) | DOB: Skipped — this ID type does not print a date of birth', '2026-07-05 05:23:04', NULL, 'CadwB1YWunJRUSzmFDITa1AYS2TNWK8NsCUAqLFgf8BPI7y3RCxSbnDr6f73', '2026-07-05 02:01:46', '2026-07-05 05:23:04'),
-(7, 'STAFF', 'LM', NULL, NULL, '2026-07-01', 'staff@eturismo.com', '2026-07-09 18:44:01', '$2y$12$uFeKOW4ZUwyjtFcQPx7bWeJg3hFeWRVfKUtc6DwO.KkjAFywlaZ0y', 'staff', '09854754736', NULL, NULL, NULL, NULL, 1, 'verified', 0, 100.00, 'Status manually updated by Admin.', '2026-07-09 10:39:55', 5, '16C4OZAIZaRg7rILqTUfsndeOW5EqZWi6lf68Jl3WbRCOUMNgJXUPXZsL7Le', '2026-07-09 10:38:11', '2026-07-09 10:39:55');
+(1, 'TOURISM', 'PERSONNEL', NULL, NULL, '2026-07-01', 'admin@eturismo.com', '2026-07-05 01:50:56', '$2y$12$CHN284cR51/Uujjqi21FH.kVn0Doli2ellYVxicNhKyMYRcWOeK0.', 'admin', NULL, 'Local', NULL, NULL, NULL, 0, 'verified', 0, NULL, NULL, '2026-07-05 01:53:24', NULL, 'T8vvB4c11GTsIgYPppmX6odyfb7cS5sq3a5WtekSTbRyF1UkXwG8q3Pzwalj', '2026-07-05 01:49:29', '2026-07-05 01:53:24'),
+(2, 'JYLSAM', 'QUIROG', NULL, 'M.', '2004-12-10', 'jylsam123@gmail.com', '2026-07-05 04:50:47', '$2y$12$sXrf8ia6DKfHaswMeD3hBuPIkJUFcWXCYF9.8QPMTCgipeKeWgbtm', 'tourist', NULL, 'Local', 'School ID', '2022-041633', 'id_photos/1783245704_2d6ed43b-f01e-47ce-b616-8910397fa53c.jpg', 0, 'verified', 1, 100.00, 'Name match: 100% (found) | ID Number: 100% (found) | DOB: Skipped — this ID type does not print a date of birth', '2026-07-05 05:23:04', NULL, 'sF4LLl4BhChwSonsHlndSALdk1qySjpeVeYGk14F3cR7obImn0RWsZIPYonY', '2026-07-05 02:01:46', '2026-07-05 05:23:04'),
+(7, 'STAFF', 'LM', NULL, NULL, '2026-07-01', 'staff@eturismo.com', '2026-07-09 18:44:01', '$2y$12$uFeKOW4ZUwyjtFcQPx7bWeJg3hFeWRVfKUtc6DwO.KkjAFywlaZ0y', 'staff', '09854754736', NULL, NULL, NULL, NULL, 1, 'verified', 0, 100.00, 'Status manually updated by Admin.', '2026-07-09 10:39:55', 5, '1UN7mXVi8TxfoWicNLWOpu4lktarKwvEs8861UiHBBufC9mhZYKdAhfWr9Tq', '2026-07-09 10:38:11', '2026-07-09 10:39:55');
 
 -- --------------------------------------------------------
 
@@ -358,10 +360,18 @@ CREATE TABLE `walk_ins` (
   `contact_number` varchar(255) DEFAULT NULL,
   `email` varchar(255) DEFAULT NULL,
   `classification` varchar(255) NOT NULL,
+  `duration_days` int(11) NOT NULL DEFAULT 1,
   `registered_by_staff_id` bigint(20) UNSIGNED NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `walk_ins`
+--
+
+INSERT INTO `walk_ins` (`id`, `destination_id`, `name`, `age`, `contact_number`, `email`, `classification`, `duration_days`, `registered_by_staff_id`, `created_at`, `updated_at`) VALUES
+(1, 5, 'kent', 15, NULL, NULL, 'Local', 1, 7, '2026-07-14 23:36:18', '2026-07-14 23:36:18');
 
 --
 -- Indexes for dumped tables
@@ -377,7 +387,10 @@ ALTER TABLE `bookings`
   ADD KEY `bookings_destination_fk` (`destination_id`),
   ADD KEY `bookings_staff_fk` (`decided_by_staff_id`),
   ADD KEY `bookings_reviewed_by_foreign` (`reviewed_by`),
-  ADD KEY `bookings_checked_in_by_foreign` (`checked_in_by`);
+  ADD KEY `bookings_checked_in_by_foreign` (`checked_in_by`),
+  ADD KEY `bookings_destination_visit_status_index` (`destination_id`,`visit_date`,`status`),
+  ADD KEY `bookings_status_visit_created_index` (`status`,`visit_date`,`created_at`),
+  ADD KEY `bookings_tourist_status_index` (`tourist_id`,`status`);
 
 --
 -- Indexes for table `cache`
@@ -391,7 +404,9 @@ ALTER TABLE `cache`
 ALTER TABLE `check_ins`
   ADD PRIMARY KEY (`id`),
   ADD KEY `checkins_booking_fk` (`booking_id`),
-  ADD KEY `checkins_staff_fk` (`verified_by_staff_id`);
+  ADD KEY `checkins_staff_fk` (`verified_by_staff_id`),
+  ADD KEY `check_ins_booking_arrival_index` (`booking_id`,`arrival_time`),
+  ADD KEY `check_ins_arrival_time_index` (`arrival_time`);
 
 --
 -- Indexes for table `destinations`
@@ -455,15 +470,16 @@ ALTER TABLE `tickets`
 ALTER TABLE `users`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `users_email_unique` (`email`),
-  ADD KEY `users_destination_fk` (`assigned_destination_id`);
+  ADD KEY `users_destination_fk` (`assigned_destination_id`),
+  ADD KEY `users_role_assigned_destination_index` (`role`,`assigned_destination_id`);
 
 --
 -- Indexes for table `walk_ins`
 --
 ALTER TABLE `walk_ins`
   ADD PRIMARY KEY (`id`),
-  ADD KEY `walk_ins_destination_id_foreign` (`destination_id`),
-  ADD KEY `walk_ins_registered_by_staff_id_foreign` (`registered_by_staff_id`);
+  ADD KEY `walk_ins_destination_visit_date_index` (`destination_id`,`created_at`),
+  ADD KEY `walk_ins_staff_created_index` (`registered_by_staff_id`,`created_at`);
 
 --
 -- AUTO_INCREMENT for dumped tables
@@ -503,7 +519,7 @@ ALTER TABLE `jobs`
 -- AUTO_INCREMENT for table `migrations`
 --
 ALTER TABLE `migrations`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
 
 --
 -- AUTO_INCREMENT for table `notifications`
@@ -533,7 +549,7 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `walk_ins`
 --
 ALTER TABLE `walk_ins`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- Constraints for dumped tables

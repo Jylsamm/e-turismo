@@ -26,25 +26,25 @@
     @endpush
 
     <style>
-        .tab-btn {
-            padding: 8px 16px;
+        .tab-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 12px 4px;
             font-size: 14px;
             font-weight: 500;
-            color: #6b7280;
+            color: #9ca3af;
             border-bottom: 2px solid transparent;
-            cursor: pointer;
-            transition: all 0.15s;
+            text-decoration: none;
         }
-        .tab-btn:hover {
-            color: #2d7a4a;
-        }
-        .tab-btn.active {
-            color: #2d7a4a;
-            border-bottom-color: #2d7a4a;
+        .tab-link.active {
+            color: #15803d;
+            border-color: #15803d;
+            font-weight: 600;
         }
     </style>
 
-    <div class="py-8 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6" x-data="{ activeTab: 'status' }">
+    <div class="py-8 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
         
         {{-- Flash Messages --}}
         @if(session('success'))
@@ -61,21 +61,21 @@
             </div>
         @endif
 
-        {{-- Nav Tabs --}}
-        <div class="flex border-b border-gray-200">
-            <button class="tab-btn" :class="{ 'active': activeTab === 'status' }" @click="activeTab = 'status'">
+        {{-- Tabs --}}
+        <div class="border-b border-gray-200 flex gap-6 mb-6">
+            <a href="{{ route('spots.status', $destination) }}" class="tab-link active">
                 <i class="ti ti-activity"></i> Spot Status
-            </button>
-            <button class="tab-btn" :class="{ 'active': activeTab === 'edit' }" @click="activeTab = 'edit'">
+            </a>
+            <a href="{{ route('spots.edit', $destination) }}" class="tab-link">
                 <i class="ti ti-edit"></i> Edit Details
-            </button>
-            <button class="tab-btn" :class="{ 'active': activeTab === 'gallery' }" @click="activeTab = 'gallery'">
+            </a>
+            <a href="{{ route('spots.gallery', $destination) }}" class="tab-link">
                 <i class="ti ti-photo"></i> Image Gallery
-            </button>
+            </a>
         </div>
 
         {{-- Tab 1: Spot Status Dashboard --}}
-        <div x-show="activeTab === 'status'" class="space-y-6">
+        <div class="space-y-6">
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 
                 {{-- Occupancy Section --}}
@@ -219,104 +219,6 @@
                         </tbody>
                     </table>
                 </div>
-            </div>
-        </div>
-
-        {{-- Tab 2: Edit Details Form --}}
-        <div x-show="activeTab === 'edit'" class="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm">
-            <h2 class="text-lg font-bold text-gray-800 mb-4">Spot Information</h2>
-            <form action="{{ route('spots.update', $destination) }}" method="POST" class="space-y-4">
-                @csrf
-                @method('PATCH')
-
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Spot Name</label>
-                        <input type="text" name="name" value="{{ $destination->name }}" class="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-green-400 outline-none" required>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Location</label>
-                        <input type="text" name="location" value="{{ $destination->location }}" class="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-green-400 outline-none" required>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Daily Capacity</label>
-                        <input type="number" name="capacity" value="{{ $destination->capacity }}" min="0" class="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-green-400 outline-none" required>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Availability Status</label>
-                        <select name="availability_status" class="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-green-400 outline-none">
-                            <option value="Available" {{ $destination->availability_status === 'Available' ? 'selected' : '' }}>Available</option>
-                            <option value="Unavailable" {{ $destination->availability_status === 'Unavailable' ? 'selected' : '' }}>Unavailable</option>
-                        </select>
-                    </div>
-                    <div class="md:col-span-2">
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Description</label>
-                        <textarea name="description" rows="4" class="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-green-400 outline-none resize-none">{{ $destination->description }}</textarea>
-                    </div>
-                </div>
-
-                <div class="flex justify-end pt-2">
-                    <button type="submit" class="bg-green-700 hover:bg-green-800 text-white font-semibold rounded-xl px-6 py-2.5 transition text-sm flex items-center gap-1.5">
-                        <i class="ti ti-device-floppy"></i> Save Changes
-                    </button>
-                </div>
-            </form>
-        </div>
-
-        {{-- Tab 3: Image Gallery --}}
-        <div x-show="activeTab === 'gallery'" class="space-y-6">
-            {{-- Upload Area --}}
-            <div class="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm">
-                <form action="{{ route('spots.images.upload', $destination) }}" method="POST" enctype="multipart/form-data" class="space-y-3">
-                    @csrf
-                    <label class="block text-sm font-medium text-gray-700">Upload New Photo</label>
-                    <div class="flex items-center gap-3">
-                        <input type="file" name="image" accept="image/*" class="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-green-50 file:text-green-700 hover:file:bg-green-100" required>
-                        <button type="submit" class="bg-green-700 hover:bg-green-800 text-white font-semibold rounded-xl px-5 py-2.5 transition text-sm shrink-0 flex items-center gap-1">
-                            <i class="ti ti-upload"></i> Upload
-                        </button>
-                    </div>
-                </form>
-            </div>
-
-            {{-- Photo List --}}
-            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-                @forelse($destination->images as $img)
-                    <div class="bg-white border border-gray-200 rounded-2xl overflow-hidden shadow-sm relative group">
-                        <img src="{{ Storage::url($img->path) }}" class="w-full h-48 object-cover">
-                        <div class="p-4 flex items-center justify-between">
-                            <div class="flex items-center gap-1.5">
-                                @if($img->is_primary)
-                                    <span class="inline-flex items-center gap-1 text-xs font-semibold text-green-700 bg-green-50 px-2 py-0.5 rounded-full">
-                                        <i class="ti ti-star"></i> Primary
-                                    </span>
-                                @else
-                                    <form action="{{ route('spots.images.primary', $img) }}" method="POST" class="inline">
-                                        @csrf
-                                        <button type="submit" class="text-xs text-gray-500 hover:text-green-700 font-semibold flex items-center gap-1">
-                                            <i class="ti ti-star-off"></i> Set Primary
-                                        </button>
-                                    </form>
-                                @endif
-                            </div>
-                            
-                            <form action="{{ route('spots.images.delete', $img) }}" method="POST" class="inline">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="text-red-500 hover:text-red-700 p-1 rounded hover:bg-red-50 transition" title="Delete image">
-                                    <i class="ti ti-trash" style="font-size:16px;"></i>
-                                </button>
-                            </form>
-                        </div>
-                    </div>
-                @empty
-                    <div class="col-span-full bg-white border border-gray-200 rounded-2xl p-12 text-center shadow-sm">
-                        <div class="flex flex-col items-center gap-2 text-gray-400">
-                            <i class="ti ti-photo" style="font-size:36px;"></i>
-                            <span class="text-sm">No photos uploaded yet for this spot.</span>
-                        </div>
-                    </div>
-                @endforelse
             </div>
         </div>
 

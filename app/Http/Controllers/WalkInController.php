@@ -59,6 +59,7 @@ class WalkInController extends Controller
             'visitors.*.contact_number' => 'nullable|string|max:50',
             'visitors.*.email' => 'nullable|email|max:255',
             'visitors.*.classification' => 'required|string|in:Local,Domestic Tourist,International Tourist',
+            'visitors.*.duration_days' => 'required|integer|min:1|max:30',
         ]);
 
         $visitorCount = count($request->visitors);
@@ -87,6 +88,7 @@ class WalkInController extends Controller
                 'contact_number' => $v['contact_number'],
                 'email' => $v['email'],
                 'classification' => $v['classification'],
+                'duration_days' => $v['duration_days'],
                 'registered_by_staff_id' => $user->id,
             ]);
         }

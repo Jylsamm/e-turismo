@@ -124,6 +124,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         // Payment approval/rejection and camera scanning
         Route::post('/bookings/{booking}/approve-payment', [BookingController::class, 'approvePayment'])->name('bookings.approve-payment');
         Route::post('/bookings/{booking}/reject-payment', [BookingController::class, 'rejectPayment'])->name('bookings.reject-payment');
+        Route::post('/staff/preview-ticket', [BookingController::class, 'previewTicket'])->name('staff.preview-ticket');
         Route::post('/staff/verify-ticket', [BookingController::class, 'verifyTicket'])->name('staff.verify-ticket');
 
         // New Staff Refactored Routes
@@ -137,6 +138,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
         // Spots routes — spots.index auto-redirects to the correct spot
         Route::get('/spots', [\App\Http\Controllers\SpotController::class, 'redirect'])->name('spots.index');
         Route::get('/spots/{destination}', [\App\Http\Controllers\SpotController::class, 'dashboard'])->name('spots.dashboard');
+        Route::get('/spots/{destination}/status',  [\App\Http\Controllers\SpotController::class, 'status'])->name('spots.status');
+        Route::get('/spots/{destination}/edit',    [\App\Http\Controllers\SpotController::class, 'edit'])->name('spots.edit');
+        Route::get('/spots/{destination}/gallery', [\App\Http\Controllers\SpotController::class, 'gallery'])->name('spots.gallery');
         Route::patch('/spots/{destination}', [\App\Http\Controllers\SpotController::class, 'update'])->name('spots.update');
         Route::post('/spots/{destination}/images', [\App\Http\Controllers\SpotController::class, 'uploadImage'])->name('spots.images.upload');
         Route::delete('/spots/images/{image}', [\App\Http\Controllers\SpotController::class, 'deleteImage'])->name('spots.images.delete');
@@ -172,5 +176,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     }); // end identity.verified middleware group
 });
+
+// Public polling endpoint — visitor map fetches this every 30 s to stay in sync
+Route::get('/spots/{destination}/checkin-coords', [\App\Http\Controllers\SpotController::class, 'checkinCoords'])->name('spots.checkin-coords');
 
 require __DIR__ . '/auth.php';

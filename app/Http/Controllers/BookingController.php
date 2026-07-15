@@ -338,6 +338,57 @@ class BookingController extends Controller
     }
 
     /**
+     * Preview ticket info WITHOUT completing check-in (Staff action).
+     * Used by the scanner UI to show a confirmation card before finalising.
+     */
+    public function previewTicket(Request $request)
+    {
+        $user = auth()->user();
+        if ($user->isAdmin()) {
+            return response()->json(['valid' => false, 'message' => 'Admins cannot perform check-ins.'], 403);
+        }
+
+        $request->validate(['qr_token' => 'required|string']);
+
+        $booking = Booking::with('tourist', 'destination')
+            ->where('qr_token', $request->qr_token)
+            ->first();
+
+        if (!$booking) {
+            return response()->json(['valid' => false, 'message' => 'Invalid ticket — booking not found.']);
+        }
+
+        if ($user->isStaff() && $user->assigned_destination_id !== $booking->destination_id) {
+            return response()->json(['valid' => false, 'message' => 'This ticket belongs to a different destination.']);
+        }
+
+        if ($booking->checked_in_at !== null || $booking->status === 'completed') {
+            $time = $booking->checked_in_at
+                ? \Illuminate\Support\Carbon::parse($booking->checked_in_at)->format('M j, Y g:i A')
+                : 'an earlier session';
+            return response()->json(['valid' => false, 'message' => "Ticket already used — visitor checked in at {$time}."]);
+        }
+
+        if ($booking->status !== 'confirmed') {
+            return response()->json(['valid' => false, 'message' => 'Booking is not confirmed (Status: ' . ucfirst($booking->status) . ').
+ Cannot check in.']);
+        }
+
+        if ($booking->visit_date !== now()->toDateString()) {
+            $formatted = \Illuminate\Support\Carbon::parse($booking->visit_date)->format('M j, Y');
+            return response()->json(['valid' => false, 'message' => "Scheduled visit date is {$formatted} — not today."]);
+        }
+
+        return response()->json([
+            'valid'            => true,
+            'tourist_name'     => $booking->tourist?->name ?? 'Unknown',
+            'destination_name' => $booking->destination?->name ?? 'Unknown',
+            'visit_date'       => \Illuminate\Support\Carbon::parse($booking->visit_date)->format('M j, Y'),
+            'booking_status'   => ucfirst($booking->status),
+        ]);
+    }
+
+    /**
      * Verify scanned QR token (Staff POST endpoint).
      */
     public function verifyTicket(Request $request)

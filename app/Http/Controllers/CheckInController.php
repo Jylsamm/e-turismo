@@ -66,16 +66,36 @@ class CheckInController extends Controller
         $pendingArrivals = Booking::where('destination_id', $destination->id)
             ->where('status', 'confirmed')
             ->whereDate('visit_date', today())
+            ->whereNull('checked_in_at')
             ->count();
+
+        // Pending list for queue panel (max 20 for perf)
+        $pendingList = Booking::with('tourist')
+            ->where('destination_id', $destination->id)
+            ->where('status', 'confirmed')
+            ->whereDate('visit_date', today())
+            ->whereNull('checked_in_at')
+            ->whereNotNull('qr_token')
+            ->orderBy('created_at')
+            ->limit(20)
+            ->get()
+            ->map(fn($b) => [
+                'id'           => $b->id,
+                'tourist_name' => $b->tourist?->name ?? 'Unknown',
+                'qr_token'     => $b->qr_token,
+            ])
+            ->values()
+            ->toArray();
 
         // Current Visitors (Proxy count matching active check-ins today)
         $currentVisitors = $todayCheckins;
 
         return [
-            'today_checkins' => $todayCheckins,
+            'today_checkins'   => $todayCheckins,
             'pending_arrivals' => $pendingArrivals,
             'current_visitors' => $currentVisitors,
-            'destination_name' => $destination->name
+            'destination_name' => $destination->name,
+            'pending_list'     => $pendingList,
         ];
     }
 

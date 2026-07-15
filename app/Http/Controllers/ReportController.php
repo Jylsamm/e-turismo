@@ -149,19 +149,27 @@ class ReportController extends Controller
 
         $bookings = $query->get();
 
-        $totalVisitors = CheckIn::whereHas('booking', function ($q) use ($filters) {
-            $q->whereBetween('visit_date', [$filters['date_from'], $filters['date_to']]);
-            if (!empty($filters['destination_id'])) {
-                $q->where('destination_id', $filters['destination_id']);
-            }
-        })->count();
+        $stats = $query->clone()
+            ->selectRaw('COUNT(*) as total_bookings')
+            ->selectRaw("SUM(CASE WHEN status IN ('confirmed','completed') THEN 1 ELSE 0 END) as confirmed")
+            ->selectRaw("SUM(CASE WHEN status = 'declined' THEN 1 ELSE 0 END) as declined")
+            ->selectRaw("SUM(CASE WHEN status = 'pending' THEN 1 ELSE 0 END) as pending")
+            ->first();
+
+        $totalVisitors = CheckIn::query()
+            ->join('bookings', 'check_ins.booking_id', '=', 'bookings.id')
+            ->whereBetween('bookings.visit_date', [$filters['date_from'], $filters['date_to']])
+            ->when(!empty($filters['destination_id']), function ($q) use ($filters) {
+                $q->where('bookings.destination_id', $filters['destination_id']);
+            })
+            ->count();
 
         return [
-            'total_bookings' => $bookings->count(),
-            'total_visitors' => $totalVisitors,
-            'confirmed' => $bookings->where('status', 'confirmed')->count() + $bookings->where('status', 'completed')->count(),
-            'declined' => $bookings->where('status', 'declined')->count(),
-            'pending' => $bookings->where('status', 'pending')->count(),
+            'total_bookings' => (int) ($stats->total_bookings ?? 0),
+            'total_visitors' => (int) $totalVisitors,
+            'confirmed' => (int) ($stats->confirmed ?? 0),
+            'declined' => (int) ($stats->declined ?? 0),
+            'pending' => (int) ($stats->pending ?? 0),
         ];
     }
 

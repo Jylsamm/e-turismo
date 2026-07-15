@@ -161,7 +161,7 @@
                                     <tr>
                                         <td class="px-6 py-3 font-medium text-gray-800">{{ $booking->tourist?->name ?? 'Unknown' }}</td>
                                         <td class="px-6 py-3 text-gray-600">{{ $booking->destination?->name ?? '—' }}</td>
-                                        <td class="px-6 py-3 text-gray-500">{{ \Carbon\Carbon::parse($booking->visit_date)->format('M j, Y') }}</td>
+                                        <td class="px-6 py-3 text-gray-500">{{ \Illuminate\Support\Carbon::parse($booking->visit_date)->format('M j, Y') }}</td>
                                         <td class="px-6 py-3">
                                             <span class="inline-flex items-center gap-1 text-xs font-semibold text-amber-700 bg-amber-50 px-2 py-0.5 rounded-full">
                                                 <i class="ti ti-clock" style="font-size:10px;"></i> Pending
@@ -278,7 +278,144 @@
             </div>
         </div>
 
+        {{-- Check-In Location Map --}}
+        @if($destination)
+        <div class="bg-white border border-gray-200 rounded-2xl overflow-hidden shadow-sm">
+            <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                    <i class="ti ti-map-pin text-green-700" style="font-size:20px;"></i>
+                    <h2 class="font-semibold text-gray-700">Check-In Location</h2>
+                    @if($destination->checkin_latitude && $destination->checkin_longitude)
+                        <span class="inline-flex items-center gap-1 text-xs font-semibold text-green-700 bg-green-50 border border-green-100 px-2 py-0.5 rounded-full ml-1">
+                            <i class="ti ti-point-filled" style="font-size:10px;"></i> Pin Set
+                        </span>
+                    @else
+                        <span class="inline-flex items-center gap-1 text-xs font-semibold text-amber-700 bg-amber-50 border border-amber-100 px-2 py-0.5 rounded-full ml-1">
+                            <i class="ti ti-alert-triangle" style="font-size:10px;"></i> Not Set
+                        </span>
+                    @endif
+                </div>
+                <a href="{{ route('spots.edit', $destination) }}"
+                   class="inline-flex items-center gap-1.5 bg-green-700 hover:bg-green-800 text-white font-semibold rounded-xl px-3 py-1.5 text-xs transition">
+                    <i class="ti ti-pencil"></i> Edit Location
+                </a>
+            </div>
+
+            <div class="p-6">
+                @if($destination->checkin_latitude && $destination->checkin_longitude)
+                    {{-- Coordinate pill row --}}
+                    <div class="flex flex-wrap items-center gap-3 mb-4">
+                        <div class="flex items-center gap-2 bg-gray-50 border border-gray-200 rounded-lg px-3 py-2">
+                            <i class="ti ti-location text-gray-400" style="font-size:14px;"></i>
+                            <span class="text-xs text-gray-500 font-medium">Spot</span>
+                            <span class="text-sm font-semibold text-gray-800">{{ $destination->name }}</span>
+                        </div>
+                        <div class="flex items-center gap-2 font-mono text-xs bg-green-50 border border-green-100 text-green-800 rounded-lg px-3 py-2">
+                            <i class="ti ti-map-pin-filled text-green-600" style="font-size:13px;"></i>
+                            {{ number_format($destination->checkin_latitude, 6) }},
+                            {{ number_format($destination->checkin_longitude, 6) }}
+                        </div>
+                        <div class="flex items-center gap-1.5 text-xs text-gray-400">
+                            <i class="ti ti-refresh"></i>
+                            Updated {{ $destination->updated_at->diffForHumans() }}
+                        </div>
+                    </div>
+
+                    {{-- Leaflet map --}}
+                    @push('head')
+                        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+                    @endpush
+                    <div id="staff-checkin-map" style="height:280px; border-radius:12px; border:1px solid #e5e7eb; z-index:0;"></div>
+
+                    @push('scripts')
+                    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+                    <script>
+                    (function () {
+                        const lat = {{ $destination->checkin_latitude }};
+                        const lng = {{ $destination->checkin_longitude }};
+                        const spotName = @json($destination->name);
+                        const coordsEndpoint = @json(route('spots.checkin-coords', $destination));
+                        const editUrl = @json(route('spots.edit', $destination));
+
+                        const map = L.map('staff-checkin-map', { zoomControl: true, scrollWheelZoom: false })
+                                     .setView([lat, lng], 15);
+
+                        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                            attribution: '&copy; OpenStreetMap contributors',
+                            maxZoom: 19,
+                        }).addTo(map);
+
+                        // Custom green pin icon
+                        const pinIcon = L.divIcon({
+                            className: '',
+                            html: `<div style="
+                                width:32px; height:32px; border-radius:50% 50% 50% 0;
+                                background:#15803d; border:3px solid #fff;
+                                box-shadow:0 2px 8px rgba(0,0,0,0.25);
+                                transform:rotate(-45deg);
+                            "></div>`,
+                            iconSize: [32, 32],
+                            iconAnchor: [16, 32],
+                            popupAnchor: [0, -36],
+                        });
+
+                        const marker = L.marker([lat, lng], { icon: pinIcon })
+                            .addTo(map)
+                            .bindPopup(`
+                                <div style="font-size:13px; font-weight:600; color:#1f2937;">${spotName}</div>
+                                <div style="font-size:11px; color:#6b7280; margin-top:2px;">Check-in point</div>
+                                <a href="${editUrl}" style="font-size:11px; color:#15803d; font-weight:600; text-decoration:none;">
+                                    ✏ Edit location →
+                                </a>
+                            `);
+
+                        // Auto-poll every 30 s so the pin stays in sync with staff edits
+                        setInterval(async function () {
+                            try {
+                                const res  = await fetch(coordsEndpoint, { cache: 'no-store' });
+                                const data = await res.json();
+                                if (data.checkin_latitude && data.checkin_longitude) {
+                                    const newLatLng = [data.checkin_latitude, data.checkin_longitude];
+                                    marker.setLatLng(newLatLng);
+                                    map.panTo(newLatLng);
+                                }
+                            } catch { /* silent — dashboard stays usable offline */ }
+                        }, 30000);
+
+                        // Also update immediately if the edit page fires a CustomEvent
+                        window.addEventListener('spot-checkin-updated', function (e) {
+                            if (e.detail.spotId === {{ $destination->id }}) {
+                                const ll = [e.detail.latitude, e.detail.longitude];
+                                marker.setLatLng(ll);
+                                map.panTo(ll);
+                            }
+                        });
+                    })();
+                    </script>
+                    @endpush
+
+                @else
+                    {{-- Empty state --}}
+                    <div class="flex flex-col items-center justify-center py-10 text-center gap-3">
+                        <div class="w-14 h-14 rounded-full bg-amber-50 flex items-center justify-center">
+                            <i class="ti ti-map-pin-off text-amber-500" style="font-size:26px;"></i>
+                        </div>
+                        <div>
+                            <p class="font-semibold text-gray-700">No check-in pin set yet</p>
+                            <p class="text-sm text-gray-400 mt-1">Visitors won't see a map marker until you set the check-in location.</p>
+                        </div>
+                        <a href="{{ route('spots.edit', $destination) }}"
+                           class="inline-flex items-center gap-1.5 bg-green-700 hover:bg-green-800 text-white font-semibold rounded-xl px-4 py-2 text-sm transition mt-1">
+                            <i class="ti ti-pencil"></i> Set Check-In Location
+                        </a>
+                    </div>
+                @endif
+            </div>
+        </div>
+        @endif
+
         {{-- Alerts & Notifications System --}}
+
         @if($notifications->count())
             <div class="bg-amber-50 border border-amber-200 rounded-2xl p-5">
                 <h2 class="font-semibold text-amber-800 mb-3 flex items-center gap-2">

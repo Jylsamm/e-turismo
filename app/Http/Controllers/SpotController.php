@@ -130,6 +130,51 @@ class SpotController extends Controller
         ));
     }
 
+    /**
+     * Show the "Edit Details" tab.
+     */
+    public function edit(Destination $destination)
+    {
+        $user = auth()->user();
+        if (!$user->isAdmin() && $user->assigned_destination_id !== $destination->id) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        $spot = $destination;
+        return view('spots.edit', compact('spot'));
+    }
+
+    /**
+     * Show the "Spot Status" tab (alias to dashboard).
+     */
+    public function status(Destination $destination)
+    {
+        return $this->dashboard($destination);
+    }
+
+    /**
+     * Show the "Image Gallery" tab.
+     */
+    public function gallery(Destination $destination)
+    {
+        $user = auth()->user();
+        if (!$user->isAdmin() && $user->assigned_destination_id !== $destination->id) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        $destination->load('images');
+        $spot = $destination;
+        return view('spots.gallery', compact('spot'));
+    }
+
+    /**
+     * Save spot details (including check-in coordinates).
+     *
+     * Supports both:
+     *  - Standard form POST  → redirect back with flash
+     *  - AJAX / fetch (Accept: application/json) → JSON response
+     *    The edit-details Blade form uses fetch + FormData + _method=PUT.
+     */
     public function update(Request $request, Destination $destination)
     {
         $user = auth()->user();
@@ -137,23 +182,65 @@ class SpotController extends Controller
             abort(403, 'Unauthorized action.');
         }
 
-        $request->validate([
+        $validated = $request->validate([
             'name'                => 'required|string|max:255',
             'location'            => 'required|string|max:255',
-            'capacity'            => 'required|integer|min:0',
+            'capacity'            => 'required|integer|min:1', // spot daily capacity must be >= 1
             'description'         => 'nullable|string',
-            'availability_status' => 'required|string|in:Available,Unavailable',
+            'availability_status' => 'required|string|in:available,limited,closed',
+            'checkin_latitude'    => 'nullable|numeric|between:-90,90',
+            'checkin_longitude'   => 'nullable|numeric|between:-180,180',
+            'checkin_radius'      => 'nullable|integer|min:5|max:5000',
         ]);
+
+        $dbStatus = 'Available';
+        if ($validated['capacity'] == 0 || $validated['availability_status'] === 'closed') {
+            $dbStatus = 'Unavailable';
+        }
 
         $destination->update([
-            'name'                => $request->name,
-            'location'            => $request->location,
-            'capacity'            => $request->capacity,
-            'description'         => $request->description,
-            'availability_status' => ($request->capacity == 0) ? 'Unavailable' : $request->availability_status,
+            'name'                => $validated['name'],
+            'location'            => $validated['location'],
+            'capacity'            => $validated['capacity'],
+            'description'         => $validated['description'] ?? null,
+            'availability_status' => $dbStatus,
+            'checkin_latitude'    => $validated['checkin_latitude'] ?? null,
+            'checkin_longitude'   => $validated['checkin_longitude'] ?? null,
+            'checkin_radius'      => $validated['checkin_radius'] ?? 100,
+            'last_updated_by'     => $user->name,
         ]);
 
+        // AJAX response (Blade form submits via fetch with Accept: application/json)
+        if ($request->expectsJson()) {
+            return response()->json([
+                'message'           => 'Spot details updated successfully!',
+                'checkin_latitude'  => $destination->checkin_latitude,
+                'checkin_longitude' => $destination->checkin_longitude,
+                'checkin_radius'    => $destination->checkin_radius,
+                'last_updated_by'   => $destination->last_updated_by,
+                'updated_at'        => $destination->updated_at->toIso8601String(),
+            ]);
+        }
+
         return back()->with('success', 'Spot details updated successfully!');
+    }
+
+    /**
+     * Lightweight public endpoint that returns only the current check-in
+     * coordinates for a spot.  The visitor-facing map polls this every 30 s
+     * so it stays in sync without WebSockets.
+     *
+     * Route: GET /spots/{destination}/checkin-coords   (no auth required)
+     */
+    public function checkinCoords(Destination $destination)
+    {
+        return response()->json([
+            'checkin_latitude'  => $destination->checkin_latitude,
+            'checkin_longitude' => $destination->checkin_longitude,
+            'checkin_radius'    => $destination->checkin_radius,
+            'last_updated_by'   => $destination->last_updated_by,
+            'updated_at'        => $destination->updated_at?->toIso8601String(),
+        ])->header('Cache-Control', 'no-store');
     }
 
     public function uploadImage(Request $request, Destination $destination)

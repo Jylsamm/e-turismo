@@ -13,7 +13,12 @@ class WalkIn extends Model
         'contact_number',
         'email',
         'classification',
+        'duration_days',
         'registered_by_staff_id',
+    ];
+
+    protected $casts = [
+        'duration_days' => 'integer',
     ];
 
     public function destination()

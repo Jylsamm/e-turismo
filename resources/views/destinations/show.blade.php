@@ -1,4 +1,7 @@
 <x-app-layout>
+    @push('head')
+        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    @endpush
     {{-- No header slot — full-width detail layout --}}
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Fraunces:ital,wght@0,600;1,600&display=swap');
@@ -353,7 +356,97 @@
                         </a>
                         @endif
                     </div>
+
+                    {{-- Check-In Location Card --}}
+                    @if($destination->checkin_latitude && $destination->checkin_longitude)
+                    <div class="detail-card" style="margin-top: 20px;">
+                        <div class="detail-section-title">📍 Check-In Location</div>
+                        <p style="font-size: .82rem; color: var(--text-3); margin-bottom: 12px;">
+                            This is the exact point where you need to check in when you arrive at this spot.
+                        </p>
+                        <div id="visitor-checkin-map" style="height: 220px; border-radius: var(--r-md); border: 1px solid #e5f6f4; z-index: 0;"></div>
+                    </div>
+
+                    @push('scripts')
+                    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+                    <script>
+                        const lat = {{ $destination->checkin_latitude }};
+                        const lng = {{ $destination->checkin_longitude }};
+                        const initialRadius = {{ $destination->checkin_radius ?? 100 }};
+                        const spotName = @json($destination->name);
+                        const coordsEndpoint = @json(route('spots.checkin-coords', $destination));
+
+                        const map = L.map('visitor-checkin-map', { zoomControl: true, scrollWheelZoom: false })
+                                     .setView([lat, lng], 15);
+
+                        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                            attribution: '&copy; OpenStreetMap contributors',
+                            maxZoom: 19,
+                        }).addTo(map);
+
+                        // Custom green pin icon
+                        const pinIcon = L.divIcon({
+                            className: '',
+                            html: `<div style="
+                                width:32px; height:32px; border-radius:50% 50% 50% 0;
+                                background:#15803d; border:3px solid #fff;
+                                box-shadow:0 2px 8px rgba(0,0,0,0.25);
+                                transform:rotate(-45deg);
+                            "></div>`,
+                            iconSize: [32, 32],
+                            iconAnchor: [16, 32],
+                            popupAnchor: [0, -36],
+                        });
+
+                        const marker = L.marker([lat, lng], { icon: pinIcon })
+                            .addTo(map)
+                            .bindPopup(`
+                                <div style="font-size:13px; font-weight:600; color:#1f2937;">${spotName}</div>
+                                <div style="font-size:11px; color:#6b7280; margin-top:2px;">Check-In Point</div>
+                            `);
+
+                        // Geofence area circle
+                        const radiusCircle = L.circle([lat, lng], {
+                            radius: initialRadius,
+                            color: '#15803d',
+                            fillColor: '#22c55e',
+                            fillOpacity: 0.15,
+                            weight: 1.5
+                        }).addTo(map);
+
+                        // Poll the coordinates endpoint every 10 seconds for real-time synchronization
+                        setInterval(async function () {
+                            try {
+                                const res = await fetch(coordsEndpoint, { cache: 'no-store' });
+                                if (!res.ok) return;
+                                const data = await res.json();
+                                if (data.checkin_latitude && data.checkin_longitude) {
+                                    const newLatLng = [parseFloat(data.checkin_latitude), parseFloat(data.checkin_longitude)];
+                                    const currentLatLng = marker.getLatLng();
+                                    
+                                    // Check coordinate changes
+                                    if (Math.abs(currentLatLng.lat - newLatLng[0]) > 0.000001 || Math.abs(currentLatLng.lng - newLatLng[1]) > 0.000001) {
+                                        marker.setLatLng(newLatLng);
+                                        radiusCircle.setLatLng(newLatLng);
+                                        map.panTo(newLatLng);
+                                    }
+
+                                    // Check geofence radius changes
+                                    const newRadius = parseInt(data.checkin_radius) || 100;
+                                    if (radiusCircle.getRadius() !== newRadius) {
+                                        radiusCircle.setRadius(newRadius);
+                                    }
+                                }
+                            } catch (e) {
+                                // Fail silently to not impact user experience
+                            }
+                        }, 10000);
+                    })();
+                    </script>
+                    @endpush
+                    @endif
                 </div>
+
 
             </div>
         </div>
