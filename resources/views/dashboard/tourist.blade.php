@@ -6,7 +6,7 @@
         </h1>
     </x-slot>
 
-    <div id="tourist-dashboard-root" class="opacity-0 transition-opacity duration-700 ease-out py-8 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+    <div id="tourist-dashboard-root" class="opacity-0 transition-opacity duration-700 ease-out pb-8 pt-0 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
 
         @if(session('success'))
             <div class="bg-green-50 border border-green-300 text-green-800 px-4 py-3 rounded-lg">{{ session('success') }}</div>

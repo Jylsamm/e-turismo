@@ -81,7 +81,7 @@
         @keyframes spin { to { transform: rotate(360deg); } }
     </style>
 
-    <div class="py-8 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6" x-data="bookingManager()">
+    <div class="pb-8 pt-0 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6" x-data="bookingManager()">
 
         {{-- Flash Messages --}}
         @if(session('success'))
