@@ -191,16 +191,36 @@
             </div>
 
             {{-- Sidebar Footer (User details + Logout) --}}
-            <div class="p-4 border-t border-green-700/50 bg-white/5 shrink-0 space-y-3">
+            <div class="p-3 border-t border-white/10 bg-black/10 backdrop-blur-md shrink-0 relative overflow-hidden">
+                <!-- Decorative glow -->
+                <div class="absolute -top-10 -right-10 w-24 h-24 bg-emerald-400/20 blur-2xl rounded-full pointer-events-none"></div>
+
                 @if(Auth::check())
-                <div class="flex items-center gap-3 px-1">
-                    <div class="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center text-white font-bold border border-white/20 shrink-0">
+                <div class="flex items-center gap-3 p-2 rounded-2xl border border-transparent hover:bg-white/5 hover:border-white/10 transition-all duration-300 group/profile">
+                    <!-- Avatar -->
+                    <div class="w-10 h-10 rounded-full border-2 border-emerald-300/80 text-emerald-100 flex items-center justify-center font-black text-lg shrink-0 relative transform group-hover/profile:scale-105 group-hover/profile:border-emerald-300 group-hover/profile:text-white group-hover/profile:shadow-[0_0_15px_rgba(52,211,153,0.6)] transition-all duration-300 shadow-sm">
                         {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
                     </div>
-                    <div class="min-w-0 flex-1">
-                        <p class="text-xs font-bold text-white truncate leading-snug">{{ Auth::user()->name }}</p>
-                        <span class="inline-block bg-white/20 text-[10px] text-white px-2 py-0.5 rounded-full font-bold uppercase tracking-wider mt-0.5 capitalize leading-none">{{ Auth::user()->role }}</span>
+                    
+                    <!-- Info -->
+                    <div class="min-w-0 flex-1 flex flex-col justify-center">
+                        <p class="text-sm font-extrabold text-white truncate leading-tight tracking-wide drop-shadow-sm">{{ Auth::user()->name }}</p>
+                        <div class="mt-1 flex items-center">
+                            <span class="inline-flex items-center gap-1.5 bg-black/20 border border-white/10 text-[9px] text-emerald-100 px-2 py-0.5 rounded-lg font-bold uppercase tracking-widest backdrop-blur-sm shadow-sm">
+                                <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 shadow-[0_0_5px_#34d399] animate-pulse"></span>
+                                {{ Auth::user()->role }}
+                            </span>
+                        </div>
                     </div>
+
+                    <!-- Logout Button -->
+                    <button x-data @click.prevent="$dispatch('open-confirm-modal', { id: 'logout-modal' })" 
+                            class="group/logout p-1.5 border-2 border-red-500 text-white bg-red-500 hover:bg-red-400 hover:border-red-400 rounded-xl transition-all duration-300 focus:outline-none hover:shadow-[0_0_20px_rgba(239,68,68,0.6)]" 
+                            title="Log Out">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 transform group-hover/logout:translate-x-0.5 transition-transform duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                        </svg>
+                    </button>
                 </div>
                 @endif
             </div>

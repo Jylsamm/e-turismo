@@ -275,7 +275,7 @@
                     Get Started
                 </a>
                 <a href="{{ route('login') }}"
-                    class="border-2 border-white/50 text-white font-bold rounded-2xl px-8 py-4 text-base transition-all duration-300 hover:-translate-y-0.5 hover:scale-105 hover:bg-white hover:text-white hover:border-white hover:shadow-[0_12px_24px_rgba(255,255,255,0.2)]">
+                    class="border-2 border-white/50 text-white font-bold rounded-2xl px-8 py-4 text-base transition-all duration-300 hover:-translate-y-0.5 hover:scale-105 hover:bg-white hover:text-green-800 hover:border-white hover:shadow-[0_12px_24px_rgba(255,255,255,0.2)]">
                     Sign In
                 </a>
             </div>
