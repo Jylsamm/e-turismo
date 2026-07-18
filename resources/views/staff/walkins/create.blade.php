@@ -284,7 +284,7 @@
         }
     </style>
 
-    <div class="py-6 max-w-full mx-auto px-4 sm:px-6 lg:px-8 space-y-5"
+    <div class="pb-6 pt-0 max-w-full mx-auto px-4 sm:px-6 lg:px-8 space-y-5"
         x-data="walkinGrid({{ $destination->capacity }}, {{ $currentVisitors }})"
         @keydown.ctrl.enter.window="submitForm()">
 

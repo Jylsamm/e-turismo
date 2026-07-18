@@ -175,17 +175,6 @@
 
     <div class="py-8 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
-        {{-- Page Header --}}
-        <div class="mb-6">
-            <h1 class="text-2xl font-bold text-gray-800">Spot Status</h1>
-        </div>
-
-        {{-- Tabs --}}
-        <div class="border-b border-gray-200 flex gap-6 mb-6">
-            <a href="{{ route('spots.status', $spot) }}" class="tab-link active">
-                <i class="ti ti-activity"></i> Spot Status
-            </a>
-        </div>
 
         <form id="spot-edit-form" class="bg-white border border-gray-200 rounded-2xl shadow-sm p-6 space-y-8">
             @csrf

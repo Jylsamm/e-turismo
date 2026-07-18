@@ -298,7 +298,7 @@
                 </div>
             </header>
 
-            <main class="flex-1 overflow-y-auto bg-gray-50 p-6 md:p-10">
+            <main class="flex-1 overflow-y-auto bg-gray-50 px-6 pt-4 pb-6 md:px-10 md:pt-4 md:pb-10">
                 {{ $slot }}
             </main>
         </div>
