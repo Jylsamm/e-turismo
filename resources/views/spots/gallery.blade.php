@@ -55,8 +55,8 @@
         {{-- Photo List --}}
         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
             @forelse($spot->images as $img)
-                <div class="gallery-card relative group">
-                    <img src="{{ Storage::url($img->path) }}" class="w-full h-48 object-cover" alt="Spot photo">
+                <div class="gallery-card relative group bg-white border border-gray-200 rounded-2xl overflow-hidden shadow-sm">
+                    <img src="{{ asset('storage/' . $img->path) }}" class="w-full h-48 object-cover" alt="Spot photo">
                     <div class="p-4 flex items-center justify-between border-t border-gray-50">
                         <div class="flex items-center gap-1.5">
                             @if($img->is_primary)
