@@ -108,10 +108,33 @@
                     {{-- Admin Controls --}}
                     @if(Auth::check() && Auth::user()->isAdmin())
                         <p class="px-4 pt-4 pb-1 text-xs font-semibold text-green-200 uppercase tracking-wider">Admin Controls</p>
-                        <a href="{{ route('verification.admin') }}" class="flex items-center px-4 py-2.5 rounded-lg font-medium transition-colors {{ $usersActive ? 'bg-white/20 text-white shadow-sm' : 'text-green-100 hover:bg-white/10 hover:text-white' }}">
-                            <svg class="w-5 h-5 mr-3 opacity-90" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
-                            Accounts &amp; Verification
-                        </a>
+                        {{-- Accordion Accounts & Verification --}}
+                        <div x-data="{ open: {{ request()->routeIs('verification.*') ? 'true' : 'false' }} }" class="space-y-1">
+                            <div class="flex items-center justify-between rounded-lg {{ request()->routeIs('verification.*') ? 'bg-white/20 text-white shadow-sm' : 'text-green-100 hover:bg-white/10 hover:text-white' }} transition-colors pl-4 pr-1 py-0.5">
+                                <a href="{{ route('verification.reviews') }}" class="flex-1 flex items-center py-2 font-medium">
+                                    <svg class="w-5 h-5 mr-3 opacity-90" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
+                                    Verification
+                                </a>
+                                <button @click="open = !open" class="p-2 text-green-200 hover:text-white rounded-md focus:outline-none transition-colors" aria-label="Toggle Verification Options">
+                                    <svg class="w-4 h-4 transform transition-transform duration-200" :class="open ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                                </button>
+                            </div>
+
+                            <div x-show="open" x-collapse class="mt-1 space-y-1" style="display: none;">
+                                <a href="{{ route('verification.reviews') }}" class="flex items-center pl-12 pr-4 py-2 rounded-lg text-sm transition-colors {{ request()->routeIs('verification.reviews') ? 'bg-white/10 text-white font-medium shadow-sm' : 'text-green-100 hover:bg-white/5 hover:text-white' }}">
+                                    <svg class="w-4 h-4 mr-2.5 opacity-75" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                                    ID Verification Reviews
+                                </a>
+                                <a href="{{ route('verification.accounts') }}" class="flex items-center pl-12 pr-4 py-2 rounded-lg text-sm transition-colors {{ request()->routeIs('verification.accounts') ? 'bg-white/10 text-white font-medium shadow-sm' : 'text-green-100 hover:bg-white/5 hover:text-white' }}">
+                                    <svg class="w-4 h-4 mr-2.5 opacity-75" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                                    Verify Account Status
+                                </a>
+                                <a href="{{ route('verification.add_account') }}" class="flex items-center pl-12 pr-4 py-2 rounded-lg text-sm transition-colors {{ request()->routeIs('verification.add_account') ? 'bg-white/10 text-white font-medium shadow-sm' : 'text-green-100 hover:bg-white/5 hover:text-white' }}">
+                                    <svg class="w-4 h-4 mr-2.5 opacity-75" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path></svg>
+                                    Add Account
+                                </a>
+                            </div>
+                        </div>
                         <a href="{{ route('reports.index') }}" class="flex items-center px-4 py-2.5 rounded-lg font-medium transition-colors {{ $reportsActive ? 'bg-white/20 text-white shadow-sm' : 'text-green-100 hover:bg-white/10 hover:text-white' }}">
                             <svg class="w-5 h-5 mr-3 opacity-90" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 17v-2m3 2v-4m3 2v-6m-9 9h12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
                             Reports

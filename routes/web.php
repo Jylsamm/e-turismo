@@ -169,7 +169,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/reports/{report}', [ReportController::class, 'show'])->name('reports.show');
 
         // Identity Verification admin review
-        Route::get('/admin/verifications', [IdentityVerificationController::class, 'adminIndex'])->name('verification.admin');
+        Route::get('/admin/verifications/reviews', [IdentityVerificationController::class, 'adminReviews'])->name('verification.reviews');
+        Route::get('/admin/verifications/accounts', [IdentityVerificationController::class, 'adminAccounts'])->name('verification.accounts');
+        Route::get('/admin/verifications/add-account', [IdentityVerificationController::class, 'adminAddAccount'])->name('verification.add_account');
+        
         Route::post('/admin/verifications/{user}/decide', [IdentityVerificationController::class, 'adminDecide'])->name('verification.decide');
         Route::post('/admin/accounts/create', [IdentityVerificationController::class, 'adminStoreAccount'])->name('admin.accounts.store');
         Route::post('/admin/accounts/{user}/status', [IdentityVerificationController::class, 'adminUpdateStatus'])->name('admin.accounts.update_status');

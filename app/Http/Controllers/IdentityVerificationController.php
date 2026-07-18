@@ -138,7 +138,7 @@ class IdentityVerificationController extends Controller
     /**
      * Admin: list tourists awaiting manual review.
      */
-    public function adminIndex()
+    public function adminReviews()
     {
         $this->authorize('admin-only');
 
@@ -154,11 +154,31 @@ class IdentityVerificationController extends Controller
                         ->where('id_verification_status', 'verified')
                         ->latest()->take(20)->get();
 
-        // Fetch all users and destinations for user management tab
-        $allUsers     = User::latest()->get();
+        return view('verification.admin_reviews', compact('pending', 'rejected', 'verified'));
+    }
+
+    /**
+     * Admin: verify account status.
+     */
+    public function adminAccounts()
+    {
+        $this->authorize('admin-only');
+
+        $allUsers = User::latest()->get();
+
+        return view('verification.admin_accounts', compact('allUsers'));
+    }
+
+    /**
+     * Admin: add a new account.
+     */
+    public function adminAddAccount()
+    {
+        $this->authorize('admin-only');
+
         $destinations = Destination::orderBy('name')->get();
 
-        return view('verification.admin', compact('pending', 'rejected', 'verified', 'allUsers', 'destinations'));
+        return view('verification.admin_add_account', compact('destinations'));
     }
 
     /**
