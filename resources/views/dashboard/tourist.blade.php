@@ -1,9 +1,12 @@
 <x-app-layout>
     <x-slot name="header">
-        <h1 class="text-2xl font-bold text-gray-800">Welcome back, {{ auth()->user()->name }}! 👋</h1>
+        <h1 class="flex items-center gap-2 text-2xl font-bold text-gray-800">
+            Welcome back, {{ auth()->user()->name }}!
+            <svg class="w-6 h-6 text-amber-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 11V6a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v0"/><path d="M14 10V4a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v2"/><path d="M10 10.5V6a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v8"/><path d="M18 8a2 2 0 1 1 4 0v6a8 8 0 0 1-8 8h-2c-2.8 0-4.5-.86-5.99-2.34l-3.6-3.6a2 2 0 0 1 2.83-2.82L7 15"/><path d="M6 14v-1.5a2 2 0 0 1 2-2v0a2 2 0 0 1 2 2v0"/></svg>
+        </h1>
     </x-slot>
 
-    <div class="py-8 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+    <div id="tourist-dashboard-root" class="opacity-0 transition-opacity duration-700 ease-out py-8 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
 
         @if(session('success'))
             <div class="bg-green-50 border border-green-300 text-green-800 px-4 py-3 rounded-lg">{{ session('success') }}</div>
@@ -117,7 +120,7 @@
         {{-- Notifications --}}
         @if($notifications->count())
         <div class="bg-blue-50 border border-blue-200 rounded-xl p-5">
-            <h2 class="font-semibold text-blue-800 mb-2">🔔 Your Notifications</h2>
+            <h2 class="font-semibold text-blue-800 mb-2 flex items-center gap-1.5"><i class="ti ti-bell-ringing"></i> Your Notifications</h2>
             <ul class="space-y-1">
                 @foreach($notifications as $notif)
                 <li class="text-sm text-blue-900">{{ $notif->message }}</li>
@@ -199,4 +202,62 @@
             </div>
         </div>
     </div>
+
+    <style>
+        .dashboard-welcome-flash {
+            position: fixed;
+            inset: 0;
+            background: linear-gradient(135deg, #0b3d2e 0%, #061810 100%);
+            z-index: 9999;
+            opacity: 1;
+            transition: opacity 0.8s cubic-bezier(0.25, 1, 0.5, 1);
+            pointer-events: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .dashboard-welcome-flash.fade-out {
+            opacity: 0;
+        }
+    </style>
+    <div id="welcome-flash" class="dashboard-welcome-flash" style="display: none;">
+        <div class="text-center px-4">
+            <h2 class="text-3xl font-black text-white tracking-tight">E-Turismo</h2>
+            <p class="text-emerald-400 text-sm mt-2">Setting up your profile...</p>
+        </div>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const flash = document.getElementById('welcome-flash');
+            const root = document.getElementById('tourist-dashboard-root');
+            
+            const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+            
+            if (sessionStorage.getItem('just_registered') === 'true') {
+                sessionStorage.removeItem('just_registered'); // clear it
+                
+                if (reducedMotion) {
+                    if (root) root.classList.remove('opacity-0');
+                    return;
+                }
+                
+                if (flash) {
+                    flash.style.display = 'flex';
+                    setTimeout(() => {
+                        flash.classList.add('fade-out');
+                        if (root) root.classList.remove('opacity-0');
+                    }, 1200);
+                    setTimeout(() => {
+                        flash.remove();
+                    }, 2000);
+                }
+            } else {
+                // Regular load
+                if (root) {
+                    root.style.transition = 'opacity 0.25s ease-out';
+                    root.classList.remove('opacity-0');
+                }
+            }
+        });
+    </script>
 </x-app-layout>

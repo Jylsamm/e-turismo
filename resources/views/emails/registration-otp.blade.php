@@ -27,7 +27,7 @@
 
               <!-- Logo (embedded inline via CID — works in all email clients without external fetch) -->
               @php
-                $logoPath = public_path('Pictures/LOGO/LOGO-eturismo2.png');
+                $logoPath = public_path('Pictures/LOGO/LOGO-eturismo3.png');
               @endphp
               @if(file_exists($logoPath) && isset($message))
               <img src="{{ $message->embed($logoPath) }}"

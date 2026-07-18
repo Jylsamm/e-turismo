@@ -108,8 +108,8 @@
                                     </td>
                                     <td class="px-4 py-3">
                                         @if($tourist->id_photo)
-                                        <a href="{{ asset('storage/' . $tourist->id_photo) }}" target="_blank">
-                                            <img src="{{ asset('storage/' . $tourist->id_photo) }}" alt="ID"
+                                        <a href="{{ Storage::url($tourist->id_photo) }}" target="_blank">
+                                            <img src="{{ Storage::url($tourist->id_photo) }}" alt="ID"
                                                 class="h-16 w-24 object-cover rounded border hover:opacity-80 transition" />
                                         </a>
                                         @else

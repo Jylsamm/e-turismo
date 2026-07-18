@@ -12,6 +12,12 @@
             display: flex;
             flex-direction: column;
             gap: 12px;
+            transition: all 0.3s ease-in-out;
+        }
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 25px -5px rgba(21, 128, 61, 0.15), 0 4px 10px -5px rgba(21, 128, 61, 0.1);
+            border-color: #bbf7d0;
         }
         .stat-icon {
             width: 40px;
@@ -139,7 +145,7 @@
         {{-- Bookings & Check-ins Columns --}}
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {{-- Recent Booking Requests --}}
-            <div class="bg-white border border-gray-200 rounded-2xl overflow-hidden shadow-sm flex flex-col justify-between">
+            <div class="interactive-card overflow-hidden flex flex-col justify-between">
                 <div>
                     <div class="px-6 py-4 border-b border-gray-100 flex items-center gap-2">
                         <i class="ti ti-list-details text-gray-400" style="font-size:20px;"></i>
@@ -240,14 +246,14 @@
         </div>
 
         {{-- Spot Occupancy Overview --}}
-        <div class="bg-white border border-gray-200 rounded-2xl overflow-hidden shadow-sm">
+        <div class="interactive-card overflow-hidden">
             <div class="px-6 py-4 border-b border-gray-100 flex items-center gap-2">
                 <i class="ti ti-gauge text-gray-400" style="font-size:20px;"></i>
                 <h2 class="font-semibold text-gray-700">Spot Occupancy Overview</h2>
             </div>
             <div class="p-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 @foreach($spots as $spot)
-                    <a href="{{ route('spots.dashboard', $spot) }}" class="block p-5 border border-gray-200 rounded-xl hover:border-green-600 transition space-y-4">
+                    <a href="{{ route('spots.dashboard', $spot) }}" class="block p-5 border border-gray-200 rounded-xl hover:border-green-600 transition-all duration-300 ease-in-out hover:-translate-y-1 hover:shadow-lg space-y-4">
                         <div class="flex justify-between items-start">
                             <div>
                                 <h3 class="font-bold text-gray-800 text-lg">{{ $spot->name }}</h3>
@@ -280,7 +286,7 @@
 
         {{-- Check-In Location Map --}}
         @if($destination)
-        <div class="bg-white border border-gray-200 rounded-2xl overflow-hidden shadow-sm">
+        <div class="interactive-card overflow-hidden">
             <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
                 <div class="flex items-center gap-2">
                     <i class="ti ti-map-pin text-green-700" style="font-size:20px;"></i>

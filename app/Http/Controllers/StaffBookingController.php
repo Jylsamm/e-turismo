@@ -76,7 +76,7 @@ class StaffBookingController extends Controller
             'guest_count' => 1,
             'payment_status' => $booking->payment_status ?? 'unpaid',
             'payment_receipt' => $booking->payment_screenshot_path ? asset('storage/' . $booking->payment_screenshot_path) : null,
-            'qr_ticket' => $booking->qr_token ? asset('storage/qr-tickets/' . $booking->id . '.png') : null,
+            'qr_ticket' => $booking->qr_token ? asset('storage/qr-tickets/' . $booking->id . '.svg') : null,
             'qr_token' => $booking->qr_token,
             'status' => $booking->status,
             'decline_reason' => $booking->decline_reason,

@@ -30,6 +30,12 @@
             display: flex;
             align-items: center;
             gap: 14px;
+            transition: all 0.3s ease-in-out;
+        }
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 25px -5px rgba(21, 128, 61, 0.15), 0 4px 10px -5px rgba(21, 128, 61, 0.1);
+            border-color: #bbf7d0;
         }
 
         .stat-icon {
@@ -328,7 +334,7 @@
         </div>
 
         {{-- ② Main Table Card ─────────────────────────────────────────────── --}}
-        <div class="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden">
+        <div class="interactive-card overflow-hidden">
 
             {{-- Card Header --}}
             <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between gap-4 flex-wrap">
@@ -552,7 +558,7 @@
 
         {{-- ④ Spot Info Sidebar (compact, below on mobile) ─────────────────── --}}
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div class="md:col-span-1 bg-white border border-gray-200 rounded-2xl p-5 shadow-sm text-sm space-y-3">
+            <div class="md:col-span-1 interactive-card p-5 text-sm space-y-3">
                 <h3 class="font-bold text-gray-800 flex items-center gap-2">
                     <i class="ti ti-map-pin text-green-700"></i> Spot Info
                 </h3>

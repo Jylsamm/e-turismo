@@ -81,7 +81,49 @@ class BookingController extends Controller
             abort(403, 'Admins do not have access to booking management.');
         }
 
+
         return view('bookings.index', compact('bookings'));
+    }
+
+    /**
+     * Show booking details (Tourist or Staff action).
+     */
+    public function show(Booking $booking)
+    {
+        $user = auth()->user();
+        if ($user->isTourist() && $booking->tourist_id !== $user->id) {
+            abort(403, 'Unauthorized.');
+        }
+        if ($user->isStaff() && $user->assigned_destination_id !== $booking->destination_id) {
+            abort(403, 'Unauthorized.');
+        }
+
+        $booking->load(['tourist', 'destination', 'ticket']);
+
+        if (request()->wantsJson() || request()->ajax()) {
+            return response()->json([
+                'id' => $booking->id,
+                'tourist' => [
+                    'name' => $booking->tourist?->name ?? 'Unknown',
+                    'email' => $booking->tourist?->email ?? 'N/A',
+                    'phone' => $booking->tourist?->phone ?? 'N/A',
+                ],
+                'spot' => $booking->destination?->name ?? 'Unknown',
+                'location' => $booking->destination?->location ?? 'Unknown',
+                'visit_date' => \Carbon\Carbon::parse($booking->visit_date)->format('M j, Y'),
+                'payment_status' => $booking->payment_status ?? 'unpaid',
+                'payment_receipt' => $booking->payment_screenshot_path ? \Illuminate\Support\Facades\Storage::url($booking->payment_screenshot_path) : null,
+                'gcash_reference_number' => $booking->gcash_reference_number,
+                'qr_ticket' => $booking->qr_token ? \Illuminate\Support\Facades\Storage::url('qr-tickets/' . $booking->id . '.svg') : null,
+                'qr_token' => $booking->qr_token,
+                'status' => $booking->status,
+                'decline_reason' => $booking->decline_reason,
+                'rejection_reason' => $booking->rejection_reason,
+                'notes' => $booking->checked_in_at ? 'Checked in at ' . \Carbon\Carbon::parse($booking->checked_in_at)->format('M j, Y h:i A') : 'N/A',
+            ]);
+        }
+
+        return view('bookings.show', compact('booking'));
     }
 
     /**
@@ -100,12 +142,7 @@ class BookingController extends Controller
             abort(403, 'Unauthorized.');
         }
 
-        $booking->update([
-            'status' => 'confirmed',
-            'decided_by_staff_id' => $user->id,
-        ]);
-
-        // Generate QR ticket
+        // Generate QR ticket code
         $destination = $booking->destination;
         $qrCode = strtoupper($destination->initials) . random_int(100000, 999999);
 
@@ -113,6 +150,22 @@ class BookingController extends Controller
         while (Ticket::where('qr_code', $qrCode)->exists()) {
             $qrCode = strtoupper($destination->initials) . random_int(100000, 999999);
         }
+
+        // Generate QR SVG file in storage
+        \Illuminate\Support\Facades\Storage::disk('public')->makeDirectory('qr-tickets');
+        $qrPath = 'qr-tickets/' . $booking->id . '.svg';
+        $qrCodeImage = \SimpleSoftwareIO\QrCode\Facades\QrCode::size(250)
+            ->margin(1)
+            ->generate($qrCode);
+        \Illuminate\Support\Facades\Storage::disk('public')->put($qrPath, $qrCodeImage);
+
+        // Update booking and payment statuses
+        $booking->update([
+            'status' => 'confirmed',
+            'decided_by_staff_id' => $user->id,
+            'qr_token' => $qrCode,
+            'qr_generated_at' => now(),
+        ]);
 
         Ticket::create([
             'booking_id' => $booking->id,
@@ -219,23 +272,13 @@ class BookingController extends Controller
         // Generate secure unguessable qr token
         $qrToken = 'TKT-' . bin2hex(random_bytes(16));
 
-        // Generate QR code and store it
+        // Generate QR code SVG and store it
         \Illuminate\Support\Facades\Storage::disk('public')->makeDirectory('qr-tickets');
-        $qrPath = 'qr-tickets/' . $booking->id . '.png';
-
-        try {
-            $qrCodeImage = \SimpleSoftwareIO\QrCode\Facades\QrCode::format('png')
-                ->size(250)
-                ->margin(1)
-                ->generate($qrToken);
-            \Illuminate\Support\Facades\Storage::disk('public')->put($qrPath, $qrCodeImage);
-        } catch (\Exception $e) {
-            // Fallback to SVG format if PNG fails due to lack of Imagick/GD extension, but keep PNG extension to match spec
-            $qrCodeImage = \SimpleSoftwareIO\QrCode\Facades\QrCode::size(250)
-                ->margin(1)
-                ->generate($qrToken);
-            \Illuminate\Support\Facades\Storage::disk('public')->put($qrPath, $qrCodeImage);
-        }
+        $qrPath = 'qr-tickets/' . $booking->id . '.svg';
+        $qrCodeImage = \SimpleSoftwareIO\QrCode\Facades\QrCode::size(250)
+            ->margin(1)
+            ->generate($qrToken);
+        \Illuminate\Support\Facades\Storage::disk('public')->put($qrPath, $qrCodeImage);
 
         // Update booking and payment statuses together
         $booking->update([
@@ -314,9 +357,9 @@ class BookingController extends Controller
             abort(403, 'Only tourists can view tickets.');
         }
 
-        $bookings = Booking::with('destination')
+        $bookings = Booking::with(['destination', 'ticket'])
             ->where('tourist_id', $user->id)
-            ->where('status', 'confirmed')
+            ->whereIn('status', ['confirmed', 'completed'])
             ->whereNotNull('qr_token')
             ->latest()
             ->get();

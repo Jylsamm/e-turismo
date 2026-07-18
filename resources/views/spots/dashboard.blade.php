@@ -66,12 +66,6 @@
             <a href="{{ route('spots.status', $destination) }}" class="tab-link active">
                 <i class="ti ti-activity"></i> Spot Status
             </a>
-            <a href="{{ route('spots.edit', $destination) }}" class="tab-link">
-                <i class="ti ti-edit"></i> Edit Details
-            </a>
-            <a href="{{ route('spots.gallery', $destination) }}" class="tab-link">
-                <i class="ti ti-photo"></i> Image Gallery
-            </a>
         </div>
 
         {{-- Tab 1: Spot Status Dashboard --}}
@@ -79,7 +73,7 @@
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 
                 {{-- Occupancy Section --}}
-                <div class="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm lg:col-span-1 flex flex-col justify-between">
+                <div class="interactive-card p-6 lg:col-span-1 flex flex-col justify-between">
                     <div>
                         <div class="flex justify-between items-start mb-4">
                             <h2 class="text-lg font-bold text-gray-800">Current Occupancy</h2>
@@ -114,7 +108,7 @@
 
                 {{-- Stats Cards Grid --}}
                 <div class="lg:col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div class="bg-white border border-gray-200 rounded-2xl p-5 shadow-sm flex items-center gap-4">
+                    <div class="interactive-card p-5 flex items-center gap-4">
                         <div class="w-12 h-12 rounded-xl bg-blue-50 flex items-center justify-center text-blue-600 text-2xl shrink-0">
                             <i class="ti ti-users"></i>
                         </div>
@@ -124,7 +118,7 @@
                         </div>
                     </div>
 
-                    <div class="bg-white border border-gray-200 rounded-2xl p-5 shadow-sm flex items-center gap-4">
+                    <div class="interactive-card p-5 flex items-center gap-4">
                         <div class="w-12 h-12 rounded-xl bg-orange-50 flex items-center justify-center text-orange-600 text-2xl shrink-0">
                             <i class="ti ti-clock"></i>
                         </div>
@@ -134,7 +128,7 @@
                         </div>
                     </div>
 
-                    <div class="bg-white border border-gray-200 rounded-2xl p-5 shadow-sm flex items-center gap-4">
+                    <div class="interactive-card p-5 flex items-center gap-4">
                         <div class="w-12 h-12 rounded-xl bg-purple-50 flex items-center justify-center text-purple-600 text-2xl shrink-0">
                             <i class="ti ti-hourglass-low"></i>
                         </div>
@@ -144,7 +138,7 @@
                         </div>
                     </div>
 
-                    <div class="bg-white border border-gray-200 rounded-2xl p-5 shadow-sm flex items-center gap-4">
+                    <div class="interactive-card p-5 flex items-center gap-4">
                         <div class="w-12 h-12 rounded-xl bg-emerald-50 flex items-center justify-center text-emerald-600 text-2xl shrink-0">
                             <i class="ti ti-trending-up"></i>
                         </div>
@@ -157,7 +151,7 @@
             </div>
 
             {{-- Booking History Section --}}
-            <div class="bg-white border border-gray-200 rounded-2xl overflow-hidden shadow-sm">
+            <div class="interactive-card overflow-hidden">
                 <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
                     <div class="flex items-center gap-2">
                         <i class="ti ti-history text-gray-400" style="font-size:20px;"></i>

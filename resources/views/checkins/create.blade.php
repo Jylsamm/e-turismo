@@ -304,7 +304,7 @@
             <div class="contents lg:block lg:col-span-5 lg:space-y-4">
 
                 {{-- Scanner Card --}}
-                <div class="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden order-1">
+                <div class="interactive-card overflow-hidden order-1">
                     <div class="px-5 py-3.5 border-b border-gray-100 flex items-center justify-between bg-gray-50">
                         <h2 class="font-bold text-gray-800 text-sm flex items-center gap-2">
                             <i class="ti ti-qrcode text-green-700"></i> QR Scanner
@@ -383,7 +383,7 @@
                 </div>
 
                 {{-- Scanner Health Card --}}
-                <div class="bg-white border border-gray-200 rounded-2xl p-5 shadow-sm space-y-3 order-5 w-full">
+                <div class="interactive-card p-5 space-y-3 order-5 w-full">
                     <h3 class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Scanner Health</h3>
                     <div class="space-y-2.5">
                         <div class="flex items-center justify-between text-sm">
@@ -412,7 +412,7 @@
                 <div id="result-card" style="display:none;" class="order-2 w-full"></div>
 
                 {{-- Manual Verification Card --}}
-                <div class="bg-white border border-gray-200 rounded-2xl p-5 shadow-sm space-y-3 order-3 w-full">
+                <div class="interactive-card p-5 space-y-3 order-3 w-full">
                     <h3 class="text-sm font-bold text-gray-800 flex items-center gap-1.5">
                         <i class="ti ti-keyboard text-green-700"></i> Manual Verification
                     </h3>
@@ -429,7 +429,7 @@
                 </div>
 
                 {{-- ④ Pending Arrivals Queue (collapsible) --}}
-                <div class="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden order-4 w-full"
+                <div class="interactive-card overflow-hidden order-4 w-full"
                     id="pending-panel">
                     <button
                         class="w-full px-5 py-3.5 flex items-center justify-between text-left hover:bg-gray-50 transition"
@@ -455,7 +455,7 @@
                 </div>
 
                 {{-- Activity Timeline (collapsible) --}}
-                <div class="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden order-6 w-full">
+                <div class="interactive-card overflow-hidden order-6 w-full">
                     <button
                         class="w-full px-5 py-3.5 flex items-center justify-between text-left hover:bg-gray-50 transition"
                         onclick="toggleActivity()">

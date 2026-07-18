@@ -237,7 +237,7 @@
                 <div style="margin-top:1.5rem;padding-top:1.25rem;border-top:1px solid #f3f4f6;">
                     <p style="color:#9ca3af;font-size:0.7rem;text-transform:uppercase;letter-spacing:.05em;margin-bottom:.5rem;">Uploaded ID Photo</p>
                     {{-- image-orientation: from-image reads EXIF rotation metadata, fixing sideways phone photos --}}
-                    <img src="{{ asset('storage/' . $user->id_photo) }}" alt="Uploaded ID"
+                    <img src="{{ Storage::url($user->id_photo) }}" alt="Uploaded ID"
                          style="width:100%;max-height:16rem;object-fit:contain;border-radius:0.75rem;border:1px solid #e5e7eb;box-shadow:0 1px 3px rgba(0,0,0,.1);image-orientation:from-image;" />
                 </div>
                 @endif

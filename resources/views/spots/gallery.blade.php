@@ -43,14 +43,8 @@
 
         {{-- Tabs --}}
         <div class="border-b border-gray-200 flex gap-6 mb-6">
-            <a href="{{ route('spots.status', $spot) }}" class="tab-link">
+            <a href="{{ route('spots.status', $spot) }}" class="tab-link active">
                 <i class="ti ti-activity"></i> Spot Status
-            </a>
-            <a href="{{ route('spots.edit', $spot) }}" class="tab-link">
-                <i class="ti ti-edit"></i> Edit Details
-            </a>
-            <a href="{{ route('spots.gallery', $spot) }}" class="tab-link active">
-                <i class="ti ti-photo"></i> Image Gallery
             </a>
         </div>
 

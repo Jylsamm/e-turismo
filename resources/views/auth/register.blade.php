@@ -286,21 +286,36 @@
     z-index: 3; /* sit above the circle, not clipped or overlapping label text */
   }
 
-  .step-label.active {
-    color: #0f172a;
-    /* dark slate */
+  #reg-form .step-label.active {
+    color: #34d399 !important;
     font-weight: 800;
+    text-shadow: 0 0 10px rgba(52, 211, 153, 0.4);
   }
 
-  .step-label.completed {
-    color: #334155;
+  #reg-form .step-label.completed {
+    color: #e2e8f0 !important;
     font-weight: 700;
   }
 
-  .step-label.locked {
-    color: #94a3b8;
-    /* muted grey */
+  #reg-form .step-label.locked {
+    color: rgba(255, 255, 255, 0.4) !important;
     font-weight: 600;
+  }
+
+  #step-progress-line {
+    background: linear-gradient(90deg, #10b981 0%, #34d399 50%, #10b981 100%) !important;
+    background-size: 200% 100% !important;
+    animation: loading-line-run 2s linear infinite !important;
+    box-shadow: 0 0 8px rgba(52, 211, 153, 0.5) !important;
+  }
+
+  @keyframes loading-line-run {
+    0% {
+      background-position: 200% 0;
+    }
+    100% {
+      background-position: -200% 0;
+    }
   }
 
   .step-node.clickable {
@@ -768,13 +783,155 @@
     cursor: pointer;
     background-color: #ffffff !important;
   }
+
+  /* ── Wizard Step Sections ── */
+  .section-block {
+    display: none;
+    opacity: 0;
+    transform: translateX(30px);
+    transition: transform 0.3s ease-out, opacity 0.3s ease-out;
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    margin-bottom: 0 !important;
+  }
+  .section-block::after {
+    display: none !important; /* disable locked overlay */
+  }
+
+  .section-block.active-step {
+    display: block;
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  .section-block.slide-out-left {
+    display: block;
+    transform: translateX(-60px);
+    opacity: 0;
+  }
+
+  .section-block.slide-in-right {
+    display: block;
+    transform: translateX(60px);
+    opacity: 0;
+  }
+
+  .section-block.slide-out-right {
+    display: block;
+    transform: translateX(60px);
+    opacity: 0;
+  }
+
+  .section-block.slide-in-left {
+    display: block;
+    transform: translateX(-60px);
+    opacity: 0;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .section-block {
+      transition: opacity 0.15s ease-in-out !important;
+      transform: none !important;
+    }
+    #stepper-active-glow {
+      transition: none !important;
+      animation: none !important;
+    }
+  }
+
+  /* ── Stepper Active Glow ── */
+  #stepper-active-glow {
+    position: absolute;
+    width: 48px;
+    height: 48px;
+    border-radius: 9999px;
+    border: 2px solid #10b981;
+    background-color: rgba(16, 185, 129, 0.15);
+    box-shadow: 0 0 15px rgba(16, 185, 129, 0.5);
+    z-index: 0;
+    transition: left 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+    pointer-events: none;
+    transform: translateY(-50%);
+    animation: active-pulse 2s infinite ease-in-out;
+  }
+
+  @keyframes active-pulse {
+    0%, 100% { transform: translateY(-50%) scale(1); box-shadow: 0 0 12px rgba(16, 185, 129, 0.4); }
+    50% { transform: translateY(-50%) scale(1.1); box-shadow: 0 0 20px rgba(16, 185, 129, 0.7); }
+  }
+
+  /* ── Checkmark Scale-In ── */
+  @keyframes check-scale-in {
+    0% { transform: scale(0.3); opacity: 0; }
+    50% { transform: scale(1.3); }
+    100% { transform: scale(1); opacity: 1; }
+  }
+  .check-icon-anim {
+    animation: check-scale-in 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  }
+
+  /* ── Text Readability inside Dark Glass Container ── */
+  #reg-form label {
+    color: rgba(255, 255, 255, 0.95) !important;
+  }
+  .section-title h2 {
+    color: #ffffff !important;
+    font-size: 1.25rem !important;
+    font-weight: 800 !important;
+  }
+  .section-hint, .otp-message {
+    color: rgba(255, 255, 255, 0.7) !important;
+  }
+  .otp-message.text-red-600 {
+    color: #f87171 !important;
+  }
+  .otp-message.text-green-600 {
+    color: #34d399 !important;
+  }
+
+  /* ── Smooth Input Focus States ── */
+  #reg-form input:focus, #reg-form select:focus, #reg-form textarea:focus {
+    border-color: #10b981 !important;
+    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.25) !important;
+    outline: none !important;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  /* ── Button Micro-Interactions ── */
+  .otp-button, .cam-enable-btn, .cam-retry-btn, button[type="submit"], #submit-btn, .btn-primary, x-primary-button {
+    transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+  }
+  .otp-button:hover:not(:disabled), 
+  .cam-enable-btn:hover:not(:disabled), 
+  .cam-retry-btn:hover:not(:disabled), 
+  #submit-btn:hover:not(:disabled) {
+    transform: scale(1.03);
+    box-shadow: 0 0 12px rgba(16, 185, 129, 0.4);
+  }
+  .otp-button:active:not(:disabled), 
+  .cam-enable-btn:active:not(:disabled), 
+  .cam-retry-btn:active:not(:disabled), 
+  #submit-btn:active:not(:disabled) {
+    transform: scale(0.97);
+  }
+
+  /* ── Photo Capture Success Green Flash ── */
+  @keyframes success-green-flash {
+    0% { background-color: rgba(16, 185, 129, 0.45); }
+    100% { background-color: transparent; }
+  }
+  .flash-success {
+    animation: success-green-flash 0.8s ease-out forwards;
+  }
 </style>
 
-<x-guest-layout>
+<x-guest-layout maxWidth="sm:max-w-2xl">
   <!-- Back Button -->
   <div class="mb-6">
     <a href="{{ route('home') }}"
-      class="group inline-flex items-center gap-1.5 text-sm font-medium text-gray-600 bg-gray-100 hover:bg-gray-200 hover:text-gray-900 transition-all duration-200 px-3 py-1.5 rounded-full">
+      class="group inline-flex items-center gap-1.5 text-sm font-medium bg-white/10 hover:bg-white/20 transition-all duration-200 px-3 py-1.5 rounded-full border border-white/10" style="color: white;">
       <svg class="w-4 h-4 transition-transform duration-200 group-hover:-translate-x-0.5" fill="currentColor"
         viewBox="0 0 20 20">
         <path fill-rule="evenodd"
@@ -790,14 +947,17 @@
 
     <div class="mb-8 px-2 select-none">
       <!-- Progress Indicator Container -->
-      <div class="w-full max-w-2xl mx-auto mt-4 px-4 pb-8">
+      <div class="w-full max-w-2xl mx-auto mt-4 px-4 pb-8 relative">
         <div class="relative flex items-center justify-between">
           <!-- Background Connecting Line -->
-          <div class="absolute left-[32px] right-[32px] top-[20px] h-[3px] bg-gray-200 -translate-y-1/2 z-0 rounded"></div>
+          <div class="absolute left-[32px] right-[32px] top-[20px] h-[3px] bg-white/10 -translate-y-1/2 z-0 rounded"></div>
           <!-- Active Filled Progress Line -->
           <div id="step-progress-line"
-            class="absolute left-[32px] top-[20px] h-[3px] bg-emerald-600 -translate-y-1/2 z-0 rounded transition-all duration-500 ease-out"
+            class="absolute left-[32px] top-[20px] h-[3px] -translate-y-1/2 z-0 rounded transition-all duration-500 ease-out"
             style="width: 0%;"></div>
+          
+          <!-- Smooth Active Glow Ring -->
+          <div id="stepper-active-glow" class="absolute w-12 h-12 rounded-full border-2 border-emerald-500 bg-emerald-500/10 shadow-[0_0_15px_rgba(16,185,129,0.4)] z-0 transition-all duration-300 ease-out -translate-y-1/2 pointer-events-none" style="top: 20px; left: 0;"></div>
 
           <!-- Step 1 -->
           <div class="step-node flex flex-col items-center z-10 w-16 clickable" id="step-node-1"
@@ -962,6 +1122,11 @@
 
       <p id="otp-status-msg" class="otp-message text-gray-500">Enter your Gmail address and click <strong>Get
           Code</strong>.</p>
+
+      <!-- Next button for Step 1 -->
+      <div class="flex justify-end items-center mt-6 pt-4 border-t border-white/10">
+        <button type="button" class="btn-next-step otp-button" id="btn-next-1" disabled onclick="navigateToStep(1)">Next →</button>
+      </div>
     </div>
 
     <div class="section-block section-locked" id="section-details">
@@ -1062,6 +1227,11 @@
             Visitor)</option>
         </select>
         <x-input-error :messages="$errors->get('classification')" class="mt-2" />
+      </div>
+
+      <!-- Next button for Step 2 -->
+      <div class="flex justify-end items-center mt-6 pt-4 border-t border-white/10">
+        <button type="button" class="btn-next-step otp-button" id="btn-next-2" disabled onclick="navigateToStep(2)">Next →</button>
       </div>
     </div>
 
@@ -1193,14 +1363,18 @@
 
           {{-- STATE A: not yet asked --}}
           <div id="cam-state-pending" class="flex flex-col items-center justify-center text-center gap-4 px-6 py-10">
-            <div
-              style="width:3.5rem;height:3.5rem;border-radius:9999px;background:rgba(13,148,136,0.18);border:1.5px solid rgba(20,184,166,0.5);display:flex;align-items:center;justify-content:center;color:#2dd4bf;">
-              <svg style="width:1.75rem;height:1.75rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                  d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                  d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
-              </svg>
+            <div class="relative w-16 h-16 flex items-center justify-center">
+              <div class="absolute inset-0 rounded-full animate-ping opacity-35 bg-teal-500" style="animation-duration: 2s;"></div>
+              <div
+                style="width:3.5rem;height:3.5rem;border-radius:9999px;background:rgba(13,148,136,0.18);border:1.5px solid rgba(20,184,166,0.5);display:flex;align-items:center;justify-content:center;color:#2dd4bf;"
+                class="relative z-10">
+                <svg style="width:1.75rem;height:1.75rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+                </svg>
+              </div>
             </div>
             <div>
               <p style="color:#f8fafc; font-weight:600; font-size:.875rem;">Capture Your ID with Camera</p>
@@ -1379,6 +1553,11 @@
         <p id="cam-success-msg" class="mt-2 text-sm text-green-600 hidden"></p>
         <x-input-error :messages="$errors->get('id_photo')" class="mt-2" />
       </div>
+
+      <!-- Next button for Step 3 -->
+      <div class="flex justify-end items-center mt-6 pt-4 border-t border-white/10">
+        <button type="button" class="btn-next-step otp-button" id="btn-next-3" disabled onclick="navigateToStep(3)">Next →</button>
+      </div>
     </div>
 
     <div class="section-block section-locked" id="section-password">
@@ -1393,27 +1572,13 @@
           <x-text-input id="password" class="block w-full pr-12" type="password" name="password" required
             autocomplete="new-password" />
           <button type="button" onclick="togglePassword('password', this)"
-            class="text-gray-400 hover:text-gray-600 focus:outline-none"
-            style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%);">
-            <svg class="w-5 h-5 eye-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256">
-              <path d="M128,56C48,56,16,128,16,128s32,72,112,72,112-72,112-72S208,56,128,56Z" fill="currentColor"
-                opacity="0.2"></path>
-              <path d="M128,56C48,56,16,128,16,128s32,72,112,72,112-72,112-72S208,56,128,56Z" fill="none"
-                stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"></path>
-              <circle cx="128" cy="128" r="32" fill="none" stroke="currentColor" stroke-linecap="round"
-                stroke-linejoin="round" stroke-width="16"></circle>
-            </svg>
-            <svg class="w-5 h-5 eye-slash-icon hidden" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256">
-              <path d="M53.9,190.4A105.8,105.8,0,0,1,16,128s32-72,112-72a114.3,114.3,0,0,1,55.3,14.2"
-                fill="currentColor" opacity="0.2"></path>
-              <path d="M109.8,155.6a32,32,0,0,1-37.4-37.4M240,128s-32,72-112,72a114.3,114.3,0,0,1-55.3-14.2" fill="none"
-                stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"></path>
-              <path d="M53.9,190.4A105.8,105.8,0,0,1,16,128s32-72,112-72a114.3,114.3,0,0,1,55.3,14.2" fill="none"
-                stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"></path>
-              <path d="M150.6,150.6a32,32,0,0,1-40.8-40.8" fill="none" stroke="currentColor" stroke-linecap="round"
-                stroke-linejoin="round" stroke-width="16"></path>
-              <line x1="40" y1="40" x2="216" y2="216" fill="none" stroke="currentColor" stroke-linecap="round"
-                stroke-linejoin="round" stroke-width="16"></line>
+            class="password-toggle-btn toggled-hidden"
+            aria-label="Show password"
+            aria-pressed="false">
+            <svg class="w-5 h-5 eye-icon-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path class="eye-lid" d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7z"></path>
+              <circle class="eye-pupil" cx="12" cy="12" r="3"></circle>
+              <line class="eye-slash" x1="4" y1="20" x2="20" y2="4"></line>
             </svg>
           </button>
         </div>
@@ -1426,45 +1591,39 @@
           <x-text-input id="password_confirmation" class="block w-full pr-12" type="password"
             name="password_confirmation" required autocomplete="new-password" />
           <button type="button" onclick="togglePassword('password_confirmation', this)"
-            class="text-gray-400 hover:text-gray-600 focus:outline-none"
-            style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%);">
-            <svg class="w-5 h-5 eye-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256">
-              <path d="M128,56C48,56,16,128,16,128s32,72,112,72,112-72,112-72S208,56,128,56Z" fill="currentColor"
-                opacity="0.2"></path>
-              <path d="M128,56C48,56,16,128,16,128s32,72,112,72,112-72,112-72S208,56,128,56Z" fill="none"
-                stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"></path>
-              <circle cx="128" cy="128" r="32" fill="none" stroke="currentColor" stroke-linecap="round"
-                stroke-linejoin="round" stroke-width="16"></circle>
-            </svg>
-            <svg class="w-5 h-5 eye-slash-icon hidden" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256">
-              <path d="M53.9,190.4A105.8,105.8,0,0,1,16,128s32-72,112-72a114.3,114.3,0,0,1,55.3,14.2"
-                fill="currentColor" opacity="0.2"></path>
-              <path d="M109.8,155.6a32,32,0,0,1-37.4-37.4M240,128s-32,72-112,72a114.3,114.3,0,0,1-55.3-14.2" fill="none"
-                stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"></path>
-              <path d="M53.9,190.4A105.8,105.8,0,0,1,16,128s32-72,112-72a114.3,114.3,0,0,1,55.3,14.2" fill="none"
-                stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"></path>
-              <path d="M150.6,150.6a32,32,0,0,1-40.8-40.8" fill="none" stroke="currentColor" stroke-linecap="round"
-                stroke-linejoin="round" stroke-width="16"></path>
-              <line x1="40" y1="40" x2="216" y2="216" fill="none" stroke="currentColor" stroke-linecap="round"
-                stroke-linejoin="round" stroke-width="16"></line>
+            class="password-toggle-btn toggled-hidden"
+            aria-label="Show password"
+            aria-pressed="false">
+            <svg class="w-5 h-5 eye-icon-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path class="eye-lid" d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7z"></path>
+              <circle class="eye-pupil" cx="12" cy="12" r="3"></circle>
+              <line class="eye-slash" x1="4" y1="20" x2="20" y2="4"></line>
             </svg>
           </button>
         </div>
         <x-input-error :messages="$errors->get('password_confirmation')" class="mt-2" />
       </div>
 
-      <div class="section-block section-locked" id="section-submit">
-        <div class="section-title">
-          <h2>Review & Submit</h2>
-        </div>
-        <div class="flex items-center justify-end mt-5">
-          <a class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-500"
+      <!-- Next button for Step 4 -->
+      <div class="flex justify-end items-center mt-6 pt-4 border-t border-white/10">
+        <button type="button" class="btn-next-step otp-button" id="btn-next-4" disabled onclick="navigateToStep(4)">Next →</button>
+      </div>
+    </div>
+
+    <div class="section-block section-locked" id="section-submit">
+      <div class="section-title">
+        <h2>Review & Submit</h2>
+      </div>
+      <div class="flex justify-end items-center mt-6 pt-4 border-t border-white/10">
+        <div class="flex items-center gap-4">
+          <a class="underline text-sm text-gray-400 hover:text-white rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-500"
             href="{{ route('login') }}">
-            {{ __('Already registered?') }}
+            Already registered?
           </a>
-          <x-primary-button class="ms-4" id="submit-btn">{{ __('Create Account') }}</x-primary-button>
+          <x-primary-button id="submit-btn">Create Account</x-primary-button>
         </div>
       </div>
+    </div>
   </form>
 
   <script>
@@ -1573,6 +1732,104 @@
     const passwordInput = document.getElementById('password');
     const confirmPasswordInput = document.getElementById('password_confirmation');
 
+    let currentStepIndex = 0; // 0: email, 1: details, 2: identity, 3: password, 4: submit
+
+    function getSectionId(idx) {
+      return ['section-email', 'section-details', 'section-identity', 'section-password', 'section-submit'][idx];
+    }
+
+    function navigateToStep(targetIndex) {
+      if (targetIndex === currentStepIndex) return;
+      
+      const states = getStepStates();
+      if (!states[targetIndex]) return; // locked step
+
+      const currentSection = document.getElementById(getSectionId(currentStepIndex));
+      const targetSection = document.getElementById(getSectionId(targetIndex));
+
+      if (!currentSection || !targetSection) return;
+
+      const isNext = targetIndex > currentStepIndex;
+
+      // Handle prefers-reduced-motion
+      const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (reducedMotion) {
+        currentSection.className = 'section-block';
+        targetSection.className = 'section-block active-step';
+        currentStepIndex = targetIndex;
+        
+        // Focus first input
+        const firstInput = targetSection.querySelector('input:not([disabled]),select:not([disabled])');
+        if (firstInput) firstInput.focus();
+
+        updateStepProgress();
+        return;
+      }
+
+      // Set transition classes
+      if (isNext) {
+        currentSection.className = 'section-block slide-out-left';
+        targetSection.className = 'section-block slide-in-right';
+      } else {
+        currentSection.className = 'section-block slide-out-right';
+        targetSection.className = 'section-block slide-in-left';
+      }
+
+      // Force reflow
+      void targetSection.offsetWidth;
+
+      setTimeout(() => {
+        // Hide old section
+        currentSection.className = 'section-block';
+        // Show new section
+        targetSection.className = 'section-block active-step';
+        currentStepIndex = targetIndex;
+        
+        // Focus first input
+        const firstInput = targetSection.querySelector('input:not([disabled]),select:not([disabled])');
+        if (firstInput) firstInput.focus();
+
+        updateStepProgress();
+      }, 300);
+    }
+
+    function updateActiveGlow() {
+      const activeNode = document.getElementById(`step-node-${currentStepIndex + 1}`);
+      const glow = document.getElementById('stepper-active-glow');
+      if (activeNode && glow) {
+        const leftOffset = activeNode.offsetLeft + (activeNode.offsetWidth / 2) - 24; // 24 is half of 48px
+        glow.style.left = `${leftOffset}px`;
+      }
+    }
+
+    function getStepStates() {
+      const step1_completed = otpVerified;
+
+      const step2_completed = step1_completed &&
+        firstNameInput.value.trim() !== '' &&
+        lastNameInput.value.trim() !== '' &&
+        classificationSelect.value !== '';
+
+      const needsDob = ID_TYPES_WITH_DOB.has(idTypeSelect.value);
+      const step3_completed = step2_completed &&
+        idTypeSelect.value !== '' &&
+        idInput.value.trim() !== '' &&
+        (!needsDob || dobInput.value !== '') &&
+        captured;
+
+      const step4_completed = step3_completed &&
+        passwordInput.value.length >= 8 &&
+        passwordInput.value === confirmPasswordInput.value;
+
+      return [
+        true, // Step 1 always unlocked
+        step1_completed, // Step 2 details unlocked if step 1 completed
+        step2_completed, // Step 3 identity unlocked if step 2 completed
+        step3_completed, // Step 4 password unlocked if step 3 completed
+        step4_completed  // Step 5 submit unlocked if step 4 completed
+      ];
+    }
+
     function updateStepProgress() {
       const step1_completed = otpVerified;
 
@@ -1592,14 +1849,23 @@
         passwordInput.value.length >= 8 &&
         passwordInput.value === confirmPasswordInput.value;
 
-      const step5_completed = step4_completed; // Submit active
+      // Update validation state of Next buttons
+      const btnNext1 = document.getElementById('btn-next-1');
+      const btnNext2 = document.getElementById('btn-next-2');
+      const btnNext3 = document.getElementById('btn-next-3');
+      const btnNext4 = document.getElementById('btn-next-4');
+
+      if (btnNext1) btnNext1.disabled = !step1_completed;
+      if (btnNext2) btnNext2.disabled = !step2_completed;
+      if (btnNext3) btnNext3.disabled = !step3_completed;
+      if (btnNext4) btnNext4.disabled = !step4_completed;
 
       const states = [
-        { completed: step1_completed, active: !step1_completed, locked: false },
-        { completed: step2_completed, active: step1_completed && !step2_completed, locked: !step1_completed },
-        { completed: step3_completed, active: step2_completed && !step3_completed, locked: !step2_completed },
-        { completed: step4_completed, active: step3_completed && !step4_completed, locked: !step3_completed },
-        { completed: false, active: step4_completed, locked: !step4_completed }
+        { completed: step1_completed, active: currentStepIndex === 0, locked: currentStepIndex < 0 },
+        { completed: step2_completed, active: currentStepIndex === 1, locked: currentStepIndex < 1 },
+        { completed: step3_completed, active: currentStepIndex === 2, locked: currentStepIndex < 2 },
+        { completed: step4_completed, active: currentStepIndex === 3, locked: currentStepIndex < 3 },
+        { completed: false, active: currentStepIndex === 4, locked: currentStepIndex < 4 }
       ];
 
       // Update UI for each step node
@@ -1615,29 +1881,39 @@
         circle.classList.remove('active', 'completed');
         label.classList.remove('active', 'completed', 'locked');
         node.classList.remove('clickable', 'locked-node');
+        node.removeAttribute('aria-current');
+
+        const stepStates = getStepStates();
+        const stepUnlocked = stepStates[i];
 
         if (state.completed) {
           circle.classList.add('completed');
           label.classList.add('completed');
-          node.classList.add('clickable');
-          innerVal.innerHTML = '<svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>';
+          if (stepUnlocked) node.classList.add('clickable');
+          innerVal.innerHTML = '<svg class="w-4 h-4 text-white check-icon-anim" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>';
           if (lockBadge) lockBadge.classList.add('hidden');
         } else if (state.active) {
           circle.classList.add('active');
           label.classList.add('active');
-          node.classList.add('clickable');
+          node.setAttribute('aria-current', 'step');
+          if (stepUnlocked) node.classList.add('clickable');
           innerVal.textContent = idx;
           if (lockBadge) lockBadge.classList.add('hidden');
         } else {
           label.classList.add('locked');
-          node.classList.add('locked-node');
-          innerVal.textContent = idx;
-          if (lockBadge) lockBadge.classList.remove('hidden');
+          if (stepUnlocked) {
+            node.classList.add('clickable');
+            innerVal.textContent = idx;
+            if (lockBadge) lockBadge.classList.add('hidden');
+          } else {
+            node.classList.add('locked-node');
+            innerVal.textContent = idx;
+            if (lockBadge) lockBadge.classList.remove('hidden');
+          }
         }
       });
 
       // Calculate filled progress line width
-      // Distance from node 1 to 5: 0%, 25%, 50%, 75%, 100%
       let completedCount = 0;
       if (step1_completed) completedCount = 1;
       if (step2_completed) completedCount = 2;
@@ -1649,53 +1925,23 @@
         progressLine.style.width = `${completedCount * 25}%`;
       }
 
-      // Update section lock states and disabled inputs
-      // Section Details (Step 2 inputs)
-      const detailsLocked = !step1_completed;
-      sectionDetails.classList.toggle('section-locked', detailsLocked);
-      setLockSectionInputs(sectionDetails, detailsLocked);
+      // Lock inputs in other sections, unlock in active section
+      ['section-email', 'section-details', 'section-identity', 'section-password', 'section-submit'].forEach((id, idx) => {
+        const sec = document.getElementById(id);
+        if (sec) {
+          const isCurrent = idx === currentStepIndex;
+          setLockSectionInputs(sec, !isCurrent);
+        }
+      });
 
-      // Section Identity (Step 3 inputs)
-      const identityLocked = !step2_completed;
-      sectionIdentity.classList.toggle('section-locked', identityLocked);
-      setLockSectionInputs(sectionIdentity, identityLocked);
-
-      // Section Password (Step 4 inputs)
-      const passwordLocked = !step3_completed;
-      sectionPassword.classList.toggle('section-locked', passwordLocked);
-      setLockSectionInputs(sectionPassword, passwordLocked);
-
-      // Section Submit (Step 5 inputs)
-      const submitLocked = !step4_completed;
-      sectionSubmit.classList.toggle('section-locked', submitLocked);
-      setLockSectionInputs(sectionSubmit, submitLocked);
-
-      // Check form overall validity to enable the submit button
+      updateActiveGlow();
       checkValidity();
     }
 
     function handleStepClick(sectionId, stepIdx) {
-      // Only allow if not locked
-      const states = [
-        true, // Step 1 is always accessible
-        otpVerified, // Step 2 details is accessible if step 1 completed
-        otpVerified && firstNameInput.value.trim() !== '' && lastNameInput.value.trim() !== '' && classificationSelect.value !== '', // Step 3
-        // Step 4
-        otpVerified && firstNameInput.value.trim() !== '' && lastNameInput.value.trim() !== '' && classificationSelect.value !== '' && idTypeSelect.value !== '' && idInput.value.trim() !== '' && (!ID_TYPES_WITH_DOB.has(idTypeSelect.value) || dobInput.value !== '') && captured,
-        // Step 5
-        otpVerified && firstNameInput.value.trim() !== '' && lastNameInput.value.trim() !== '' && classificationSelect.value !== '' && idTypeSelect.value !== '' && idInput.value.trim() !== '' && (!ID_TYPES_WITH_DOB.has(idTypeSelect.value) || dobInput.value !== '') && captured && passwordInput.value.length >= 8 && passwordInput.value === confirmPasswordInput.value
-      ];
-
-      if (states[stepIdx]) {
-        const target = document.getElementById(sectionId);
-        if (target) {
-          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-          // Focus first input
-          setTimeout(() => {
-            const firstInput = target.querySelector('input:not([disabled]),select:not([disabled])');
-            if (firstInput) firstInput.focus();
-          }, 500);
-        }
+      const stepStates = getStepStates();
+      if (stepStates[stepIdx]) {
+        navigateToStep(stepIdx);
       }
     }
 
@@ -1794,13 +2040,36 @@
     // ── Restore state immediately before init ──
     restoreFormState();
 
-    // Initialise — ensure locked sections have disabled inputs from the start
-    setLockSectionInputs(sectionDetails, true);
-    setLockSectionInputs(sectionIdentity, true);
-    setLockSectionInputs(sectionPassword, true);
-    setLockSectionInputs(sectionSubmit, true);
+    // Initialize active step index based on restored state
+    if (otpVerified) {
+      currentStepIndex = 1;
+    } else {
+      currentStepIndex = 0;
+    }
+
+    function initStepVisibility() {
+      const sections = ['section-email', 'section-details', 'section-identity', 'section-password', 'section-submit'];
+      sections.forEach((id, idx) => {
+        const sec = document.getElementById(id);
+        if (sec) {
+          if (idx === currentStepIndex) {
+            sec.className = 'section-block active-step';
+            setLockSectionInputs(sec, false);
+          } else {
+            sec.className = 'section-block';
+            setLockSectionInputs(sec, true);
+          }
+        }
+      });
+      updateActiveGlow();
+    }
+
+    initStepVisibility();
     checkValidity();
     updateStepProgress();
+
+    window.addEventListener('load', updateActiveGlow);
+    window.addEventListener('resize', updateActiveGlow);
 
     // ── Email check ────────────────────────────────────────────
     emailInput.addEventListener('input', function () {
@@ -1977,12 +2246,9 @@
         updateStepProgress();
         saveFormState(); // Persist verified state so refresh doesn't reset wizard
 
-        // Auto-scroll to section 2
+        // Auto-advance to section 2
         setTimeout(() => {
-          sectionDetails.scrollIntoView({ behavior: 'smooth', block: 'start' });
-          // Focus first visible input in section 2
-          const firstInput = sectionDetails.querySelector('input:not([disabled]),select:not([disabled])');
-          if (firstInput) firstInput.focus();
+          navigateToStep(1);
         }, 500);
 
       }).catch(() => {
@@ -2129,6 +2395,13 @@
               camOkMsg.classList.remove('hidden');
               stopStream();
               showState('captured');
+              
+              // Play green flash success animation
+              stateCaptured.classList.add('flash-success');
+              setTimeout(() => {
+                stateCaptured.classList.remove('flash-success');
+              }, 800);
+
               updateStepProgress();
             };
             imgBack.src = backPhotoData;
@@ -2515,28 +2788,55 @@
 
     document.getElementById('reg-form').addEventListener('submit', function (e) {
       if (msgDiv.className.includes('text-red-600') || !captured) { e.preventDefault(); return; }
+      
+      e.preventDefault(); // Stop default submit to play transition first
+      
+      sessionStorage.setItem('just_registered', 'true');
+      
       stopStream();
-      const ov = document.createElement('div');
-      ov.className = 'fixed inset-0 z-50 flex items-center justify-center bg-slate-900/80 backdrop-blur-sm';
-      ov.innerHTML = '<div class="text-center"><div class="text-6xl mb-4 animate-bounce">\u23f3</div><h2 class="text-2xl font-bold text-white mb-2">Reading Your ID...</h2><p class="text-teal-300 text-sm">This usually takes a few seconds.</p></div>';
-      document.body.appendChild(ov);
-      submitBtn.disabled = true; submitBtn.textContent = 'Processing…';
+
+      // Fade out the main form card
+      const guestCard = document.querySelector('.bg-black/60');
+      if (guestCard) {
+        guestCard.style.transition = 'all 0.6s cubic-bezier(0.25, 1, 0.5, 1)';
+        guestCard.style.opacity = '0';
+        guestCard.style.transform = 'scale(0.95)';
+      }
+      
+      // Play success checkmark scale-out animation
+      const successOverlay = document.createElement('div');
+      successOverlay.className = 'fixed inset-0 z-[9999] flex items-center justify-center backdrop-blur-md';
+      successOverlay.style.background = 'linear-gradient(135deg, #0b3d2e 0%, #061810 100%)';
+      successOverlay.style.opacity = '0';
+      successOverlay.style.transition = 'opacity 0.5s ease';
+      successOverlay.innerHTML = `
+        <style>
+          @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+          }
+        </style>
+        <div class="text-center px-4">
+          <div class="w-20 h-20 mx-auto bg-emerald-500 rounded-full flex items-center justify-center text-white text-4xl shadow-lg shadow-emerald-500/50 scale-0" style="animation: check-scale-in 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) 0.2s forwards;">
+            ✓
+          </div>
+          <h2 class="text-3xl font-black text-white mt-6 mb-2" style="animation: fadeInUp 0.8s cubic-bezier(0.25, 1, 0.5, 1) 0.5s forwards; opacity: 0; transform: translateY(15px);">Welcome to E-Turismo!</h2>
+          <p class="text-emerald-400 text-sm" style="animation: fadeInUp 0.8s cubic-bezier(0.25, 1, 0.5, 1) 0.7s forwards; opacity: 0; transform: translateY(15px);">Setting up your tourist dashboard...</p>
+        </div>
+      `;
+      document.body.appendChild(successOverlay);
+
+      // Trigger reflow
+      void successOverlay.offsetWidth;
+      successOverlay.style.opacity = '1';
+
+      // Submit form after animation completes
+      setTimeout(() => {
+        e.target.submit();
+      }, 1900);
     });
 
-    function togglePassword(inputId, btn) {
-      const input = document.getElementById(inputId);
-      const eye = btn.querySelector('.eye-icon');
-      const eyeSlash = btn.querySelector('.eye-slash-icon');
-      if (input.type === 'password') {
-        input.type = 'text';
-        eye.classList.add('hidden');
-        eyeSlash.classList.remove('hidden');
-      } else {
-        input.type = 'password';
-        eye.classList.remove('hidden');
-        eyeSlash.classList.add('hidden');
-      }
-    }
+
   </script>
 
   <script>

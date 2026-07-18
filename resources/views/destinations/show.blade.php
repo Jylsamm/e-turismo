@@ -107,14 +107,14 @@
         }
 
         /* ── Calendar ── */
-        #cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
-        .cal-weekday { font-size: .62rem; font-weight: 700; text-align: center; color: var(--text-4); text-transform: uppercase; letter-spacing: .05em; padding: 4px 0; }
+        #cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 3px; }
+        .cal-weekday { font-size: .62rem; font-weight: 700; text-align: center; color: var(--text-4); text-transform: uppercase; letter-spacing: .05em; padding: 2px 0; }
         .cal-day {
             position: relative; aspect-ratio: 1/1; display: flex; flex-direction: column;
-            align-items: center; justify-content: center; border-radius: 10px;
-            font-size: .76rem; font-weight: 600; cursor: default;
-            border: 2px solid transparent; transition: all .15s ease;
-            user-select: none; min-height: 36px;
+            align-items: center; justify-content: center; border-radius: 8px;
+            font-size: .72rem; font-weight: 600; cursor: default;
+            border: 1.5px solid transparent; transition: all .15s ease;
+            user-select: none; min-height: 30px;
         }
         .cal-day.empty  { background: transparent; border: none; }
         .cal-day.past   { background: #f9fafb; color: #d1d5db; cursor: not-allowed; }
@@ -125,10 +125,10 @@
         .cal-day.full    { background: #fef2f2; color: #b91c1c; border-color: #fca5a5; cursor: not-allowed; }
         .cal-day.insufficient { background: #f9fafb; color: #9ca3af; border-color: #e5e7eb; cursor: not-allowed; position: relative; overflow: hidden; }
         .cal-day.insufficient::after { content: ''; position: absolute; top: 50%; left: 12%; right: 12%; height: 1.5px; background: #d1d5db; transform: translateY(-50%) rotate(-15deg); }
-        .cal-day.range-start { background: #4f46e5 !important; color: #fff !important; border-color: #3730a3 !important; transform: scale(1.08); box-shadow: 0 4px 14px rgba(79,70,229,.45); border-radius: 10px 0 0 10px !important; }
-        .cal-day.range-end   { background: #4f46e5 !important; color: #fff !important; border-color: #3730a3 !important; transform: scale(1.08); box-shadow: 0 4px 14px rgba(79,70,229,.45); border-radius: 0 10px 10px 0 !important; }
+        .cal-day.range-start { background: #4f46e5 !important; color: #fff !important; border-color: #3730a3 !important; transform: scale(1.08); box-shadow: 0 4px 14px rgba(79,70,229,.45); border-radius: 8px 0 0 8px !important; }
+        .cal-day.range-end   { background: #4f46e5 !important; color: #fff !important; border-color: #3730a3 !important; transform: scale(1.08); box-shadow: 0 4px 14px rgba(79,70,229,.45); border-radius: 0 8px 8px 0 !important; }
         .cal-day.range-mid   { background: #e0e7ff !important; color: #3730a3 !important; border-color: #a5b4fc !important; border-radius: 0 !important; }
-        .cal-day.range-start.range-end { border-radius: 10px !important; }
+        .cal-day.range-start.range-end { border-radius: 8px !important; }
         .slot-dot { position: absolute; bottom: 3px; font-size: .45rem; line-height: 1; color: inherit; opacity: .7; }
         .cal-shimmer { animation: shimmer 1.4s infinite; background: linear-gradient(90deg,#f3f4f6 25%,#e5e7eb 50%,#f3f4f6 75%); background-size: 200% 100%; border-radius: 10px; }
         @keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
@@ -173,20 +173,19 @@
             @php
                 $n = strtolower($destination->name);
                 $gradient = 'linear-gradient(135deg,#15803d,#166534)';
-                $emoji = '🌿';
                 if (str_contains($n,'casas')||str_contains($n,'shrine')||str_contains($n,'heritage')) {
-                    $gradient='linear-gradient(135deg,#b45309,#92400e)'; $emoji='🏛️';
+                    $gradient='linear-gradient(135deg,#b45309,#92400e)';
                 } elseif (str_contains($n,'park')||str_contains($n,'rapids')||str_contains($n,'river')||str_contains($n,'adventure')||str_contains($n,'gapo')) {
-                    $gradient='linear-gradient(135deg,#0d9488,#0f766e)'; $emoji='🚣';
+                    $gradient='linear-gradient(135deg,#0d9488,#0f766e)';
                 } elseif (str_contains($n,'lake')||str_contains($n,'maragang')) {
-                    $gradient='linear-gradient(135deg,#0ea5e9,#0369a1)'; $emoji='🌊';
+                    $gradient='linear-gradient(135deg,#0ea5e9,#0369a1)';
                 } elseif (str_contains($n,'falls')||str_contains($n,'nangan')) {
-                    $gradient='linear-gradient(135deg,#0d9488,#166534)'; $emoji='💦';
+                    $gradient='linear-gradient(135deg,#0d9488,#166534)';
                 }
 
-                $category = 'Nature'; $categoryIcon = '🌿';
-                if (str_contains($n,'casas')||str_contains($n,'shrine')) { $category='Heritage'; $categoryIcon='🏛️'; }
-                elseif (str_contains($n,'park')||str_contains($n,'rapids')||str_contains($n,'river')) { $category='Adventure'; $categoryIcon='🏔️'; }
+                $category = 'Nature'; $categoryColor = 'emerald';
+                if (str_contains($n,'casas')||str_contains($n,'shrine')) { $category='Heritage'; $categoryColor='amber'; }
+                elseif (str_contains($n,'park')||str_contains($n,'rapids')||str_contains($n,'river')) { $category='Adventure'; $categoryColor='blue'; }
 
                 $confirmedToday = $destination->bookings()->where('status','confirmed')->where('visit_date', now()->toDateString())->count();
                 $pct = $destination->capacity > 0 ? min(100, round(($confirmedToday/$destination->capacity)*100)) : 0;
@@ -196,13 +195,11 @@
                 $avLabel = ['open'=>'Open','limited'=>'Limited','full'=>'Full','closed'=>'Closed'][$avStatus];
 
                 $highlights = [
-                    ['icon'=>'📍','text'=>$destination->location],
-                    ['icon'=>'👥','text'=>$destination->capacity.' max visitors/day'],
-                    ['icon'=>'🎟️','text'=>'QR entrance ticket required'],
-                    ['icon'=>'🛡️','text'=>'Sanitized & safe for visitors'],
+                    ['type'=>'location','text'=>$destination->location],
+                    ['type'=>'capacity','text'=>$destination->capacity.' max visitors/day'],
+                    ['type'=>'ticket','text'=>'QR entrance ticket required'],
+                    ['type'=>'sanitized','text'=>'Sanitized & safe for visitors'],
                 ];
-
-                $tags = [$categoryIcon.' '.$category, '🛡️ Sanitized', '🎟️ QR Entrance'];
             @endphp
 
             <div class="detail-hero" aria-hidden="true">
@@ -231,15 +228,46 @@
                         <p class="detail-desc">
                             {{ $destination->description ?: 'A beautiful destination in Tigbao, Zamboanga del Sur. Part of the natural and cultural heritage of the region, offering visitors a memorable experience in a pristine setting.' }}
                         </p>
-                        <div class="tag-row">
-                            @foreach($tags as $tag)
-                                <span class="tag">{{ $tag }}</span>
-                            @endforeach
+                        {{-- Colorful pill badges --}}
+                        <div class="tag-row" style="margin-top:16px;">
+                            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold transition-all duration-300 hover:-translate-y-1 hover:scale-105 hover:shadow-md
+                                @if($categoryColor === 'emerald') bg-emerald-100 text-emerald-700
+                                @elseif($categoryColor === 'amber') bg-amber-100 text-amber-700
+                                @else bg-blue-100 text-blue-700 @endif">
+                                @if($categoryColor === 'emerald')
+                                    <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" /></svg>
+                                @elseif($categoryColor === 'amber')
+                                    <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8 14v3m4-3v3m4-3v3M3 21h18M3 10h18M3 7l9-4 9 4M4 10h16v11H4V10z" /></svg>
+                                @else
+                                    <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M17.657 18.657A8 8 0 016.343 7.343S7 9 9 10c0-2 .5-5 2.986-7C14 5 16.09 5.777 17.656 7.343A7.975 7.975 0 0120 13a7.975 7.975 0 01-2.343 5.657z" /></svg>
+                                @endif
+                                {{ $category }}
+                            </span>
+                            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-sky-100 text-sky-700 transition-all duration-300 hover:-translate-y-1 hover:scale-105 hover:shadow-md">
+                                <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" /></svg>
+                                Sanitized
+                            </span>
+                            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-violet-100 text-violet-700 transition-all duration-300 hover:-translate-y-1 hover:scale-105 hover:shadow-md">
+                                <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z" /></svg>
+                                QR Entrance
+                            </span>
                         </div>
+
+                        {{-- Highlights with SVG icons --}}
                         <ul class="highlights">
                             @foreach($highlights as $h)
                                 <li>
-                                    <span class="hi-icon" aria-hidden="true">{{ $h['icon'] }}</span>
+                                    <span class="hi-icon" aria-hidden="true">
+                                        @if($h['type'] === 'location')
+                                            <svg class="w-4 h-4 text-rose-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a2 2 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                                        @elseif($h['type'] === 'capacity')
+                                            <svg class="w-4 h-4 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                                        @elseif($h['type'] === 'ticket')
+                                            <svg class="w-4 h-4 text-violet-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z" /></svg>
+                                        @else
+                                            <svg class="w-4 h-4 text-sky-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" /></svg>
+                                        @endif
+                                    </span>
                                     <span>{{ $h['text'] }}</span>
                                 </li>
                             @endforeach
@@ -248,56 +276,61 @@
 
                     {{-- ── Multi-Day Calendar Availability Checker ── --}}
                     @if($destination->availability_status === 'Available')
-                    <div class="detail-card">
-                        <div class="detail-section-title">📅 Plan Your Visit — Check Availability</div>
+                    <div class="detail-card max-w-md mx-auto">
+                        <div class="detail-section-title" style="display:flex;align-items:center;gap:7px;">
+                            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2" stroke-linecap="round" stroke-linejoin="round"/><line x1="16" y1="2" x2="16" y2="6" stroke-linecap="round" stroke-linejoin="round"/><line x1="8" y1="2" x2="8" y2="6" stroke-linecap="round" stroke-linejoin="round"/><line x1="3" y1="10" x2="21" y2="10" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                            Plan Your Visit — Check Availability
+                        </div>
                         <p style="font-size:.85rem;color:var(--text-3);margin-bottom:16px;">Choose a tour duration and tap a highlighted start date to see slot details.</p>
 
-                        {{-- Duration Selector --}}
-                        <div style="margin-bottom:14px;">
-                            <p style="font-size:.8rem;font-weight:700;color:var(--text-1);margin-bottom:8px;">🗓️ Tour Duration:</p>
-                            <div style="display:flex;flex-wrap:wrap;gap:8px;" id="duration-pills">
-                                @foreach([1,2,3,4,5,7,10] as $d)
-                                <button type="button" data-days="{{ $d }}" onclick="setDuration({{ $d }})"
-                                    class="dur-pill {{ $d===1 ? 'active' : '' }}">
-                                    {{ $d }} {{ $d===1?'Day':'Days' }}
-                                </button>
-                                @endforeach
-                            </div>
-                        </div>
-
-                        {{-- Legend --}}
-                        <div class="cal-legend" style="margin-bottom:12px;">
-                            <span><span class="dot" style="background:#10b981;"></span>Available</span>
-                            <span><span class="dot" style="background:#f59e0b;"></span>Limited</span>
-                            <span><span class="dot" style="background:#fca5a5;"></span>Full</span>
-                            <span><span class="dot" style="background:#e5e7eb;"></span>Can't start here</span>
-                        </div>
-
-                        {{-- Calendar --}}
-                        <div style="background:#f9fafb;border:1.5px solid var(--border);border-radius:var(--r-lg);overflow:hidden;">
-                            <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:1px solid #f0fdfc;">
-                                <button id="cal-prev" class="cal-nav-btn" onclick="prevMonth()">&lsaquo;</button>
-                                <span id="cal-month-label" style="font-weight:700;font-size:.9rem;color:var(--text-1);"></span>
-                                <button id="cal-next" class="cal-nav-btn" onclick="nextMonth()">&rsaquo;</button>
-                            </div>
-                            <div style="padding:10px 12px 14px;">
-                                <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:1px;margin-bottom:4px;">
-                                    @foreach(['Su','Mo','Tu','We','Th','Fr','Sa'] as $wd)
-                                        <div class="cal-weekday">{{ $wd }}</div>
+                        <div class="space-y-4">
+                            {{-- Duration Selector --}}
+                            <div style="margin-bottom:14px;">
+                                <p style="font-size:.8rem;font-weight:700;color:var(--text-1);margin-bottom:8px;">Tour Duration:</p>
+                                <div style="display:flex;flex-wrap:wrap;gap:8px;" id="duration-pills">
+                                    @foreach([1,2,3,4,5,7,10] as $d)
+                                    <button type="button" data-days="{{ $d }}" onclick="setDuration({{ $d }})"
+                                        class="dur-pill {{ $d===1 ? 'active' : '' }}">
+                                        {{ $d }} {{ $d===1?'Day':'Days' }}
+                                    </button>
                                     @endforeach
                                 </div>
-                                <div id="cal-grid"></div>
-                                <div id="cal-empty-state" style="display:none;text-align:center;padding:24px 0;">
-                                    <p style="font-size:1.5rem;margin-bottom:8px;">🗓️</p>
-                                    <p style="font-size:.85rem;font-weight:600;color:var(--text-3);">No valid start dates this month</p>
-                                    <p style="font-size:.75rem;color:var(--text-4);margin:4px 0 10px;">No consecutive open window for <span id="empty-dur-label"></span>.</p>
-                                    <button onclick="nextMonth()" style="font-size:.78rem;color:var(--teal);font-weight:700;background:none;border:none;cursor:pointer;font-family:inherit;">Check next month →</button>
+                            </div>
+
+                            {{-- Legend --}}
+                            <div class="cal-legend" style="margin-bottom:12px;">
+                                <span><span class="dot" style="background:#10b981;"></span>Available</span>
+                                <span><span class="dot" style="background:#f59e0b;"></span>Limited</span>
+                                <span><span class="dot" style="background:#fca5a5;"></span>Full</span>
+                                <span><span class="dot" style="background:#e5e7eb;"></span>Can't start here</span>
+                            </div>
+
+                            {{-- Calendar --}}
+                            <div style="background:#f9fafb;border:1.5px solid var(--border);border-radius:var(--r-lg);overflow:hidden;">
+                                <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:1px solid #f0fdfc;">
+                                    <button id="cal-prev" class="cal-nav-btn" onclick="prevMonth()">&lsaquo;</button>
+                                    <span id="cal-month-label" style="font-weight:700;font-size:.9rem;color:var(--text-1);"></span>
+                                    <button id="cal-next" class="cal-nav-btn" onclick="nextMonth()">&rsaquo;</button>
+                                </div>
+                                <div style="padding:10px 12px 14px;">
+                                    <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:1px;margin-bottom:4px;">
+                                        @foreach(['Su','Mo','Tu','We','Th','Fr','Sa'] as $wd)
+                                            <div class="cal-weekday">{{ $wd }}</div>
+                                        @endforeach
+                                    </div>
+                                    <div id="cal-grid"></div>
+                                    <div id="cal-empty-state" style="display:none;text-align:center;padding:24px 0;">
+                                        <div style="display:flex;justify-content:center;margin-bottom:8px;">
+                                            <svg style="width:32px;height:32px;color:#9ca3af;" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><rect x="3" y="4" width="18" height="18" rx="2" ry="2" stroke-linecap="round" stroke-linejoin="round"/><line x1="16" y1="2" x2="16" y2="6" stroke-linecap="round" stroke-linejoin="round"/><line x1="8" y1="2" x2="8" y2="6" stroke-linecap="round" stroke-linejoin="round"/><line x1="3" y1="10" x2="21" y2="10" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                                        </div>
+                                        <p style="font-size:.85rem;font-weight:600;color:var(--text-3);">No valid start dates this month</p>
+                                        <p style="font-size:.75rem;color:var(--text-4);margin:4px 0 10px;">No consecutive open window for <span id="empty-dur-label"></span>.</p>
+                                        <button onclick="nextMonth()" style="font-size:.78rem;color:var(--teal);font-weight:700;background:none;border:none;cursor:pointer;font-family:inherit;">Check next month →</button>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
 
-                        {{-- Range Summary --}}
-                        <div id="range-summary" style="margin-top:12px;display:none;"></div>
+                            <div id="range-summary" style="margin-top:12px;display:none;"></div>
                     </div>
                     @endif
                 </div>
@@ -308,23 +341,38 @@
                         <div class="detail-section-title">Visitor Info</div>
 
                         <div class="sidebar-stat">
-                            <span class="ss-label">📍 Location</span>
+                            <span class="ss-label">
+                                <svg class="w-4 h-4" style="color:#f43f5e;" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a2 2 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                                Location
+                            </span>
                             <span class="ss-value" style="max-width:160px;text-align:right;font-size:.82rem;">{{ $destination->location }}</span>
                         </div>
                         <div class="sidebar-stat">
-                            <span class="ss-label">👥 Capacity</span>
+                            <span class="ss-label">
+                                <svg class="w-4 h-4" style="color:#3b82f6;" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                                Capacity
+                            </span>
                             <span class="ss-value">{{ $destination->capacity }} / day</span>
                         </div>
                         <div class="sidebar-stat">
-                            <span class="ss-label">{{ $categoryIcon }} Category</span>
+                            <span class="ss-label">
+                                <svg class="w-4 h-4" style="color:#f59e0b;" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" /></svg>
+                                Category
+                            </span>
                             <span class="ss-value">{{ $category }}</span>
                         </div>
                         <div class="sidebar-stat">
-                            <span class="ss-label">✅ Confirmed</span>
+                            <span class="ss-label">
+                                <svg class="w-4 h-4" style="color:#10b981;" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                                Confirmed
+                            </span>
                             <span class="ss-value">{{ $destination->bookings()->where('status','confirmed')->count() }}</span>
                         </div>
                         <div class="sidebar-stat">
-                            <span class="ss-label">🎟️ Entrance</span>
+                            <span class="ss-label">
+                                <svg class="w-4 h-4" style="color:#8b5cf6;" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z" /></svg>
+                                Entrance
+                            </span>
                             <span class="ss-value">QR Code</span>
                         </div>
 
@@ -343,8 +391,10 @@
 
                         {{-- Book button --}}
                         @if($destination->availability_status === 'Available')
-                            <a id="main-book-btn" href="{{ route('bookings.create', $destination) }}" class="btn-book">
-                                📅 Book This Destination →
+                            <a id="main-book-btn" href="{{ route('bookings.create', $destination) }}" class="btn-book" style="background:linear-gradient(135deg,#10b981,#0ea5e9);box-shadow:0 4px 16px rgba(16,185,129,.35);">
+                                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+                                Book This Destination
+                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" /></svg>
                             </a>
                         @else
                             <div class="btn-book-disabled">Currently Unavailable</div>
@@ -352,7 +402,8 @@
 
                         @if(auth()->user()->isAdmin())
                         <a href="{{ route('destinations.edit', $destination) }}" style="display:flex;align-items:center;justify-content:center;gap:6px;margin-top:10px;padding:10px;border-radius:var(--r-md);border:1.5px solid #fcd34d;background:#fffbeb;color:#92400e;font-size:.85rem;font-weight:600;text-decoration:none;transition:var(--t);">
-                            ✏️ Edit Destination Profile
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
+                            Edit Destination Profile
                         </a>
                         @endif
                     </div>
@@ -360,7 +411,10 @@
                     {{-- Check-In Location Card --}}
                     @if($destination->checkin_latitude && $destination->checkin_longitude)
                     <div class="detail-card" style="margin-top: 20px;">
-                        <div class="detail-section-title">📍 Check-In Location</div>
+                        <div class="detail-section-title" style="display:flex;align-items:center;gap:7px;">
+                            <svg class="w-3.5 h-3.5" style="color:#f43f5e;" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a2 2 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                            Check-In Location
+                        </div>
                         <p style="font-size: .82rem; color: var(--text-3); margin-bottom: 12px;">
                             This is the exact point where you need to check in when you arrive at this spot.
                         </p>
@@ -480,6 +534,27 @@
         // Animate capacity bar on load
         if (capFill) setTimeout(() => capFill.style.width = '{{ $pct }}%', 200);
 
+        // ── Custom Tooltip ────────────────────────────────────────────────
+        const calTip = document.createElement('div');
+        calTip.id = 'cal-tooltip';
+        calTip.style.cssText = [
+            'position:fixed','z-index:9999','pointer-events:none',
+            'background:#1f2937','color:#fff','font-size:11px','font-weight:600',
+            'padding:4px 10px','border-radius:6px','white-space:nowrap',
+            'box-shadow:0 2px 8px rgba(0,0,0,.25)','opacity:0',
+            'transition:opacity 0.15s ease'
+        ].join(';');
+        document.body.appendChild(calTip);
+
+        function showTip(el, text) {
+            calTip.textContent = text;
+            calTip.style.opacity = '1';
+            const r = el.getBoundingClientRect();
+            calTip.style.left = (r.left + r.width / 2 - calTip.offsetWidth / 2) + 'px';
+            calTip.style.top  = (r.top - calTip.offsetHeight - 6) + 'px';
+        }
+        function hideTip() { calTip.style.opacity = '0'; }
+
         // ── Duration ──────────────────────────────────────────────────────
         window.setDuration = function(d) {
             duration = d;
@@ -567,19 +642,23 @@
                 if (date < MIN_DATE) {
                     el.className = 'cal-day past';
                 } else if (info.status === 'full') {
-                    el.className = 'cal-day full'; el.title = 'Fully booked';
+                    el.className = 'cal-day full';
+                    el.addEventListener('mouseenter', () => showTip(el, 'Fully booked'));
+                    el.addEventListener('mouseleave', hideTip);
                 } else {
                     const run = consecDays(date, dayData);
                     if (run >= duration) {
                         hasValid = true;
                         el.className = `cal-day ${info.status === 'limited' ? 'limited' : 'open'}`;
-                        el.title = `${info.slots} slot${info.slots!==1?'s':''} available`;
+                        const tipText = `${info.slots} slot${info.slots!==1?'s':''} available`;
+                        el.addEventListener('mouseenter', () => { hoverRange(date, dayData); showTip(el, tipText); });
+                        el.addEventListener('mouseleave', () => { clearHover(); hideTip(); });
                         el.addEventListener('click', () => selectDate(date, dayData));
-                        el.addEventListener('mouseenter', () => hoverRange(date, dayData));
-                        el.addEventListener('mouseleave', clearHover);
                     } else {
                         el.className = 'cal-day insufficient';
-                        el.title = run===0 ? 'Fully booked' : `Only ${run} of ${duration} day${duration>1?'s':''} available from here`;
+                        const tipText2 = run===0 ? 'Fully booked' : `Only ${run} of ${duration} day${duration>1?'s':''} available from here`;
+                        el.addEventListener('mouseenter', () => showTip(el, tipText2));
+                        el.addEventListener('mouseleave', hideTip);
                     }
                 }
                 applyRangeClass(el, date);
@@ -634,38 +713,47 @@
             const endFmt   = end.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
             const bookUrl  = `${BOOK_BASE}?visit_date=${fmtDate(date)}&duration=${duration}`;
             const colors = {open:'background:#ecfdf5;border:1.5px solid #6ee7b7;color:#065f46',limited:'background:#fffbeb;border:1.5px solid #fcd34d;color:#92400e',full:'background:#fef2f2;border:1.5px solid #fca5a5;color:#991b1b'};
-            const statusMsg = {open:`✅ ${minSlots} slot${minSlots!==1?'s':''} available across all days`,limited:`⚠️ Limited — ${minSlots} slot${minSlots!==1?'s':''} available (bottleneck day)`,full:'🚫 One or more days in this range are fully booked'};
+            const statusMsg = {
+                open:    `<svg class="w-4 h-4 inline-block mr-1 text-emerald-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg> ${minSlots} slot${minSlots!==1?'s':''} available across all days`,
+                limited: `<svg class="w-4 h-4 inline-block mr-1 text-amber-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg> Limited — ${minSlots} slot${minSlots!==1?'s':''} available (bottleneck day)`,
+                full:    `<svg class="w-4 h-4 inline-block mr-1 text-rose-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="4.93" x2="19.07" y1="4.93" y2="19.07"/></svg> One or more days in this range are fully booked`
+            };
             let bkHtml='';
             if(duration>1) {
-                bkHtml=`<div style="margin-top:12px;"><p style="font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--text-4);margin-bottom:6px;">Day-by-day</p>${breakdown.map((b,i)=>{const df=new Date(b.date+'T00:00:00').toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'});const dot=b.status==='open'?'🟢':b.status==='limited'?'🟡':'🔴';return`<div style="display:flex;justify-content:space-between;font-size:.78rem;padding:2px 0;"><span>${dot} Day ${i+1} — ${df}</span><span style="font-weight:700;">${b.slots} slot${b.slots!==1?'s':''}</span></div>`;}).join('')}</div>`;
+                bkHtml=`<div style="margin-top:12px;"><p style="font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--text-4);margin-bottom:6px;">Day-by-day</p>${breakdown.map((b,i)=>{const df=new Date(b.date+'T00:00:00').toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'});const dotClass=b.status==='open'?'bg-emerald-500':b.status==='limited'?'bg-amber-500':'bg-rose-500';const dot=`<span class="inline-block w-2.5 h-2.5 rounded-full ${dotClass} mr-1.5 shadow-sm"></span>`;return`<div style="display:flex;justify-content:space-between;font-size:.78rem;padding:2px 0;"><span>${dot} Day ${i+1} — ${df}</span><span style="font-weight:700;">${b.slots} slot${b.slots!==1?'s':''}</span></div>`;}).join('')}</div>`;
             }
             rangeSummary.style.display='block';
-            rangeSummary.innerHTML=`<div style="padding:16px;border-radius:var(--r-md);${colors[rs]};font-size:.85rem;"><div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px;flex-wrap:wrap;"><div><p style="font-weight:800;font-size:.95rem;">📌 ${duration}-Day Stay Selected</p><p style="font-size:.75rem;opacity:.8;margin-top:2px;">${startFmt}${duration>1?' → '+endFmt:''}</p></div>${rs!=='full'?`<a href="${bookUrl}" style="background:#4f46e5;color:#fff;font-weight:700;font-size:.78rem;border-radius:8px;padding:8px 14px;text-decoration:none;white-space:nowrap;">Book This Stay →</a>`:''}</div><p style="margin-top:8px;font-weight:700;">${statusMsg[rs]}</p>${bkHtml}</div>`;
-            if(rs!=='full'&&bookBtn) { bookBtn.href=bookUrl; bookBtn.textContent=`📅 Book ${duration>1?duration+'-Day Stay':'This Date'} →`; }
+            rangeSummary.innerHTML=`<div style="padding:16px;border-radius:var(--r-md);${colors[rs]};font-size:.85rem;"><div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px;flex-wrap:wrap;"><div><p style="font-weight:800;font-size:.95rem;display:flex;align-items:center;gap:6px;"><svg style="width:16px;height:16px;flex-shrink:0;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg> ${duration}-Day Stay Selected</p><p style="font-size:.75rem;opacity:.8;margin-top:2px;">${startFmt}${duration>1?' → '+endFmt:''}</p></div>${rs!=='full'?`<a href="${bookUrl}" style="background:#4f46e5;color:#fff;font-weight:700;font-size:.78rem;border-radius:8px;padding:8px 14px;text-decoration:none;white-space:nowrap;">Book This Stay →</a>`:''}</div><p style="margin-top:8px;font-weight:700;">${statusMsg[rs]}</p>${bkHtml}</div>`;
+            if(rs!=='full'&&bookBtn) { bookBtn.href=bookUrl; bookBtn.innerHTML=`<svg class="w-4 h-4 inline-block mr-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/></svg> Book ${duration>1?duration+'-Day Stay':'This Date'} →`; }
         }
 
         function hoverRange(date, dayData) {
             clearHover();
-            if(!consecDays(date,dayData)>=duration) return;
-            const end=new Date(date); end.setDate(end.getDate()+duration-1);
-            grid.querySelectorAll('.cal-day:not(.empty):not(.past)').forEach(el=>{
-                const d=el.dataset.date?new Date(el.dataset.date+'T00:00:00'):null;
-                if(d&&d>=date&&d<=end) el.classList.add('hovered');
+            if (consecDays(date, dayData) < duration) return;
+            const startStr = fmtDate(date);
+            const endDate  = new Date(date); endDate.setDate(endDate.getDate() + duration - 1);
+            const endStr   = fmtDate(endDate);
+            grid.querySelectorAll('.cal-day[data-date]').forEach(el => {
+                const ds = el.dataset.date;
+                if (ds && ds >= startStr && ds <= endStr) el.classList.add('hovered');
             });
         }
-        function clearHover() { grid.querySelectorAll('.hovered').forEach(el=>el.classList.remove('hovered')); }
+        function clearHover() { grid.querySelectorAll('.hovered').forEach(el => el.classList.remove('hovered')); }
         function applyRangeClass(el, date) {
-            if(!selectedStart) return;
-            const end=new Date(selectedStart); end.setDate(end.getDate()+duration-1);
-            if(date<selectedStart||date>end) return;
-            const isS=date.getTime()===selectedStart.getTime(), isE=date.getTime()===end.getTime();
-            if(isS&&isE) el.classList.add('range-start','range-end');
-            else if(isS) el.classList.add('range-start');
-            else if(isE) el.classList.add('range-end');
-            else         el.classList.add('range-mid');
+            if (!selectedStart) return;
+            const startStr = fmtDate(selectedStart);
+            const endDate  = new Date(selectedStart); endDate.setDate(endDate.getDate() + duration - 1);
+            const endStr   = fmtDate(endDate);
+            const ds       = fmtDate(date);
+            if (ds < startStr || ds > endStr) return;
+            const isS = ds === startStr, isE = ds === endStr;
+            if (isS && isE) el.classList.add('range-start','range-end');
+            else if (isS)   el.classList.add('range-start');
+            else if (isE)   el.classList.add('range-end');
+            else             el.classList.add('range-mid');
         }
         function resetBookBtn() {
-            if(bookBtn){ bookBtn.href='{{ route('bookings.create', $destination) }}'; bookBtn.textContent='📅 Book This Destination →'; }
+            if(bookBtn){ bookBtn.href='{{ route('bookings.create', $destination) }}'; bookBtn.innerHTML='<svg class="w-4 h-4 inline-block mr-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/></svg> Book This Destination →'; }
         }
         function fmtDate(d) { return d.toISOString().split('T')[0]; }
 

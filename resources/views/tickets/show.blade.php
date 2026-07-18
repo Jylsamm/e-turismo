@@ -7,17 +7,17 @@
         <!-- Ticket Card -->
         <div class="bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-100 print:shadow-none print:border-none">
             <!-- Header Banner -->
-            <div class="bg-et-gradient px-6 py-6 text-white text-center">
+            <div class="bg-gradient-to-r from-green-800 to-green-600 px-6 py-6 text-white text-center">
                 <span class="text-xs font-semibold uppercase tracking-wider bg-white/20 px-3 py-1 rounded-full">E-Turismo Digital Pass</span>
                 <h2 class="text-2xl font-bold mt-2">{{ $booking->destination?->name }}</h2>
-                <p class="text-brand-100 text-sm mt-1">{{ $booking->destination?->location }}</p>
+                <p class="text-green-100 text-sm mt-1">📍 {{ $booking->destination?->location }}</p>
             </div>
 
             <!-- Content -->
             <div class="p-8 space-y-6 text-center">
                 <!-- QR Code Wrapper -->
-                <div class="inline-block p-4 bg-gray-50 border border-gray-100 rounded-2xl shadow-inner">
-                    {!! QrCode::size(200)->generate($ticket->qr_code) !!}
+                <div class="inline-block p-4 bg-gray-50 border border-gray-150 rounded-2xl shadow-inner">
+                    {!! \SimpleSoftwareIO\QrCode\Facades\QrCode::size(200)->generate($ticket->qr_code) !!}
                 </div>
                 
                 <div class="space-y-1">
@@ -56,7 +56,7 @@
                 <a href="{{ route('bookings.index') }}" class="flex-1 text-center bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 font-medium py-2.5 px-4 rounded-xl text-sm transition">
                     Back to Bookings
                 </a>
-                <button onclick="window.print()" class="flex-1 bg-brand-700 hover:bg-brand-800 text-white font-medium py-2.5 px-4 rounded-xl text-sm transition shadow-lg shadow-brand-700/20">
+                <button onclick="window.print()" class="flex-1 bg-green-700 hover:bg-green-800 text-white font-medium py-2.5 px-4 rounded-xl text-sm transition shadow-lg shadow-green-700/20">
                     Print Ticket
                 </button>
             </div>

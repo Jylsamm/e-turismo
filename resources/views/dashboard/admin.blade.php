@@ -89,7 +89,7 @@
                     <h2 class="font-semibold text-gray-700 mb-3">Quick Actions</h2>
                     <div class="space-y-2">
                         <a href="{{ route('destinations.create') }}" class="block w-full text-center bg-brand-700 hover:bg-brand-800 text-white rounded-lg py-2 text-sm font-medium transition shadow-sm">+ Add Destination</a>
-                        <a href="{{ route('reports.index') }}" class="block w-full text-center bg-emerald-700 hover:bg-emerald-800 text-white rounded-lg py-2 text-sm font-medium transition shadow-sm">📊 Generate Report</a>
+                        <a href="{{ route('reports.index') }}" class="block w-full text-center bg-emerald-700 hover:bg-emerald-800 text-white rounded-lg py-2 text-sm font-medium transition shadow-sm"><i class="ti ti-chart-bar mr-1"></i> Generate Report</a>
                     </div>
                 </div>
             </div>
@@ -98,7 +98,7 @@
         {{-- Unread Notifications --}}
         @if($notifications->count())
         <div class="bg-amber-50 border border-amber-200 rounded-xl p-5">
-            <h2 class="font-semibold text-amber-800 mb-3">🔔 Unread Notifications</h2>
+            <h2 class="font-semibold text-amber-800 mb-3 flex items-center gap-1.5"><i class="ti ti-bell-ringing"></i> Unread Notifications</h2>
             <ul class="space-y-2">
                 @foreach($notifications as $notif)
                 <li class="text-sm text-amber-900">{{ $notif->message }}</li>

@@ -55,7 +55,12 @@ return new class extends Migration
 
     protected function ensureIndex(string $table, string $indexName, array $columns): void
     {
-        $existingIndexes = collect(DB::select("SHOW INDEX FROM `{$table}`"))->pluck('Key_name')->toArray();
+        $driver = DB::connection()->getDriverName();
+        if ($driver === 'sqlite') {
+            $existingIndexes = collect(DB::select("PRAGMA index_list(`{$table}`)"))->pluck('name')->toArray();
+        } else {
+            $existingIndexes = collect(DB::select("SHOW INDEX FROM `{$table}`"))->pluck('Key_name')->toArray();
+        }
 
         if (in_array($indexName, $existingIndexes, true)) {
             return;

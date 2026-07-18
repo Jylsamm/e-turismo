@@ -101,6 +101,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Bookings list + management (Tourist sees own; Staff sees assigned spot; Admin blocked)
     Route::middleware('can:not-admin')->group(function () {
         Route::get('/bookings', [BookingController::class, 'index'])->name('bookings.index');
+        Route::get('/bookings/{booking}', [BookingController::class, 'show'])->name('bookings.show');
         Route::post('/bookings/{booking}/submit-payment', [BookingController::class, 'submitPayment'])->name('bookings.submit-payment');
         Route::get('/my-tickets', [BookingController::class, 'myTickets'])->name('bookings.my-tickets');
     });

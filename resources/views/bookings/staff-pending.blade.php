@@ -142,7 +142,7 @@
         </div>
 
         {{-- Table Card --}}
-        <div class="bg-white border border-gray-200 rounded-2xl overflow-hidden shadow-sm">
+        <div class="interactive-card overflow-hidden">
             <div class="overflow-x-auto">
                 <table class="w-full text-sm text-left">
                     <thead>

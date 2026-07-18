@@ -9,6 +9,7 @@ use Illuminate\Cache\RateLimiter;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\RateLimiter as RateLimiterFacade;
 use Illuminate\Support\Str;
@@ -45,7 +46,20 @@ class RegistrationOtpController extends Controller
             'sent_at' => now()->timestamp,
         ], now()->addMinutes(10));
 
-        Mail::to($email)->send(new RegistrationOtpMail($otp));
+        try {
+            Mail::to($email)->send(new RegistrationOtpMail($otp));
+        } catch (\Throwable $e) {
+            Log::error("[RegistrationOtpController] Failed to send OTP email to {$email}: " . $e->getMessage(), [
+                'exception' => $e,
+            ]);
+
+            Cache::forget($cacheKey);
+
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Failed to send the verification code. Please check your internet connection or email configuration.'
+            ], 500);
+        }
 
         session()->forget('otp_verified_email');
 

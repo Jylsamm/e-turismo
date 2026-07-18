@@ -11,7 +11,7 @@
 
         /* Hero */
         .tk-hero {
-            background: linear-gradient(135deg, #7c3aed 0%, #0d9488 55%, #0891b2 100%);
+            background: linear-gradient(135deg, #0b3d2e 0%, #166534 50%, #16a34a 100%);
             padding: 40px 24px 72px; text-align: center; position: relative; overflow: hidden;
         }
         .tk-hero::before {
@@ -56,7 +56,7 @@
         .ticket-card:hover { transform: translateY(-4px); box-shadow: 0 12px 40px rgba(13,148,136,.18); }
 
         .tc-header {
-            background: linear-gradient(135deg, #7c3aed, #0d9488);
+            background: linear-gradient(135deg, #166534, #16a34a);
             padding: 20px; color: #fff;
         }
         .tc-badge {
@@ -100,8 +100,8 @@
         }
         .tc-btn-view { background: #f0fdfc; color: #0d9488; border: 1.5px solid #99f6e4; }
         .tc-btn-view:hover { background: #ccfbf1; }
-        .tc-btn-dl { background: linear-gradient(135deg, #7c3aed, #0d9488); color: #fff; box-shadow: 0 3px 12px rgba(13,148,136,.25); }
-        .tc-btn-dl:hover { transform: translateY(-1px); box-shadow: 0 6px 18px rgba(13,148,136,.35); }
+        .tc-btn-dl { background: linear-gradient(135deg, #166534, #16a34a); color: #fff; box-shadow: 0 3px 12px rgba(22,163,74,.25); }
+        .tc-btn-dl:hover { transform: translateY(-1px); box-shadow: 0 6px 18px rgba(22,163,74,.35); }
 
         /* Empty */
         .empty-wrap { text-align: center; padding: 60px 24px; }
@@ -177,16 +177,9 @@
                     {{-- QR Code --}}
                     <div class="tc-qr-wrap">
                         @if($booking->qr_token)
-                            @php $qrImg = 'storage/qr-tickets/' . $booking->id . '.png'; @endphp
-                            @if(file_exists(public_path($qrImg)))
-                                <div class="tc-qr-frame">
-                                    <img src="{{ asset($qrImg) }}?t={{ $booking->qr_generated_at ? strtotime($booking->qr_generated_at) : '' }}" alt="QR Ticket">
-                                </div>
-                            @else
-                                <div class="tc-qr-frame" style="padding:16px;">
-                                    {!! QrCode::size(140)->generate($booking->qr_token) !!}
-                                </div>
-                            @endif
+                            <div class="tc-qr-frame" style="padding:12px;">
+                                {!! \SimpleSoftwareIO\QrCode\Facades\QrCode::size(140)->generate($booking->qr_token) !!}
+                            </div>
                             <div class="tc-qr-code">{{ $booking->qr_token }}</div>
                         @endif
 
@@ -227,9 +220,9 @@
                         @if($booking->ticket)
                             <a href="{{ route('tickets.show', $booking->ticket) }}" class="tc-btn tc-btn-view">🔍 View & Print</a>
                         @endif
-                        @if(file_exists(public_path('storage/qr-tickets/' . $booking->id . '.png')))
-                            <a href="{{ asset('storage/qr-tickets/' . $booking->id . '.png') }}"
-                               download="E-Ticket-{{ str_pad($booking->id, 5, '0', STR_PAD_LEFT) }}.png"
+                        @if(file_exists(public_path('storage/qr-tickets/' . $booking->id . '.svg')))
+                            <a href="{{ asset('storage/qr-tickets/' . $booking->id . '.svg') }}"
+                               download="E-Ticket-{{ str_pad($booking->id, 5, '0', STR_PAD_LEFT) }}.svg"
                                class="tc-btn tc-btn-dl">💾 Download QR</a>
                         @endif
                     </div>

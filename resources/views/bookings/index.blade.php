@@ -75,7 +75,7 @@
             margin-bottom: 14px; overflow: hidden; box-shadow: var(--sh-card);
             transition: box-shadow var(--t);
         }
-        .booking-card:hover { box-shadow: var(--sh-md); }
+        .booking-card:not(.interactive-card):hover { box-shadow: var(--sh-md); }
 
         .bc-main { display: grid; grid-template-columns: auto 1fr; gap: 0; }
         .bc-accent { width: 5px; flex-shrink: 0; }
@@ -211,7 +211,7 @@
         }
     </style>
 
-    <div id="bookings-page">
+    <div id="bookings-page" x-data="bookingPortal()">
         {{-- Hero --}}
         <div class="bk-hero">
             <div class="bk-hero-inner">
@@ -301,7 +301,7 @@
                     $accentCls = 'status-' . $booking->status;
                     $payStatus = $booking->payment_status;
                 @endphp
-                <div class="booking-card">
+                <div class="booking-card {{ auth()->user()->isStaff() ? 'interactive-card' : '' }}">
                     {{-- Staff: Tourist info header --}}
                     @if(auth()->user()->isStaff())
                     <div class="bc-tourist">
@@ -372,6 +372,9 @@
 
                         {{-- Tourist actions --}}
                         @if(auth()->user()->isTourist())
+                            <button type="button" @click="viewDetails({{ $booking->id }})" class="bc-action-btn btn-ticket">
+                                🔍 View Details
+                            </button>
                             @if(empty($payStatus) && $booking->status === 'pending')
                                 <button type="button"
                                     onclick="togglePanel('pay-{{ $booking->id }}')"
@@ -495,7 +498,135 @@
         </div>
     </div>
 
+        {{-- Tourist: Booking Details Modal --}}
+        <div class="fixed inset-0 bg-gray-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+             x-show="showDetailsModal"
+             x-transition
+             style="display: none;">
+            <div class="bg-white border border-gray-200 rounded-2xl max-w-lg w-full max-h-[90vh] flex flex-col shadow-xl"
+                 @click.away="showDetailsModal = false">
+                {{-- Modal Header --}}
+                <div class="px-6 py-4 border-b border-gray-150 flex items-center justify-between shrink-0">
+                    <h3 class="font-bold text-gray-800 text-lg flex items-center gap-2">
+                        <i class="ti ti-file-invoice text-green-700"></i> Booking Details #<span x-text="details.id"></span>
+                    </h3>
+                    <button class="text-gray-400 hover:text-gray-600 transition" @click="showDetailsModal = false">
+                        <i class="ti ti-x" style="font-size:20px;"></i>
+                    </button>
+                </div>
+
+                {{-- Modal Body --}}
+                <div class="p-6 space-y-5 text-sm overflow-y-auto flex-1 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
+                    {{-- Destination info with gradient bg --}}
+                    <div class="bg-gradient-to-r from-green-50 to-emerald-50 border border-green-100 rounded-xl p-4">
+                        <div class="text-xs font-semibold text-green-700 uppercase tracking-wide">Destination</div>
+                        <h4 class="font-bold text-gray-800 text-base mt-0.5" x-text="details.spot"></h4>
+                        <div class="text-xs text-gray-500 mt-1 flex items-center gap-1">
+                            <i class="ti ti-map-pin"></i> <span x-text="details.location"></span>
+                        </div>
+                    </div>
+
+                    {{-- Schedule details --}}
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="bg-gray-50 border border-gray-150 rounded-xl p-3.5">
+                            <span class="text-gray-400 text-xs block">Visit Date</span>
+                            <span class="font-bold text-gray-800 text-sm mt-0.5 block" x-text="details.visit_date"></span>
+                        </div>
+                        <div class="bg-gray-50 border border-gray-150 rounded-xl p-3.5">
+                            <span class="text-gray-400 text-xs block">Status</span>
+                            <span class="font-bold text-sm mt-0.5 inline-flex items-center gap-1 capitalize"
+                                  :class="details.status === 'confirmed' || details.status === 'completed' ? 'text-green-700' : (details.status === 'pending' ? 'text-amber-700' : 'text-red-700')">
+                                <span class="w-2 h-2 rounded-full inline-block" :class="details.status === 'confirmed' || details.status === 'completed' ? 'bg-green-500 animate-pulse' : (details.status === 'pending' ? 'bg-amber-500' : 'bg-red-500')"></span>
+                                <span x-text="details.status"></span>
+                            </span>
+                        </div>
+                    </div>
+
+                    {{-- Payment Details --}}
+                    <div class="border border-gray-150 rounded-xl p-4 space-y-3">
+                        <div class="text-xs font-semibold text-gray-400 uppercase tracking-wide">GCash Payment Status</div>
+                        <div class="flex justify-between items-center text-xs">
+                            <span class="text-gray-500">Payment Status:</span>
+                            <span class="font-bold px-2 py-0.5 rounded-full capitalize"
+                                  :class="details.payment_status === 'approved' ? 'text-green-700 bg-green-50 border border-green-200' : (details.payment_status === 'pending_verification' ? 'text-amber-700 bg-amber-50 border border-amber-200' : 'text-red-700 bg-red-50 border border-red-200')">
+                                <span x-text="details.payment_status ? details.payment_status.replace('_', ' ') : 'unpaid'"></span>
+                            </span>
+                        </div>
+                        <template x-if="details.gcash_reference_number">
+                            <div class="flex justify-between items-center text-xs pt-1 border-t border-gray-100">
+                                <span class="text-gray-500">Reference No:</span>
+                                <span class="font-mono font-bold text-gray-800 text-sm" x-text="details.gcash_reference_number"></span>
+                            </div>
+                        </template>
+
+                        {{-- Payment Screenshot --}}
+                        <template x-if="details.payment_receipt">
+                            <div class="pt-3 border-t border-gray-100 flex flex-col items-center">
+                                <span class="text-gray-400 text-xs block self-start mb-2">Receipt Screenshot:</span>
+                                <a :href="details.payment_receipt" target="_blank" class="block w-full max-h-48 overflow-hidden rounded-lg border border-gray-200 bg-gray-50 p-2 flex justify-center">
+                                    <img :src="details.payment_receipt" class="max-h-40 object-contain hover:scale-105 transition duration-300">
+                                </a>
+                            </div>
+                        </template>
+                    </div>
+
+                    {{-- Ticket section --}}
+                    <template x-if="details.qr_token">
+                        <div class="border border-green-200 bg-green-50/30 rounded-xl p-4 flex flex-col items-center text-center space-y-3">
+                            <div class="text-xs font-semibold text-green-700 uppercase tracking-wide">Scannable QR Ticket</div>
+                            <div class="bg-white border border-green-100 rounded-2xl p-3 shadow-inner">
+                                <img :src="'/storage/qr-tickets/' + details.id + '.svg'" class="w-36 h-36 object-contain" alt="QR Ticket">
+                            </div>
+                            <div class="text-center">
+                                <span class="text-xs uppercase text-gray-400 font-semibold tracking-wider block">Ticket Token</span>
+                                <span class="text-sm font-mono font-bold text-green-800" x-text="details.qr_token"></span>
+                            </div>
+                        </div>
+                    </template>
+
+                    {{-- Rejection / Decline Reasons --}}
+                    <template x-if="details.status === 'declined' && details.decline_reason">
+                        <div class="bg-red-50 border border-red-200 rounded-xl p-4 text-red-800">
+                            <div class="font-bold text-xs uppercase tracking-wide mb-1">Decline Reason</div>
+                            <p class="text-xs" x-text="details.decline_reason"></p>
+                        </div>
+                    </template>
+                    <template x-if="details.payment_status === 'rejected' && details.rejection_reason">
+                        <div class="bg-red-50 border border-red-200 rounded-xl p-4 text-red-800">
+                            <div class="font-bold text-xs uppercase tracking-wide mb-1">Payment Rejection Reason</div>
+                            <p class="text-xs" x-text="details.rejection_reason"></p>
+                        </div>
+                    </template>
+                </div>
+
+                {{-- Modal Footer --}}
+                <div class="px-6 py-4 border-t border-gray-150 bg-gray-50 flex justify-end shrink-0">
+                    <button class="bg-gray-250 hover:bg-gray-300 text-gray-700 font-semibold rounded-xl px-5 py-2.5 transition text-sm" @click="showDetailsModal = false">
+                        Close
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @push('scripts')
     <script>
+    function bookingPortal() {
+        return {
+            showDetailsModal: false,
+            details: {},
+            viewDetails(id) {
+                fetch(`/bookings/${id}`, {
+                    headers: { 'Accept': 'application/json' }
+                })
+                .then(r => r.json())
+                .then(data => {
+                    this.details = data;
+                    this.showDetailsModal = true;
+                });
+            }
+        }
+    }
     function togglePanel(id) {
         const el = document.getElementById(id);
         if (!el) return;
@@ -503,4 +634,5 @@
         el.style.display = isHidden ? 'block' : 'none';
     }
     </script>
+    @endpush
 </x-app-layout>

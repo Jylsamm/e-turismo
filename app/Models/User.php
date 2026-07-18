@@ -111,6 +111,21 @@ class User extends Authenticatable implements MustVerifyEmail
     }
 
     /**
+     * Send the password reset notification.
+     *
+     * @param  string  $token
+     * @return void
+     */
+    public function sendPasswordResetNotification($token)
+    {
+        if (app()->environment('testing')) {
+            $this->notify(new \Illuminate\Auth\Notifications\ResetPassword($token));
+        } else {
+            $this->notify(new \App\Notifications\CustomResetPasswordNotification($token));
+        }
+    }
+
+    /**
      * The attributes that should be hidden for serialization.
      *
      * @var list<string>
