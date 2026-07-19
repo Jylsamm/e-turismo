@@ -28,29 +28,7 @@ class DashboardController extends Controller
 
     private function adminDashboard()
     {
-        $stats = [
-            'total_tourists' => User::where('role', 'tourist')->count(),
-            'total_destinations' => Destination::count(),
-            'pending_bookings' => Booking::where('status', 'pending')->count(),
-            'total_checkins' => CheckIn::count(),
-            'today_visitors' => CheckIn::whereDate('arrival_time', today())->count(),
-            'confirmed_bookings' => Booking::where('status', 'confirmed')->count(),
-        ];
-
-        $recentBookings = Booking::query()
-            ->select(['id', 'tourist_id', 'destination_id', 'visit_date', 'status', 'payment_status', 'created_at'])
-            ->with(['tourist:id,name,email', 'destination:id,name,location'])
-            ->latest()
-            ->limit(10)
-            ->get();
-
-        $topDestinations = Destination::withCount(['bookings' => fn($q) => $q->whereIn('status', ['confirmed', 'completed'])])
-            ->orderByDesc('bookings_count')->limit(5)->get();
-
-        $notifications = Notification::where('recipient_id', auth()->id())
-            ->where('is_read', false)->latest()->limit(5)->get();
-
-        return view('dashboard.admin', compact('stats', 'recentBookings', 'topDestinations', 'notifications'));
+        return view('dashboard');
     }
 
     private function staffDashboard()

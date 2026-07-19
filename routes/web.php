@@ -4,6 +4,7 @@ use App\Http\Controllers\BookingController;
 use App\Http\Controllers\CheckInController;
 use App\Http\Controllers\DestinationController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\AnalyticsController;
 use App\Http\Controllers\IdentityVerificationController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\ProfileController;
@@ -75,6 +76,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // Notifications
     Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
+    Route::get('/notifications/latest-alert', [NotificationController::class, 'getLatestAlert'])->name('notifications.latest-alert');
+    Route::post('/notifications/{notification}/dismiss', [NotificationController::class, 'dismissAlert'])->name('notifications.dismiss-alert');
     Route::patch('/notifications/{notification}/read', [NotificationController::class, 'markRead'])->name('notifications.read');
     Route::post('/notifications/read-all', [NotificationController::class, 'markAllRead'])->name('notifications.read-all');
 
@@ -96,7 +99,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Bookings — Tourist books, Staff manages; Admin is excluded
     // Tourist: book a destination
     Route::get('/destinations/{destination}/book', [BookingController::class, 'create'])->name('bookings.create');
-    Route::post('/destinations/{destination}/book', [BookingController::class, 'store'])->name('bookings.store');
+    Route::post('/destinations/{destination}/book', [BookingController::class, 'store'])->middleware('check.booking.status')->name('bookings.store');
 
     // Bookings list + management (Tourist sees own; Staff sees assigned spot; Admin blocked)
     Route::middleware('can:not-admin')->group(function () {
@@ -171,11 +174,23 @@ Route::middleware(['auth', 'verified'])->group(function () {
         // Identity Verification admin review
         Route::get('/admin/verifications/reviews', [IdentityVerificationController::class, 'adminReviews'])->name('verification.reviews');
         Route::get('/admin/verifications/accounts', [IdentityVerificationController::class, 'adminAccounts'])->name('verification.accounts');
+        Route::get('/admin/verifications/staff', [IdentityVerificationController::class, 'adminStaff'])->name('verification.staff');
+        Route::post('/admin/verifications/staff/{user}/reassign', [IdentityVerificationController::class, 'reassignStaff'])->name('verification.staff.reassign');
+        Route::delete('/admin/verifications/staff/{user}', [IdentityVerificationController::class, 'deleteStaff'])->name('verification.staff.delete');
         Route::get('/admin/verifications/add-account', [IdentityVerificationController::class, 'adminAddAccount'])->name('verification.add_account');
         
         Route::post('/admin/verifications/{user}/decide', [IdentityVerificationController::class, 'adminDecide'])->name('verification.decide');
         Route::post('/admin/accounts/create', [IdentityVerificationController::class, 'adminStoreAccount'])->name('admin.accounts.store');
         Route::post('/admin/accounts/{user}/status', [IdentityVerificationController::class, 'adminUpdateStatus'])->name('admin.accounts.update_status');
+
+        // Analytics
+        Route::get('/admin/analytics/kpis', [AnalyticsController::class, 'getKpis'])->name('admin.analytics.kpis');
+        Route::get('/admin/analytics/trends', [AnalyticsController::class, 'getTrendData'])->name('admin.analytics.trends');
+        Route::get('/admin/analytics/destinations', [AnalyticsController::class, 'getDestinations'])->name('admin.analytics.destinations');
+        Route::get('/admin/analytics/advanced', [AnalyticsController::class, 'getAdvancedData'])->name('admin.analytics.advanced');
+        Route::post('/admin/analytics/broadcast-alert', [AnalyticsController::class, 'broadcastAlert'])->name('admin.analytics.broadcast-alert');
+        Route::post('/admin/analytics/toggle-halt', [AnalyticsController::class, 'toggleHaltBookings'])->name('admin.analytics.toggle-halt');
+        Route::post('/admin/analytics/export-pipeline', [AnalyticsController::class, 'exportPipeline'])->name('admin.analytics.export-pipeline');
     });
 
     }); // end identity.verified middleware group

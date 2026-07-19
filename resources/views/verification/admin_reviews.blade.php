@@ -1,4 +1,8 @@
 <x-app-layout>
+    @push('head')
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css" />
+    @endpush
+
     <x-slot name="header">
         <div class="flex items-center justify-between">
             <h2 class="font-semibold text-xl text-gray-800 leading-tight flex items-center gap-2">
@@ -9,11 +13,31 @@
     </x-slot>
 
     <div class="pb-12 pt-0">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-8">
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
+
+            <!-- Sub-Navigation Tabs -->
+            <div class="flex flex-wrap gap-2 border-b border-gray-200 pb-3">
+                <a href="{{ route('verification.reviews') }}" 
+                   class="px-4 py-2 text-sm font-semibold rounded-xl transition {{ request()->routeIs('verification.reviews') ? 'bg-green-700 text-white shadow-sm' : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100' }}">
+                    <i class="ti ti-checklist mr-1"></i> ID Verification Reviews
+                </a>
+                <a href="{{ route('verification.accounts') }}" 
+                   class="px-4 py-2 text-sm font-semibold rounded-xl transition {{ request()->routeIs('verification.accounts') ? 'bg-green-700 text-white shadow-sm' : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100' }}">
+                    <i class="ti ti-users mr-1"></i> Verify Tourists
+                </a>
+                <a href="{{ route('verification.staff') }}" 
+                   class="px-4 py-2 text-sm font-semibold rounded-xl transition {{ request()->routeIs('verification.staff') ? 'bg-green-700 text-white shadow-sm' : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100' }}">
+                    <i class="ti ti-user-cog mr-1"></i> Manage Staff
+                </a>
+                <a href="{{ route('verification.add_account') }}" 
+                   class="px-4 py-2 text-sm font-semibold rounded-xl transition {{ request()->routeIs('verification.add_account') ? 'bg-green-700 text-white shadow-sm' : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100' }}">
+                    <i class="ti ti-user-plus mr-1"></i> Add Account
+                </a>
+            </div>
 
             {{-- Error Alerts --}}
             @if ($errors->any())
-            <div class="bg-red-50 border border-red-300 text-red-700 rounded-lg px-4 py-3 text-sm">
+            <div class="bg-red-50 border border-red-300 text-red-700 rounded-2xl px-4 py-3 text-sm shadow-sm">
                 <ul class="list-disc pl-5">
                     @foreach ($errors->all() as $error)
                         <li>{{ $error }}</li>
@@ -23,30 +47,43 @@
             @endif
 
             @if(session('success'))
-            <div class="bg-green-50 border border-green-300 text-green-700 rounded-lg px-4 py-3 text-sm">
-                {{ session('success') }}
+            <div class="bg-green-50 border border-green-300 text-green-700 rounded-2xl px-4 py-3 text-sm shadow-sm flex items-center gap-2">
+                <i class="ti ti-circle-check text-lg"></i>
+                <span>{{ session('success') }}</span>
             </div>
             @endif
 
             <div class="space-y-10">
                 {{-- PENDING TABLE --}}
-                <div class="bg-white shadow rounded-xl overflow-hidden">
+                <div class="bg-white shadow rounded-xl overflow-hidden" x-data="{ searchQuery: '' }">
                     <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
                         <div>
                             <h3 class="text-lg font-semibold text-gray-800">Pending Review</h3>
-                            <p class="text-sm text-gray-500">Tourists requiring manual identity approval</p>
                         </div>
                         <span class="bg-yellow-100 text-yellow-800 text-xs font-semibold px-3 py-1 rounded-full">
                             {{ $pending->count() }} pending
                         </span>
                     </div>
 
+                    <!-- Search Bar -->
+                    <div class="px-5 py-3 border-b border-gray-100 bg-gradient-to-r from-gray-50/60 to-white">
+                        <div class="relative w-full sm:max-w-sm group">
+                            <span class="absolute inset-y-0 flex items-center pointer-events-none text-gray-400 group-focus-within:text-green-600 transition-colors duration-200" style="left: 14px;">
+                                <i class="ti ti-search text-base"></i>
+                            </span>
+                            <input type="text" x-model="searchQuery" placeholder="Search by name or email…" style="padding-left: 2.75rem;" class="w-full pr-8 py-2.5 border border-gray-200 rounded-xl text-sm shadow-sm focus:border-green-500 focus:ring-2 focus:ring-green-200 bg-white placeholder-gray-400 transition-all duration-200 hover:border-gray-300" />
+                            <button type="button" x-show="searchQuery.length > 0" x-transition @click="searchQuery = ''" class="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400 hover:text-red-400 transition-colors duration-150">
+                                <i class="ti ti-x text-sm"></i>
+                            </button>
+                        </div>
+                    </div>
+
                     @if($pending->isEmpty())
                     <p class="px-6 py-8 text-gray-400 text-sm text-center">No pending verifications.</p>
                     @else
-                    <div class="overflow-x-auto">
+                    <div class="max-h-[420px] overflow-y-auto overflow-x-auto relative">
                         <table class="w-full text-sm">
-                            <thead class="bg-gray-50 text-gray-500 text-xs uppercase">
+                            <thead class="bg-gray-50 text-gray-500 text-xs uppercase sticky top-0 z-10 shadow-sm">
                                 <tr>
                                     <th class="px-4 py-3 text-left">Tourist</th>
                                     <th class="px-4 py-3 text-left">ID Type / Number</th>
@@ -59,7 +96,8 @@
                             </thead>
                             <tbody class="divide-y divide-gray-100">
                                 @foreach($pending as $tourist)
-                                <tr class="hover:bg-gray-50">
+                                <tr class="hover:bg-gray-50"
+                                    x-show="searchQuery === '' || '{{ strtolower($tourist->name . ' ' . $tourist->email) }}'.includes(searchQuery.toLowerCase())">
                                     <td class="px-4 py-3">
                                         <p class="font-medium text-gray-800">{{ $tourist->name }}</p>
                                         <p class="text-xs text-gray-400">{{ $tourist->email }}</p>
@@ -128,16 +166,30 @@
                 </div>
 
                 {{-- RECENTLY VERIFIED --}}
-                <div class="bg-white shadow rounded-xl overflow-hidden">
+                <div class="bg-white shadow rounded-xl overflow-hidden" x-data="{ searchQuery: '', statusFilter: 'all' }">
                     <div class="px-6 py-4 border-b border-gray-100">
                         <h3 class="text-lg font-semibold text-gray-800">Recently Verified</h3>
                     </div>
+
+                    <!-- Search Bar -->
+                    <div class="px-5 py-3 border-b border-gray-100 bg-gradient-to-r from-gray-50/60 to-white flex flex-col sm:flex-row gap-3 items-center justify-between">
+                        <div class="relative w-full sm:max-w-sm group">
+                            <span class="absolute inset-y-0 flex items-center pointer-events-none text-gray-400 group-focus-within:text-green-600 transition-colors duration-200" style="left: 14px;">
+                                <i class="ti ti-search text-base"></i>
+                            </span>
+                            <input type="text" x-model="searchQuery" placeholder="Search by name or email…" style="padding-left: 2.75rem;" class="w-full pr-8 py-2.5 border border-gray-200 rounded-xl text-sm shadow-sm focus:border-green-500 focus:ring-2 focus:ring-green-200 bg-white placeholder-gray-400 transition-all duration-200 hover:border-gray-300" />
+                            <button type="button" x-show="searchQuery.length > 0" x-transition @click="searchQuery = ''" class="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400 hover:text-red-400 transition-colors duration-150">
+                                <i class="ti ti-x text-sm"></i>
+                            </button>
+                        </div>
+                    </div>
+
                     @if($verified->isEmpty())
                     <p class="px-6 py-6 text-gray-400 text-sm text-center">No verified tourists yet.</p>
                     @else
-                    <div class="overflow-x-auto">
+                    <div class="max-h-[420px] overflow-y-auto overflow-x-auto relative">
                         <table class="w-full text-sm">
-                            <thead class="bg-gray-50 text-gray-500 text-xs uppercase">
+                            <thead class="bg-gray-50 text-gray-500 text-xs uppercase sticky top-0 z-10 shadow-sm">
                                 <tr>
                                     <th class="px-4 py-3 text-left">Tourist</th>
                                     <th class="px-4 py-3 text-left">ID Type</th>
@@ -147,7 +199,8 @@
                             </thead>
                             <tbody class="divide-y divide-gray-100">
                                 @foreach($verified as $tourist)
-                                <tr class="hover:bg-gray-50">
+                                <tr class="hover:bg-gray-50"
+                                    x-show="searchQuery === '' || '{{ strtolower($tourist->name . ' ' . $tourist->email) }}'.includes(searchQuery.toLowerCase())">
                                     <td class="px-4 py-3">
                                         <p class="font-medium text-gray-800">{{ $tourist->name }}</p>
                                         <p class="text-xs text-gray-400">{{ $tourist->email }}</p>

@@ -3,16 +3,34 @@
 
             {{-- Spot Selector Dropdown --}}
             @if(count($allSpots) > 1)
-                <div class="flex items-center gap-2">
-                    <label for="spot-selector" class="text-sm font-medium text-gray-500">Switch Spot:</label>
-                    <select id="spot-selector" onchange="window.location.href = this.value"
-                        class="border border-gray-300 rounded-lg px-3 py-1.5 text-sm focus:ring-2 focus:ring-green-400 outline-none">
-                        @foreach($allSpots as $spot)
-                            <option value="{{ route('spots.dashboard', $spot->id) }}" {{ $destination->id === $spot->id ? 'selected' : '' }}>
-                                {{ $spot->name }}
-                            </option>
-                        @endforeach
-                    </select>
+                <div class="flex items-center gap-2" x-data="{ showSpotDropdown: false }">
+                    <span class="text-sm font-medium text-gray-500">Switch Spot:</span>
+                    <div class="relative">
+                        <!-- Dropdown Trigger Button -->
+                        <button type="button" @click="showSpotDropdown = !showSpotDropdown" @click.away="showSpotDropdown = false" class="flex justify-between items-center w-52 rounded-xl border border-gray-250 bg-white px-3 py-1.5 text-sm text-gray-700 font-semibold hover:bg-gray-50 transition focus:outline-none focus:ring-2 focus:ring-green-400 shadow-sm">
+                            <span class="truncate">{{ $destination->name }}</span>
+                            <svg class="h-4 w-4 text-gray-450 transform transition-transform duration-200 shrink-0 ml-1" :class="showSpotDropdown ? 'rotate-180' : ''" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7" />
+                            </svg>
+                        </button>
+
+                        <!-- Dropdown Menu -->
+                        <div x-show="showSpotDropdown" 
+                             x-transition:enter="transition ease-out duration-150"
+                             x-transition:enter-start="opacity-0 scale-95"
+                             x-transition:enter-end="opacity-100 scale-100"
+                             x-transition:leave="transition ease-in duration-100"
+                             x-transition:leave-start="opacity-100 scale-100"
+                             x-transition:leave-end="opacity-0 scale-95"
+                             class="absolute right-0 mt-1.5 z-40 w-52 rounded-xl bg-white border border-gray-200 shadow-xl py-1 max-h-48 overflow-y-auto"
+                             style="display: none;">
+                            @foreach($allSpots as $spot)
+                                <a href="{{ route('spots.dashboard', $spot->id) }}" class="block px-3.5 py-2 text-sm text-left hover:bg-green-50/40 hover:text-green-950 transition-colors {{ $destination->id === $spot->id ? 'bg-green-50 text-green-700 font-bold' : 'text-gray-700' }}">
+                                    {{ $spot->name }}
+                                </a>
+                            @endforeach
+                        </div>
+                    </div>
                 </div>
             @endif
         </div>

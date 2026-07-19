@@ -59,6 +59,29 @@
         $destinationsActive = request()->routeIs('destinations.*');
     ?>
 
+    <!-- Global Emergency Broadcast Banner -->
+    <div id="global-emergency-banner" class="hidden py-3 px-4 shadow-lg sticky top-0 z-50 transition-all duration-300">
+        <div class="max-w-7xl mx-auto flex items-center justify-between flex-wrap gap-2">
+            <div class="flex items-center gap-2.5 min-w-0">
+                <span class="flex p-1.5 rounded-lg bg-black/10">
+                    <svg class="h-5 w-5 text-current animate-bounce" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z" />
+                    </svg>
+                </span>
+                <p class="font-semibold truncate text-sm" id="global-emergency-message">
+                    <!-- Alert message goes here -->
+                </p>
+            </div>
+            <div class="flex items-center gap-2">
+                <button type="button" onclick="dismissGlobalEmergencyAlert()" class="flex p-1.5 rounded-md hover:bg-black/10 focus:outline-none transition">
+                    <svg class="h-4 w-4 text-current" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- Mobile Top Navigation Header -->
     <div class="md:hidden flex items-center justify-between bg-white p-4 shadow-sm z-30 relative">
         <div class="flex items-center gap-2">
@@ -127,7 +150,11 @@
                                 </a>
                                 <a href="{{ route('verification.accounts') }}" class="flex items-center pl-12 pr-4 py-2 rounded-lg text-sm transition-colors {{ request()->routeIs('verification.accounts') ? 'bg-white/10 text-white font-medium shadow-sm' : 'text-green-100 hover:bg-white/5 hover:text-white' }}">
                                     <svg class="w-4 h-4 mr-2.5 opacity-75" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
-                                    Verify Account Status
+                                    Verify Tourists
+                                </a>
+                                <a href="{{ route('verification.staff') }}" class="flex items-center pl-12 pr-4 py-2 rounded-lg text-sm transition-colors {{ request()->routeIs('verification.staff') ? 'bg-white/10 text-white font-medium shadow-sm' : 'text-green-100 hover:bg-white/5 hover:text-white' }}">
+                                    <svg class="w-4 h-4 mr-2.5 opacity-75" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+                                    Manage Staff
                                 </a>
                                 <a href="{{ route('verification.add_account') }}" class="flex items-center pl-12 pr-4 py-2 rounded-lg text-sm transition-colors {{ request()->routeIs('verification.add_account') ? 'bg-white/10 text-white font-medium shadow-sm' : 'text-green-100 hover:bg-white/5 hover:text-white' }}">
                                     <svg class="w-4 h-4 mr-2.5 opacity-75" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path></svg>
@@ -355,6 +382,72 @@
             </button>
         </form>
     </x-confirm-modal>
+
+    @auth
+    <script>
+        (function() {
+            let currentAlertId = null;
+
+            function checkEmergencyAlerts() {
+                fetch("{{ route('notifications.latest-alert') }}")
+                    .then(r => {
+                        if (!r.ok) throw new Error('Unauthenticated');
+                        return r.json();
+                    })
+                    .then(data => {
+                        const banner = document.getElementById('global-emergency-banner');
+                        const messageEl = document.getElementById('global-emergency-message');
+                        if (!banner || !messageEl) return;
+
+                        if (data.has_alert) {
+                            currentAlertId = data.id;
+                            messageEl.textContent = data.message;
+                            banner.classList.remove('hidden');
+                            
+                            // Style based on severity prefix in the notification message
+                            if (data.message.includes('[CRITICAL]')) {
+                                banner.className = "py-3 px-4 shadow-lg sticky top-0 z-50 transition-all duration-300 bg-red-600 text-white";
+                            } else if (data.message.includes('[WARNING]')) {
+                                banner.className = "py-3 px-4 shadow-lg sticky top-0 z-50 transition-all duration-300 bg-amber-500 text-amber-950";
+                            } else {
+                                banner.className = "py-3 px-4 shadow-lg sticky top-0 z-50 transition-all duration-300 bg-blue-600 text-white";
+                            }
+                        } else {
+                            banner.classList.add('hidden');
+                        }
+                    })
+                    .catch(err => {
+                        // Suppress background errors if page is unloading or session expired
+                    });
+            }
+
+            window.dismissGlobalEmergencyAlert = function() {
+                if (!currentAlertId) return;
+                fetch(`/notifications/${currentAlertId}/dismiss`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'Content-Type': 'application/json'
+                    }
+                })
+                .then(r => r.json())
+                .then(data => {
+                    if (data.success) {
+                        const banner = document.getElementById('global-emergency-banner');
+                        if (banner) banner.classList.add('hidden');
+                        currentAlertId = null;
+                    }
+                })
+                .catch(err => console.error('Error dismissing alert:', err));
+            };
+
+            // Check every 6 seconds for fast user-experience and immediate delivery
+            setInterval(checkEmergencyAlerts, 6000);
+            // Initial check
+            document.addEventListener('DOMContentLoaded', checkEmergencyAlerts);
+        })();
+    </script>
+    @endauth
 
     @stack('scripts')
 </body>

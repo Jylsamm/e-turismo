@@ -34,7 +34,7 @@
         }
     </style>
 
-    <div class="pb-8 pt-0 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div x-data="{ deleteUrl: '' }" class="pb-8 pt-0 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
 
         {{-- Upload Area --}}
@@ -73,13 +73,12 @@
                             @endif
                         </div>
                         
-                        <form action="{{ route('spots.images.delete', $img) }}" method="POST" class="inline" onsubmit="return confirm('Are you sure you want to delete this photo?')">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="text-red-500 hover:text-red-700 p-1.5 rounded-lg hover:bg-red-50 transition" title="Delete image">
-                                <i class="ti ti-trash" style="font-size:16px;"></i>
-                            </button>
-                        </form>
+                        <button type="button" 
+                                @click="deleteUrl = '{{ route('spots.images.delete', $img) }}'; $dispatch('open-confirm-modal', { id: 'delete-photo-modal' })"
+                                class="text-red-500 hover:text-red-700 p-1.5 rounded-lg hover:bg-red-50 transition" 
+                                title="Delete image">
+                            <i class="ti ti-trash" style="font-size:16px;"></i>
+                        </button>
                     </div>
                 </div>
             @empty
@@ -91,5 +90,16 @@
                 </div>
             @endforelse
         </div>
+
+        {{-- Delete Photo Confirmation Modal --}}
+        <x-confirm-modal id="delete-photo-modal" title="Delete Photo" message="Are you sure you want to delete this photo? This action cannot be undone.">
+            <form method="POST" :action="deleteUrl">
+                @csrf
+                @method('DELETE')
+                <button type="submit" @click.stop class="px-4 py-2.5 rounded-xl bg-red-600 hover:bg-red-700 text-white font-semibold text-sm transition-all duration-200 hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
+                    Delete
+                </button>
+            </form>
+        </x-confirm-modal>
     </div>
 </x-app-layout>
