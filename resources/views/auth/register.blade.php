@@ -1198,7 +1198,7 @@
               :value="old('suffix')" maxlength="20" autocomplete="off" style="padding-right: 2.5rem;"
               placeholder="e.g. Jr." />
             <button type="button" tabindex="-1"
-              style="position:absolute; right:8px; top:50%; transform:translateY(-50%); background:none; border:none; padding:0; cursor:pointer; color:#6b7280; display:flex; align-items:center;"
+              style="position:absolute; right:0; top:0; bottom:0; width: 2.5rem; background:none; border:none; padding:0; cursor:pointer; color:#6b7280; display:flex; align-items:center; justify-content:center;"
               onmousedown="event.preventDefault(); var inp=document.getElementById('suffix'); inp.focus(); if(window.suffixOpenDropdown) suffixOpenDropdown(inp);">
               <svg xmlns="http://www.w3.org/2000/svg" style="width:16px; height:16px; pointer-events:none;"
                 viewBox="0 0 20 20" fill="currentColor">
@@ -1213,20 +1213,95 @@
       </div>
 
       {{-- Classification --}}
-      <div class="mt-4">
+      <div class="mt-4" x-data="{ 
+        classification: sessionStorage.getItem('reg_form_state') ? (JSON.parse(sessionStorage.getItem('reg_form_state')).classification || '') : '{{ old('classification') }}', 
+        showClassification: false 
+      }">
         <x-input-label for="classification" :value="__('Visitor Classification')" />
-        <select id="classification" name="classification"
-          class="block mt-1 w-full border-gray-300 focus:border-brand-500 focus:ring-brand-500 rounded-md shadow-sm"
-          required>
-          <option value="" disabled selected>Select Classification</option>
-          <option value="Local" {{ old('classification') == 'Local' ? 'selected' : '' }}>Local (Municipal Resident)
-          </option>
-          <option value="Domestic" {{ old('classification') == 'Domestic' ? 'selected' : '' }}>Domestic (National
-            Resident)</option>
-          <option value="Foreign" {{ old('classification') == 'Foreign' ? 'selected' : '' }}>Foreign (International
-            Visitor)</option>
-        </select>
+        <div class="relative mt-1">
+          <!-- Dropdown Trigger Button -->
+          <button type="button" @click="showClassification = !showClassification" @click.away="showClassification = false"
+            class="flex justify-between items-center w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-700 font-semibold hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 shadow-sm transition duration-150">
+            <span x-text="
+              classification === 'Local' ? 'Local (Municipal Resident)' : 
+              (classification === 'Domestic' ? 'Domestic (National Resident)' : 
+              (classification === 'Foreign' ? 'Foreign (International Visitor)' : 'Select Classification'))
+            " class="text-gray-800"></span>
+            <svg class="h-4 w-4 text-gray-400 transform transition-transform duration-200" :class="showClassification ? 'rotate-180' : ''" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7" />
+            </svg>
+          </button>
+          
+          <input type="hidden" id="classification" name="classification" :value="classification" required />
+
+          <!-- Dropdown List with transitions -->
+          <div x-show="showClassification"
+            x-transition:enter="transition ease-out duration-150"
+            x-transition:enter-start="opacity-0 scale-95"
+            x-transition:enter-end="opacity-100 scale-100"
+            x-transition:leave="transition ease-in duration-100"
+            x-transition:leave-start="opacity-100 scale-100"
+            x-transition:leave-end="opacity-0 scale-95"
+            class="absolute left-0 mt-1.5 z-50 w-full rounded-md bg-white border border-gray-200 shadow-xl py-1 overflow-hidden"
+            style="display: none;">
+            
+            <button type="button" @click="classification = 'Local'; showClassification = false; saveFormState(); updateStepProgress();"
+              class="w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-green-50 hover:text-green-950 transition-colors">
+              Local (Municipal Resident)
+            </button>
+            <button type="button" @click="classification = 'Domestic'; showClassification = false; saveFormState(); updateStepProgress();"
+              class="w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-green-50 hover:text-green-950 transition-colors">
+              Domestic (National Resident)
+            </button>
+            <button type="button" @click="classification = 'Foreign'; showClassification = false; saveFormState(); updateStepProgress();"
+              class="w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-green-50 hover:text-green-950 transition-colors">
+              Foreign (International Visitor)
+            </button>
+          </div>
+        </div>
         <x-input-error :messages="$errors->get('classification')" class="mt-2" />
+      </div>
+
+      {{-- Gender --}}
+      <div class="mt-4" x-data="{ 
+        gender: sessionStorage.getItem('reg_form_state') ? (JSON.parse(sessionStorage.getItem('reg_form_state')).gender || '') : '{{ old('gender') }}', 
+        showGender: false 
+      }">
+        <x-input-label for="gender" :value="__('Gender')" />
+        <div class="relative mt-1">
+          <!-- Dropdown Trigger Button -->
+          <button type="button" @click="showGender = !showGender" @click.away="showGender = false"
+            class="flex justify-between items-center w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-700 font-semibold hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 shadow-sm transition duration-150">
+            <span x-text="gender === 'Male' ? 'Male' : (gender === 'Female' ? 'Female' : 'Select Gender')" class="text-gray-800"></span>
+            <svg class="h-4 w-4 text-gray-400 transform transition-transform duration-200" :class="showGender ? 'rotate-180' : ''" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7" />
+            </svg>
+          </button>
+          
+          <input type="hidden" id="gender" name="gender" :value="gender" required />
+
+          <!-- Dropdown List with transitions -->
+          <div x-show="showGender"
+            x-transition:enter="transition ease-out duration-150"
+            x-transition:enter-start="opacity-0 scale-95"
+            x-transition:enter-end="opacity-100 scale-100"
+            x-transition:leave="transition ease-in duration-100"
+            x-transition:leave-start="opacity-100 scale-100"
+            x-transition:leave-end="opacity-0 scale-95"
+            class="absolute left-0 mt-1.5 z-50 w-full rounded-md bg-white border border-gray-200 shadow-xl py-1 overflow-hidden"
+            style="display: none;">
+            
+            <button type="button" @click="gender = 'Male'; showGender = false; saveFormState(); updateStepProgress();"
+              class="w-full text-left px-4 py-2.5 text-sm text-gray-750 hover:bg-green-50 hover:text-green-950 transition-colors">
+              Male
+            </button>
+            <button type="button" @click="gender = 'Female'; showGender = false; saveFormState(); updateStepProgress();"
+              class="w-full text-left px-4 py-2.5 text-sm text-gray-755 hover:bg-green-50 hover:text-green-950 transition-colors">
+              Female
+            </button>
+          </div>
+        </div>
+        <x-input-error :messages="$errors->get('gender')" class="mt-2" />
       </div>
 
       <!-- Next button for Step 2 -->
@@ -1949,7 +2024,7 @@
     [firstNameInput, lastNameInput, passwordInput, confirmPasswordInput, idInput].forEach(el => {
       if (el) el.addEventListener('input', updateStepProgress);
     });
-    [classificationSelect, idTypeSelect, dobInput].forEach(el => {
+    [classificationSelect, idTypeSelect, dobInput, document.getElementById('gender')].forEach(el => {
       if (el) el.addEventListener('change', updateStepProgress);
     });
 
@@ -1964,6 +2039,7 @@
         last_name: (document.getElementById('last_name') || {}).value || '',
         middle_initial: (document.getElementById('middle_initial') || {}).value || '',
         classification: (document.getElementById('classification') || {}).value || '',
+        gender: (document.getElementById('gender') || {}).value || '',
         id_type: idTypeSelect.value,
         id_number: idInput.value,
         dob: dobInput.value,
@@ -1985,6 +2061,7 @@
       if (state.middle_initial) { const el = document.getElementById('middle_initial'); if (el) el.value = state.middle_initial; }
       if (state.suffix) { const el = document.getElementById('suffix'); if (el) el.value = state.suffix; }
       if (state.classification) { const el = document.getElementById('classification'); if (el) el.value = state.classification; }
+      if (state.gender) { const el = document.getElementById('gender'); if (el) el.value = state.gender; }
       if (state.id_type) { idTypeSelect.value = state.id_type; applyIdType(); }
       if (state.id_number) { idInput.value = state.id_number; }
       if (state.dob) { dobInput.value = state.dob; }
@@ -2019,7 +2096,7 @@
     }
 
     // Bind save-on-change to all relevant fields
-    const _saveFields = ['first_name', 'last_name', 'middle_initial', 'suffix', 'classification', 'id_type', 'id_number_input', 'dob', 'password', 'password_confirmation'];
+    const _saveFields = ['first_name', 'last_name', 'middle_initial', 'suffix', 'classification', 'gender', 'id_type', 'id_number_input', 'dob', 'password', 'password_confirmation'];
     _saveFields.forEach(id => {
       const el = document.getElementById(id);
       if (el) {

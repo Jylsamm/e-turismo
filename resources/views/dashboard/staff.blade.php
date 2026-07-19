@@ -201,7 +201,7 @@
             </div>
 
             {{-- Recent Check-ins --}}
-            <div class="bg-white border border-gray-200 rounded-2xl overflow-hidden shadow-sm flex flex-col justify-between">
+            <div class="interactive-card overflow-hidden flex flex-col justify-between">
                 <div>
                     <div class="px-6 py-4 border-b border-gray-100 flex items-center gap-2">
                         <i class="ti ti-user-check text-gray-400" style="font-size:20px;"></i>

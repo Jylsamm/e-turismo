@@ -61,6 +61,7 @@ class RegisteredUserController extends Controller
             ],
             'password'       => ['required', 'confirmed', Rules\Password::defaults()],
             'classification' => ['required', 'string', 'in:Local,Domestic,Foreign'],
+            'gender'         => ['required', 'string', 'in:Male,Female'],
             'id_type'        => ['required', 'string', 'max:50'],
             // School ID submits school_name; all others submit id_number
             'school_name'    => $isSchoolId ? ['required', 'string', 'max:150'] : ['nullable'],
@@ -121,6 +122,7 @@ class RegisteredUserController extends Controller
                     'password'        => Hash::make($request->password),
                     'role'            => 'tourist',
                     'classification'  => $request->classification,
+                    'gender'          => $request->gender,
                     'id_type'         => $request->id_type,
                     'id_number'       => $isSchoolId ? $request->school_name : $request->id_number,
                     'dob'             => $request->dob ?: null,

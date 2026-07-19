@@ -36,6 +36,26 @@
 
     <div x-data="{ deleteUrl: '' }" class="pb-8 pt-0 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
+        <!-- Sub-Navigation Tabs -->
+        <div class="flex flex-wrap gap-2 border-b border-gray-200 pb-3 mb-6">
+            <a href="{{ route('spots.index') }}"
+                class="px-4 py-2 text-sm font-semibold rounded-xl transition-all duration-200 transform hover:-translate-y-0.5 active:translate-y-0 {{ request()->routeIs('spots.index') || request()->routeIs('spots.dashboard') ? 'bg-green-700 text-white shadow-md shadow-green-700/15' : 'text-gray-500 hover:text-gray-800 hover:bg-gray-100 hover:shadow-sm' }}">
+                <i class="ti ti-chart-bar mr-1"></i> Spot Status
+            </a>
+            @php
+                $activeDestinationId = Auth::check() ? Auth::user()->assigned_destination_id : null;
+            @endphp
+            @if($activeDestinationId)
+                <a href="{{ route('spots.edit', $activeDestinationId) }}"
+                    class="px-4 py-2 text-sm font-semibold rounded-xl transition-all duration-200 transform hover:-translate-y-0.5 active:translate-y-0 {{ request()->routeIs('spots.edit') ? 'bg-green-700 text-white shadow-md shadow-green-700/15' : 'text-gray-500 hover:text-gray-800 hover:bg-gray-100 hover:shadow-sm' }}">
+                    <i class="ti ti-edit mr-1"></i> Edit Details
+                </a>
+                <a href="{{ route('spots.gallery', $activeDestinationId) }}"
+                    class="px-4 py-2 text-sm font-semibold rounded-xl transition-all duration-200 transform hover:-translate-y-0.5 active:translate-y-0 {{ request()->routeIs('spots.gallery') ? 'bg-green-700 text-white shadow-md shadow-green-700/15' : 'text-gray-500 hover:text-gray-800 hover:bg-gray-100 hover:shadow-sm' }}">
+                    <i class="ti ti-photo mr-1"></i> Image Gallery
+                </a>
+            @endif
+        </div>
 
         {{-- Upload Area --}}
         <div class="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm mb-6">

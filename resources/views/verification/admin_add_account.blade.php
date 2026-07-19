@@ -15,6 +15,14 @@
         .animate-fade-in-up {
             animation: fadeInUp 0.4s ease-out forwards;
         }
+        .admin-card-hover {
+            transition: all 0.3s ease-in-out !important;
+        }
+        .admin-card-hover:hover {
+            transform: translateY(-4px) !important;
+            box-shadow: 0 10px 25px -5px rgba(21, 128, 61, 0.15), 0 4px 10px -5px rgba(21, 128, 61, 0.1) !important;
+            border-color: #bbf7d0 !important;
+        }
     </style>
     @endpush
 
@@ -33,19 +41,19 @@
             <!-- Sub-Navigation Tabs -->
             <div class="flex flex-wrap gap-2 border-b border-gray-200 pb-3">
                 <a href="{{ route('verification.reviews') }}" 
-                   class="px-4 py-2 text-sm font-semibold rounded-xl transition {{ request()->routeIs('verification.reviews') ? 'bg-green-700 text-white shadow-sm' : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100' }}">
+                   class="px-4 py-2 text-sm font-semibold rounded-xl transition-all duration-200 transform hover:-translate-y-0.5 active:translate-y-0 {{ request()->routeIs('verification.reviews') ? 'bg-green-700 text-white shadow-md shadow-green-700/15' : 'text-gray-500 hover:text-gray-800 hover:bg-gray-100 hover:shadow-sm' }}">
                     <i class="ti ti-checklist mr-1"></i> ID Verification Reviews
                 </a>
                 <a href="{{ route('verification.accounts') }}" 
-                   class="px-4 py-2 text-sm font-semibold rounded-xl transition {{ request()->routeIs('verification.accounts') ? 'bg-green-700 text-white shadow-sm' : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100' }}">
+                   class="px-4 py-2 text-sm font-semibold rounded-xl transition-all duration-200 transform hover:-translate-y-0.5 active:translate-y-0 {{ request()->routeIs('verification.accounts') ? 'bg-green-700 text-white shadow-md shadow-green-700/15' : 'text-gray-500 hover:text-gray-800 hover:bg-gray-100 hover:shadow-sm' }}">
                     <i class="ti ti-users mr-1"></i> Verify Tourists
                 </a>
                 <a href="{{ route('verification.staff') }}" 
-                   class="px-4 py-2 text-sm font-semibold rounded-xl transition {{ request()->routeIs('verification.staff') ? 'bg-green-700 text-white shadow-sm' : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100' }}">
+                   class="px-4 py-2 text-sm font-semibold rounded-xl transition-all duration-200 transform hover:-translate-y-0.5 active:translate-y-0 {{ request()->routeIs('verification.staff') ? 'bg-green-700 text-white shadow-md shadow-green-700/15' : 'text-gray-500 hover:text-gray-800 hover:bg-gray-100 hover:shadow-sm' }}">
                     <i class="ti ti-user-cog mr-1"></i> Manage Staff
                 </a>
                 <a href="{{ route('verification.add_account') }}" 
-                   class="px-4 py-2 text-sm font-semibold rounded-xl transition {{ request()->routeIs('verification.add_account') ? 'bg-green-700 text-white shadow-sm' : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100' }}">
+                   class="px-4 py-2 text-sm font-semibold rounded-xl transition-all duration-200 transform hover:-translate-y-0.5 active:translate-y-0 {{ request()->routeIs('verification.add_account') ? 'bg-green-700 text-white shadow-md shadow-green-700/15' : 'text-gray-500 hover:text-gray-800 hover:bg-gray-100 hover:shadow-sm' }}">
                     <i class="ti ti-user-plus mr-1"></i> Add Account
                 </a>
             </div>
@@ -69,7 +77,7 @@
             @endif
 
             <div class="space-y-6">
-                <div class="bg-white shadow rounded-xl overflow-hidden max-w-3xl mx-auto border border-gray-150 shadow-sm hover:shadow transition-shadow duration-350"
+                <div class="bg-white shadow rounded-xl overflow-hidden max-w-3xl mx-auto border border-gray-200 admin-card-hover"
                      x-data="{ 
                          emailVerified: false, 
                          otpSent: false, 

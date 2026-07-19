@@ -334,7 +334,7 @@
         </div>
 
         {{-- ② Main Table Card ─────────────────────────────────────────────── --}}
-        <div class="interactive-card overflow-hidden">
+        <div class="interactive-card">
 
             {{-- Card Header --}}
             <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between gap-4 flex-wrap">
@@ -401,13 +401,13 @@
                 <textarea x-ref="pasteArea" @paste="handlePaste($event)" class="sr-only"
                     aria-label="Paste area for bulk import" tabindex="-1"></textarea>
                 <p class="text-xs text-gray-400 mt-2 mb-1">
-                    <strong>Column order:</strong> Name · Age · Contact Number · Email · Classification (Local /
+                    <strong>Column order:</strong> Name · Age · Gender · Contact Number · Email · Classification (Local /
                     Domestic Tourist / International Tourist) · Days Stay
                 </p>
             </div>
 
             {{-- ③ Visitor Grid Table ───────────────────────────────────────── --}}
-            <div class="overflow-x-auto" id="table-scroll-container">
+            <div class="overflow-x-auto lg:overflow-visible" id="table-scroll-container">
                 <form id="walkin-form" action="{{ route('staff.walkins.store') }}" method="POST">
                     @csrf
                     <table class="visitor-table" id="visitor-table">
@@ -416,6 +416,7 @@
                                 <th class="text-center" style="width:38px;">#</th>
                                 <th style="min-width:180px;">Full Name <span class="text-red-400">*</span></th>
                                 <th style="width:72px;">Age <span class="text-red-400">*</span></th>
+                                <th style="width:110px;">Gender <span class="text-red-400">*</span></th>
                                 <th style="min-width:140px;">Contact Number</th>
                                 <th style="min-width:180px;">Email Address</th>
                                 <th style="min-width:175px;">Classification <span class="text-red-400">*</span></th>
@@ -450,6 +451,39 @@
                                             required>
                                     </td>
 
+                                    {{-- Gender --}}
+                                    <td>
+                                        <div class="relative">
+                                            <button type="button" @click="row.showGenderDropdown = !row.showGenderDropdown" @click.away="row.showGenderDropdown = false"
+                                                @keydown.tab.prevent="focusNext($event, i, 'gender')"
+                                                class="cell-input text-left flex justify-between items-center w-full focus:outline-none focus:ring-2 focus:ring-green-500 focus:bg-white" style="min-width: 90px;">
+                                                <span x-text="row.gender || 'Select'" class="truncate"></span>
+                                                <svg class="h-3 w-3 text-gray-400 transform transition-transform duration-150 shrink-0 ml-1" :class="row.showGenderDropdown ? 'rotate-180' : ''" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7" />
+                                                </svg>
+                                            </button>
+                                            <input type="hidden" :name="'visitors['+i+'][gender]'" :value="row.gender" required />
+                                            
+                                            <!-- Animated Dropdown Options -->
+                                            <div x-show="row.showGenderDropdown"
+                                                x-transition:enter="transition ease-out duration-100"
+                                                x-transition:enter-start="opacity-0 scale-95"
+                                                x-transition:enter-end="opacity-100 scale-100"
+                                                x-transition:leave="transition ease-in duration-75"
+                                                x-transition:leave-start="opacity-100 scale-100"
+                                                x-transition:leave-end="opacity-0 scale-95"
+                                                class="absolute left-0 mt-1 z-50 w-full min-w-[100px] rounded-lg bg-white border border-gray-200 shadow-lg py-1 text-xs"
+                                                style="display: none;">
+                                                <button type="button" @click="row.gender = 'Male'; row.showGenderDropdown = false" class="w-full text-left px-3 py-2 hover:bg-green-50 hover:text-green-950 transition-colors">
+                                                    Male
+                                                </button>
+                                                <button type="button" @click="row.gender = 'Female'; row.showGenderDropdown = false" class="w-full text-left px-3 py-2 hover:bg-green-50 hover:text-green-950 transition-colors">
+                                                    Female
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </td>
+
                                     {{-- Contact --}}
                                     <td>
                                         <input type="tel" :name="'visitors['+i+'][contact_number]'"
@@ -469,15 +503,37 @@
 
                                     {{-- Classification --}}
                                     <td>
-                                        <div class="select-wrapper">
-                                            <select :name="'visitors['+i+'][classification]'"
-                                                x-model="row.classification"
+                                        <div class="relative">
+                                            <button type="button" @click="row.showClassDropdown = !row.showClassDropdown" @click.away="row.showClassDropdown = false"
                                                 @keydown.tab.prevent="focusNext($event, i, 'classification')"
-                                                class="cell-input" required>
-                                                <option value="Local">Local</option>
-                                                <option value="Domestic Tourist">Domestic Tourist</option>
-                                                <option value="International Tourist">International Tourist</option>
-                                            </select>
+                                                class="cell-input text-left flex justify-between items-center w-full focus:outline-none focus:ring-2 focus:ring-green-500 focus:bg-white" style="min-width: 140px;">
+                                                <span x-text="row.classification || 'Select'" class="truncate"></span>
+                                                <svg class="h-3 w-3 text-gray-400 transform transition-transform duration-150 shrink-0 ml-1" :class="row.showClassDropdown ? 'rotate-180' : ''" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7" />
+                                                </svg>
+                                            </button>
+                                            <input type="hidden" :name="'visitors['+i+'][classification]'" :value="row.classification" required />
+                                            
+                                            <!-- Animated Dropdown Options -->
+                                            <div x-show="row.showClassDropdown"
+                                                x-transition:enter="transition ease-out duration-100"
+                                                x-transition:enter-start="opacity-0 scale-95"
+                                                x-transition:enter-end="opacity-100 scale-100"
+                                                x-transition:leave="transition ease-in duration-75"
+                                                x-transition:leave-start="opacity-100 scale-100"
+                                                x-transition:leave-end="opacity-0 scale-95"
+                                                class="absolute left-0 mt-1 z-50 w-full min-w-[150px] rounded-lg bg-white border border-gray-200 shadow-lg py-1 text-xs"
+                                                style="display: none;">
+                                                <button type="button" @click="row.classification = 'Local'; row.showClassDropdown = false" class="w-full text-left px-3 py-2 hover:bg-green-50 hover:text-green-950 transition-colors">
+                                                    Local
+                                                </button>
+                                                <button type="button" @click="row.classification = 'Domestic Tourist'; row.showClassDropdown = false" class="w-full text-left px-3 py-2 hover:bg-green-50 hover:text-green-950 transition-colors">
+                                                    Domestic Tourist
+                                                </button>
+                                                <button type="button" @click="row.classification = 'International Tourist'; row.showClassDropdown = false" class="w-full text-left px-3 py-2 hover:bg-green-50 hover:text-green-950 transition-colors">
+                                                    International Tourist
+                                                </button>
+                                            </div>
                                         </div>
                                     </td>
 
@@ -637,12 +693,15 @@
                             id: ++this._idCounter,
                             name: defaults.name ?? '',
                             age: defaults.age ?? '',
+                            gender: defaults.gender ?? '',
                             contact_number: defaults.contact_number ?? '',
                             email: defaults.email ?? '',
                             classification: defaults.classification ?? 'Local',
                             duration_days: defaults.duration_days ?? 1,
                             hasError: false,
-                            errors: { name: '', age: '', email: '', duration_days: '' }
+                            errors: { name: '', age: '', email: '', duration_days: '' },
+                            showGenderDropdown: false,
+                            showClassDropdown: false
                         };
                     },
 
@@ -702,6 +761,7 @@
                         this.addRow({
                             name: '',
                             age: src.age,
+                            gender: src.gender,
                             contact_number: src.contact_number,
                             email: src.email,
                             classification: src.classification,
@@ -762,8 +822,8 @@
                     },
 
                     // ── Keyboard focus navigation ─────────────────────
-                    // Tab order per row: name → age → contact_number → email → classification → duration_days
-                    FIELD_ORDER: ['name', 'age', 'contact_number', 'email', 'classification', 'duration_days'],
+                    // Tab order per row: name → age → gender → contact_number → email → classification → duration_days
+                    FIELD_ORDER: ['name', 'age', 'gender', 'contact_number', 'email', 'classification', 'duration_days'],
 
                     focusCellAt(rowIdx, field) {
                         this.$nextTick(() => {
@@ -818,19 +878,20 @@
 
                             const name = clean[0] || '';
                             const age = parseInt(clean[1]) || '';
-                            const contact = clean[2] || '';
-                            const email = clean[3] || '';
+                            const gender = clean[2] || '';
+                            const contact = clean[3] || '';
+                            const email = clean[4] || '';
 
                             // Fuzzy-match classification
-                            const rawClass = (clean[4] || '').toLowerCase();
+                            const rawClass = (clean[5] || '').toLowerCase();
                             let classification = 'Local';
                             if (rawClass.includes('international')) classification = 'International Tourist';
                             else if (rawClass.includes('domestic')) classification = 'Domestic Tourist';
 
-                            const duration_days = parseInt(clean[5]) || 1;
+                            const duration_days = parseInt(clean[6]) || 1;
 
                             if (name) {
-                                this.addRow({ name, age, contact_number: contact, email, classification, duration_days });
+                                this.addRow({ name, age, gender, contact_number: contact, email, classification, duration_days });
                                 imported++;
                             }
                         });

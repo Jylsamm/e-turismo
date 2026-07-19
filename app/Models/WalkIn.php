@@ -15,6 +15,7 @@ class WalkIn extends Model
         'classification',
         'duration_days',
         'registered_by_staff_id',
+        'gender',
     ];
 
     protected $casts = [

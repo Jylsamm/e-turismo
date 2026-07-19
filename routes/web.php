@@ -168,7 +168,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         // Reports
         Route::get('/reports', [ReportController::class, 'index'])->name('reports.index');
         Route::post('/reports/generate', [ReportController::class, 'generate'])->name('reports.generate');
-        Route::get('/reports/export', [ReportController::class, 'export'])->name('reports.export');
+        Route::get('/reports/export-docx', [ReportController::class, 'exportDocx'])->name('reports.export-docx');
         Route::get('/reports/{report}', [ReportController::class, 'show'])->name('reports.show');
 
         // Identity Verification admin review

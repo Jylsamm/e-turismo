@@ -40,6 +40,7 @@ class User extends Authenticatable implements MustVerifyEmail
         'id_verified_at',
         'ready_to_complete_requirements',
         'is_manually_verified',
+        'gender',
     ];
 
     public function isAdmin(): bool

@@ -2,6 +2,26 @@
     $destinations = \App\Models\Destination::select('id', 'name')->get();
 @endphp
 <x-app-layout>
+    @push('head')
+    <style>
+        .admin-card-hover {
+            transition: all 0.3s ease-in-out !important;
+        }
+        .admin-card-hover:hover {
+            transform: translateY(-4px) !important;
+            box-shadow: 0 10px 25px -5px rgba(21, 128, 61, 0.15), 0 4px 10px -5px rgba(21, 128, 61, 0.1) !important;
+            border-color: #bbf7d0 !important;
+        }
+        .broadcast-btn-hover {
+            transition: all 0.25s ease-in-out !important;
+        }
+        .broadcast-btn-hover:hover {
+            transform: translateY(-2px) !important;
+            background-color: #dc2626 !important; /* red-600 */
+            box-shadow: 0 8px 20px rgba(220, 38, 38, 0.35) !important;
+        }
+    </style>
+    @endpush
     <x-slot name="header">
         <div class="flex flex-col md:flex-row md:items-center md:justify-between space-y-4 md:space-y-0">
             <div>
@@ -14,7 +34,7 @@
     </x-slot>
 
     <!-- Alpine Component Initialization -->
-    <div x-data="analyticsDashboard()" x-init="initCharts()" class="py-12 relative">
+    <div x-data="analyticsDashboard()" x-init="initCharts()" class="pt-0 pb-12 relative">
         <!-- Toast Notification -->
         <div x-show="toastMessage" x-transition:enter="transition ease-out duration-300"
             x-transition:enter-start="opacity-0 translate-y-2" x-transition:enter-end="opacity-100 translate-y-0"
@@ -39,7 +59,7 @@
 
             <!-- 2.1 Global Controls -->
             <div
-                class="mb-6 flex flex-col sm:flex-row justify-between items-center bg-white p-4 rounded-xl shadow-sm border border-gray-100 relative z-20">
+                class="mb-6 flex flex-col sm:flex-row justify-between items-center bg-white p-4 rounded-xl shadow-sm border border-gray-100 relative z-20 admin-card-hover">
                 <div class="flex items-center w-full sm:w-auto mb-4 sm:mb-0 gap-3">
                     <span class="text-sm font-medium text-gray-500 mr-1">Date Range:</span>
                     <div class="relative" x-data="{ showRangeDropdown: false }" @click.away="showRangeDropdown = false">
@@ -105,7 +125,7 @@
                 </div>
 
                 <button @click="openBroadcastModal()"
-                    class="w-full sm:w-auto inline-flex items-center justify-center rounded-md border border-transparent bg-red-600 hover:bg-red-700 px-4 py-2 text-sm font-medium text-white shadow-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition-colors">
+                    class="w-full sm:w-auto inline-flex items-center justify-center rounded-md border border-transparent bg-red-600 hover:bg-red-750 px-4 py-2 text-sm font-medium text-white shadow-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition-all duration-200 transform hover:-translate-y-0.5 active:translate-y-0 hover:shadow-md broadcast-btn-hover">
                     <svg class="mr-2 h-4 w-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"
                         stroke-width="2">
                         <path stroke-linecap="round" stroke-linejoin="round"
@@ -136,14 +156,14 @@
             <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4 mb-8">
                 <!-- Active Tourists -->
                 <div
-                    class="overflow-hidden rounded-xl bg-white shadow-sm border border-gray-100 flex flex-col relative">
+                    class="overflow-hidden rounded-xl bg-white shadow-sm border border-gray-100 flex flex-col relative admin-card-hover">
                     <div x-show="isLoadingKpis"
                         class="absolute inset-0 z-10 bg-white/80 flex items-center justify-center">
                         <div class="w-5 h-5 border-2 border-emerald-500 border-t-transparent rounded-full animate-spin">
                         </div>
                     </div>
                     <div class="p-5 flex-grow">
-                        <div class="flex items-center">
+                        <div class="flex items-center gap-4">
                             <div class="flex-shrink-0 bg-emerald-100 rounded-md p-3">
                                 <svg class="h-6 w-6 text-emerald-600" fill="none" viewBox="0 0 24 24"
                                     stroke="currentColor">
@@ -151,14 +171,9 @@
                                         d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
                                 </svg>
                             </div>
-                            <div class="ml-5 w-0 flex-1">
-                                <dl>
-                                    <dt class="truncate text-sm font-medium text-gray-500">Active Tourists</dt>
-                                    <dd>
-                                        <div class="text-2xl font-bold text-gray-900" x-text="kpis.activeTourists">...
-                                        </div>
-                                    </dd>
-                                </dl>
+                            <div class="min-w-0">
+                                <p class="text-sm font-medium text-gray-500 leading-tight">Active Tourists</p>
+                                <p class="text-2xl font-bold text-gray-900 leading-tight mt-0.5" x-text="kpis.activeTourists">...</p>
                             </div>
                         </div>
                     </div>
@@ -167,14 +182,14 @@
 
                 <!-- Pending Booking Requests -->
                 <div
-                    class="overflow-hidden rounded-xl bg-white shadow-sm border border-gray-100 flex flex-col relative">
+                    class="overflow-hidden rounded-xl bg-white shadow-sm border border-gray-100 flex flex-col relative admin-card-hover">
                     <div x-show="isLoadingKpis"
                         class="absolute inset-0 z-10 bg-white/80 flex items-center justify-center">
                         <div class="w-5 h-5 border-2 border-amber-500 border-t-transparent rounded-full animate-spin">
                         </div>
                     </div>
                     <div class="p-5 flex-grow">
-                        <div class="flex items-center">
+                        <div class="flex items-center gap-4">
                             <div class="flex-shrink-0 bg-amber-100 rounded-md p-3">
                                 <svg class="h-6 w-6 text-amber-600" fill="none" viewBox="0 0 24 24"
                                     stroke="currentColor">
@@ -182,14 +197,9 @@
                                         d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                                 </svg>
                             </div>
-                            <div class="ml-5 w-0 flex-1">
-                                <dl>
-                                    <dt class="truncate text-sm font-medium text-gray-500">Pending Bookings</dt>
-                                    <dd>
-                                        <div class="text-2xl font-bold text-amber-600" x-text="kpis.pendingRequests">...
-                                        </div>
-                                    </dd>
-                                </dl>
+                            <div class="min-w-0">
+                                <p class="text-sm font-medium text-gray-500 leading-tight">Pending Bookings</p>
+                                <p class="text-2xl font-bold text-amber-600 leading-tight mt-0.5" x-text="kpis.pendingRequests">...</p>
                             </div>
                         </div>
                     </div>
@@ -199,14 +209,14 @@
 
                 <!-- Destination Capacity Health -->
                 <div
-                    class="overflow-hidden rounded-xl bg-white shadow-sm border border-gray-100 flex flex-col relative">
+                    class="overflow-hidden rounded-xl bg-white shadow-sm border border-gray-100 flex flex-col relative admin-card-hover">
                     <div x-show="isLoadingKpis"
                         class="absolute inset-0 z-10 bg-white/80 flex items-center justify-center">
                         <div class="w-5 h-5 border-2 border-teal-500 border-t-transparent rounded-full animate-spin">
                         </div>
                     </div>
                     <div class="p-5 flex-grow">
-                        <div class="flex items-center">
+                        <div class="flex items-center gap-4">
                             <div class="flex-shrink-0 bg-teal-100 rounded-md p-3">
                                 <svg class="h-6 w-6 text-teal-600" fill="none" viewBox="0 0 24 24"
                                     stroke="currentColor">
@@ -214,14 +224,9 @@
                                         d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                                 </svg>
                             </div>
-                            <div class="ml-5 w-0 flex-1">
-                                <dl>
-                                    <dt class="truncate text-sm font-medium text-gray-500">Capacity Health</dt>
-                                    <dd>
-                                        <div class="text-2xl font-bold text-gray-900"
-                                            x-text="kpis.capacityHealth + '%'">...</div>
-                                    </dd>
-                                </dl>
+                            <div class="min-w-0">
+                                <p class="text-sm font-medium text-gray-500 leading-tight">Capacity Health</p>
+                                <p class="text-2xl font-bold text-gray-900 leading-tight mt-0.5" x-text="kpis.capacityHealth + '%'">...</p>
                             </div>
                         </div>
                     </div>
@@ -230,14 +235,14 @@
 
                 <!-- QR Scans -->
                 <div
-                    class="overflow-hidden rounded-xl bg-white shadow-sm border border-gray-100 flex flex-col relative">
+                    class="overflow-hidden rounded-xl bg-white shadow-sm border border-gray-100 flex flex-col relative admin-card-hover">
                     <div x-show="isLoadingKpis"
                         class="absolute inset-0 z-10 bg-white/80 flex items-center justify-center">
                         <div class="w-5 h-5 border-2 border-emerald-500 border-t-transparent rounded-full animate-spin">
                         </div>
                     </div>
                     <div class="p-5 flex-grow">
-                        <div class="flex items-center">
+                        <div class="flex items-center gap-4">
                             <div class="flex-shrink-0 bg-emerald-100 rounded-md p-3">
                                 <svg class="h-6 w-6 text-emerald-600" fill="none" viewBox="0 0 24 24"
                                     stroke="currentColor">
@@ -245,13 +250,9 @@
                                         d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z" />
                                 </svg>
                             </div>
-                            <div class="ml-5 w-0 flex-1">
-                                <dl>
-                                    <dt class="truncate text-sm font-medium text-gray-500">QR Check-ins</dt>
-                                    <dd>
-                                        <div class="text-2xl font-bold text-gray-900" x-text="kpis.qrScans">...</div>
-                                    </dd>
-                                </dl>
+                            <div class="min-w-0">
+                                <p class="text-sm font-medium text-gray-500 leading-tight">QR Check-ins</p>
+                                <p class="text-2xl font-bold text-gray-900 leading-tight mt-0.5" x-text="kpis.qrScans">...</p>
                             </div>
                         </div>
                     </div>
@@ -263,7 +264,7 @@
             <h3 class="text-lg font-semibold text-gray-900 mb-4">Core Analytics</h3>
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
                 <!-- Dual-Axis Area Chart: Check-ins vs Bookings -->
-                <div class="lg:col-span-2 bg-white rounded-xl shadow-sm border border-gray-100 p-6 relative">
+                <div class="lg:col-span-2 bg-white rounded-xl shadow-sm border border-gray-100 p-6 relative admin-card-hover">
                     <h3 class="text-base font-semibold text-gray-900 mb-4">Check-ins vs Bookings</h3>
 
                     <div x-show="isLoadingCore"
@@ -282,7 +283,7 @@
                 </div>
 
                 <!-- Donut Chart with Tabs -->
-                <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 relative flex flex-col">
+                <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 relative flex flex-col admin-card-hover">
                     <div class="flex justify-between items-center mb-4">
                         <h3 class="text-base font-semibold text-gray-900"
                             x-text="donutTab === 'demographics' ? 'Visitor Demographics' : 'Booking Status'"></h3>
@@ -313,7 +314,7 @@
                 </div>
 
                 <!-- Horizontal Bar Chart: Top Destinations -->
-                <div class="lg:col-span-3 bg-white rounded-xl shadow-sm border border-gray-100 p-6 relative">
+                <div class="lg:col-span-3 bg-white rounded-xl shadow-sm border border-gray-100 p-6 relative admin-card-hover">
                     <h3 class="text-base font-semibold text-gray-900 mb-4">Top 5 Destinations (Visits)</h3>
 
                     <div x-show="isLoadingDestinations"
@@ -337,7 +338,7 @@
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
 
                 <!-- Capacity Gauges -->
-                <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 relative">
+                <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 relative admin-card-hover">
                     <h3 class="text-base font-semibold text-gray-900 mb-4">Site Capacity Monitoring</h3>
 
                     <div x-show="isLoadingAdvanced"
@@ -367,7 +368,7 @@
                 </div>
 
                 <!-- Activity Heatmap -->
-                <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 relative">
+                <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 relative admin-card-hover">
                     <h3 class="text-base font-semibold text-gray-900 mb-4">Activity Heatmap (Day x Hour)</h3>
 
                     <div x-show="isLoadingAdvanced"
@@ -398,7 +399,7 @@
 
             <!-- Tier 3: Audit Log Table -->
             <h3 class="text-lg font-semibold text-gray-900 mb-4">System Health & Staff Activity</h3>
-            <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 mb-8 relative">
+            <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 mb-8 relative admin-card-hover">
                 <div class="overflow-x-auto">
                     <table class="min-w-full divide-y divide-gray-200 text-sm">
                         <thead class="bg-gray-50 text-gray-500 uppercase text-xs">
@@ -587,26 +588,76 @@
                     </div>
 
                     <!-- Audience -->
-                    <div>
+                    <div x-data="{ showAudienceDropdown: false }">
                         <label class="block text-sm font-semibold text-gray-700 mb-1">Target Audience</label>
-                        <select x-model="broadcastForm.audience"
-                            class="block w-full rounded-xl border-gray-250 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm text-gray-700 bg-white px-3 py-2.5 border">
-                            <option value="all">All Active Users</option>
-                            <option value="active_bookings">Users with Active Bookings</option>
-                            <option value="destination">Specific Destination</option>
-                        </select>
+                        <div class="relative">
+                            <!-- Dropdown Trigger Button -->
+                            <button type="button" @click="showAudienceDropdown = !showAudienceDropdown" @click.away="showAudienceDropdown = false" class="flex justify-between items-center w-full rounded-xl border border-gray-250 bg-white px-3 py-2.5 text-sm text-gray-700 font-semibold hover:bg-gray-50 transition focus:outline-none focus:ring-2 focus:ring-emerald-500 shadow-sm">
+                                <span x-text="
+                                    broadcastForm.audience === 'all' ? 'All Active Users' : 
+                                    (broadcastForm.audience === 'active_bookings' ? 'Users with Active Bookings' : 
+                                    (broadcastForm.audience === 'destination' ? 'Specific Destination' : 'Select Audience'))
+                                "></span>
+                                <svg class="h-4 w-4 text-gray-450 transform transition-transform duration-200 shrink-0 ml-1" :class="showAudienceDropdown ? 'rotate-180' : ''" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7" />
+                                </svg>
+                            </button>
+
+                            <!-- Dropdown Menu -->
+                            <div x-show="showAudienceDropdown" 
+                                 x-transition:enter="transition ease-out duration-150"
+                                 x-transition:enter-start="opacity-0 scale-95"
+                                 x-transition:enter-end="opacity-100 scale-100"
+                                 x-transition:leave="transition ease-in duration-100"
+                                 x-transition:leave-start="opacity-100 scale-100"
+                                 x-transition:leave-end="opacity-0 scale-95"
+                                 class="absolute left-0 mt-1.5 z-50 w-full rounded-xl bg-white border border-gray-200 shadow-xl py-1 max-h-48 overflow-y-auto"
+                                 style="display: none;">
+                                <button type="button" @click="broadcastForm.audience = 'all'; showAudienceDropdown = false" class="w-full text-left px-4 py-2.5 text-sm hover:bg-green-50/40 hover:text-green-950 transition-colors">
+                                    All Active Users
+                                </button>
+                                <button type="button" @click="broadcastForm.audience = 'active_bookings'; showAudienceDropdown = false" class="w-full text-left px-4 py-2.5 text-sm hover:bg-green-50/40 hover:text-green-950 transition-colors">
+                                    Users with Active Bookings
+                                </button>
+                                <button type="button" @click="broadcastForm.audience = 'destination'; showAudienceDropdown = false" class="w-full text-left px-4 py-2.5 text-sm hover:bg-green-50/40 hover:text-green-950 transition-colors">
+                                    Specific Destination
+                                </button>
+                            </div>
+                        </div>
                     </div>
 
                     <!-- Conditional Destination Dropdown -->
-                    <div x-show="broadcastForm.audience === 'destination'" x-transition>
-                        <label class="block text-sm font-semibold text-gray-700 mb-1">Select Destination</label>
-                        <select x-model="broadcastForm.destination"
-                            class="block w-full rounded-xl border-gray-250 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm text-gray-700 bg-white px-3 py-2.5 border">
-                            <option value="">-- Select Destination Spot --</option>
-                            <template x-for="dest in destinationsList" :key="dest.id">
-                                <option :value="dest.id" x-text="dest.name"></option>
-                            </template>
-                        </select>
+                    <div x-show="broadcastForm.audience === 'destination'" x-transition x-data="{ showDestDropdown: false }">
+                        <label class="block text-sm font-semibold text-gray-700 mb-1 mt-4">Select Destination</label>
+                        <div class="relative">
+                            <!-- Dropdown Trigger Button -->
+                            <button type="button" @click="showDestDropdown = !showDestDropdown" @click.away="showDestDropdown = false" class="flex justify-between items-center w-full rounded-xl border border-gray-250 bg-white px-3 py-2.5 text-sm text-gray-700 font-semibold hover:bg-gray-50 transition focus:outline-none focus:ring-2 focus:ring-emerald-500 shadow-sm">
+                                <span x-text="
+                                    broadcastForm.destination ? (destinationsList.find(d => d.id == broadcastForm.destination)?.name || 'Select Destination') : '-- Select Destination Spot --'
+                                "></span>
+                                <svg class="h-4 w-4 text-gray-450 transform transition-transform duration-200 shrink-0 ml-1" :class="showDestDropdown ? 'rotate-180' : ''" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7" />
+                                </svg>
+                            </button>
+
+                            <!-- Dropdown Menu -->
+                            <div x-show="showDestDropdown" 
+                                 x-transition:enter="transition ease-out duration-150"
+                                 x-transition:enter-start="opacity-0 scale-95"
+                                 x-transition:enter-end="opacity-100 scale-100"
+                                 x-transition:leave="transition ease-in duration-100"
+                                 x-transition:leave-start="opacity-100 scale-100"
+                                 x-transition:leave-end="opacity-0 scale-95"
+                                 class="absolute left-0 mt-1.5 z-50 w-full rounded-xl bg-white border border-gray-200 shadow-xl py-1 max-h-48 overflow-y-auto"
+                                 style="display: none;">
+                                <button type="button" @click="broadcastForm.destination = ''; showDestDropdown = false" class="w-full text-left px-4 py-2.5 text-sm hover:bg-green-50/40 hover:text-green-950 transition-colors">
+                                    -- Select Destination Spot --
+                                </button>
+                                <template x-for="dest in destinationsList" :key="dest.id">
+                                    <button type="button" @click="broadcastForm.destination = dest.id; showDestDropdown = false" class="w-full text-left px-4 py-2.5 text-sm hover:bg-green-50/40 hover:text-green-950 transition-colors" x-text="dest.name"></button>
+                                </template>
+                            </div>
+                        </div>
                     </div>
 
                     <!-- Footer Action -->

@@ -1,4 +1,17 @@
 <x-app-layout>
+    @push('head')
+    <style>
+        .admin-card-hover {
+            transition: all 0.3s ease-in-out !important;
+        }
+        .admin-card-hover:hover {
+            transform: translateY(-4px) !important;
+            box-shadow: 0 10px 25px -5px rgba(21, 128, 61, 0.15), 0 4px 10px -5px rgba(21, 128, 61, 0.1) !important;
+            border-color: #bbf7d0 !important;
+        }
+    </style>
+    @endpush
+
     <x-slot name="header">
         <h1 class="text-2xl font-bold text-gray-800">📊 Reports Dashboard</h1>
     </x-slot>
@@ -10,7 +23,7 @@
         @endif
 
         {{-- Filter Form --}}
-        <div class="bg-white rounded-2xl shadow p-6">
+        <div class="bg-white border border-gray-200 rounded-2xl shadow p-6 admin-card-hover">
             <h2 class="text-lg font-semibold text-gray-700 mb-4">Filter & Preview</h2>
             <form method="GET" action="{{ route('reports.index') }}" class="grid grid-cols-1 sm:grid-cols-4 gap-4">
                 <div>
@@ -37,7 +50,7 @@
                 </div>
                 <div class="flex items-end">
                     <button type="submit"
-                        class="w-full bg-brand-700 hover:bg-brand-800 text-white rounded-lg py-2 text-sm font-medium transition">
+                        class="w-full bg-brand-700 hover:bg-brand-800 text-white rounded-lg py-2.5 text-sm font-medium transition duration-200 transform hover:-translate-y-0.5 active:translate-y-0 hover:shadow-md">
                         Apply Filter
                     </button>
                 </div>
@@ -56,15 +69,15 @@
             ];
             @endphp
             @foreach($cards as $card)
-            <div class="bg-white rounded-xl shadow p-5 border-l-4 border-{{ $card['color'] }}-500">
-                <p class="text-xs text-gray-500 uppercase">{{ $card['label'] }}</p>
+            <div class="bg-white rounded-xl shadow p-5 border-l-4 border-{{ $card['color'] }}-500 border-t border-r border-b border-gray-200 admin-card-hover">
+                <p class="text-xs text-gray-500 uppercase font-medium">{{ $card['label'] }}</p>
                 <p class="text-3xl font-bold text-{{ $card['color'] }}-600 mt-1">{{ $card['value'] }}</p>
             </div>
             @endforeach
         </div>
 
         {{-- Generate Report + Export --}}
-        <div class="bg-white rounded-2xl shadow p-6 flex flex-col sm:flex-row gap-4 items-end">
+        <div class="bg-white border border-gray-200 rounded-2xl shadow p-6 flex flex-col sm:flex-row gap-4 items-end admin-card-hover">
             <form action="{{ route('reports.generate') }}" method="POST" class="grid grid-cols-4 gap-4 flex-1">
                 @csrf
                 <input type="hidden" name="destination_id" value="{{ $filters['destination_id'] }}">
@@ -80,16 +93,16 @@
                 </div>
                 <div class="col-span-2 flex items-end">
                     <button type="submit"
-                        class="w-full bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg py-2 text-sm font-medium transition">
+                        class="w-full bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg py-2.5 text-sm font-medium transition duration-200 transform hover:-translate-y-0.5 active:translate-y-0 hover:shadow-md">
                         📄 Save Report
                     </button>
                 </div>
             </form>
 
             <div>
-                <a href="{{ route('reports.export') }}?date_from={{ $filters['date_from'] }}&date_to={{ $filters['date_to'] }}&destination_id={{ $filters['destination_id'] }}"
-                    class="inline-flex items-center gap-2 bg-gray-700 hover:bg-gray-900 text-white rounded-lg px-5 py-2 text-sm font-medium transition">
-                    ⬇️ Export CSV
+                <a href="{{ route('reports.export-docx') }}?date_from={{ $filters['date_from'] }}&date_to={{ $filters['date_to'] }}&destination_id={{ $filters['destination_id'] }}"
+                    class="inline-flex items-center gap-1.5 bg-blue-700 hover:bg-blue-800 text-white rounded-xl px-5 py-3 text-sm font-semibold shadow-sm transition duration-200 transform hover:-translate-y-0.5 active:translate-y-0 hover:shadow-md">
+                    <i class="ti ti-file-text text-base"></i> Export DOCX
                 </a>
             </div>
         </div>

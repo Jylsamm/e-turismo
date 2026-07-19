@@ -132,7 +132,10 @@
                     @if(Auth::check() && Auth::user()->isAdmin())
                         <p class="px-4 pt-4 pb-1 text-xs font-semibold text-green-200 uppercase tracking-wider">Admin Controls</p>
                         {{-- Accordion Accounts & Verification --}}
-                        <div x-data="{ open: {{ request()->routeIs('verification.*') ? 'true' : 'false' }} }" class="space-y-1">
+                        <div x-data="{ open: {{ request()->routeIs('verification.*') ? 'true' : 'false' }} }" 
+                             @mouseenter="open = true" 
+                             @mouseleave="open = {{ request()->routeIs('verification.*') ? 'true' : 'false' }}" 
+                             class="space-y-1">
                             <div class="flex items-center justify-between rounded-lg {{ request()->routeIs('verification.*') ? 'bg-white/20 text-white shadow-sm' : 'text-green-100 hover:bg-white/10 hover:text-white' }} transition-colors pl-4 pr-1 py-0.5">
                                 <a href="{{ route('verification.reviews') }}" class="flex-1 flex items-center py-2 font-medium">
                                     <svg class="w-5 h-5 mr-3 opacity-90" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
@@ -181,11 +184,14 @@
                         </a>
 
                         {{-- Accordion Spot Status --}}
-                        <div x-data="{ open: {{ request()->routeIs('spots.*') ? 'true' : 'false' }} }" class="space-y-1">
+                        <div x-data="{ open: {{ request()->routeIs('spots.*') ? 'true' : 'false' }} }" 
+                             @mouseenter="open = true" 
+                             @mouseleave="open = {{ request()->routeIs('spots.*') ? 'true' : 'false' }}" 
+                             class="space-y-1">
                             <div class="flex items-center justify-between rounded-lg {{ request()->routeIs('spots.*') ? 'bg-white/20 text-white shadow-sm' : 'text-green-100 hover:bg-white/10 hover:text-white' }} transition-colors pl-4 pr-1 py-0.5">
                                 <a href="{{ route('spots.index') }}" class="flex-1 flex items-center py-2 font-medium">
                                     <svg class="w-5 h-5 mr-3 opacity-90" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
-                                    Spot Status
+                                    Status
                                 </a>
                                 <button @click="open = !open" class="p-2 text-green-200 hover:text-white rounded-md focus:outline-none transition-colors" aria-label="Toggle Spot Options">
                                     <svg class="w-4 h-4 transform transition-transform duration-200" :class="open ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
@@ -193,6 +199,10 @@
                             </div>
 
                             <div x-show="open" x-collapse class="mt-1 space-y-1" style="display: none;">
+                                <a href="{{ route('spots.index') }}" class="flex items-center pl-12 pr-4 py-2 rounded-lg text-sm transition-colors {{ request()->routeIs('spots.index') ? 'bg-white/10 text-white font-medium shadow-sm' : 'text-green-100 hover:bg-white/5 hover:text-white' }}">
+                                    <svg class="w-4 h-4 mr-2.5 opacity-75" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
+                                    Spot Status
+                                </a>
                                 <?php
                                     $activeDestination = request()->route('destination');
                                     $activeDestinationId = null;

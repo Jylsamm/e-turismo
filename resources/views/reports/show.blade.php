@@ -25,9 +25,9 @@
                         @endif
                     </p>
                 </div>
-                <a href="{{ route('reports.export') }}?date_from={{ $report->date_from }}&date_to={{ $report->date_to }}&destination_id={{ $report->destination_id }}"
-                    class="inline-flex items-center gap-2 bg-gray-700 hover:bg-gray-900 text-white rounded-lg px-4 py-2 text-sm transition">
-                    ⬇️ Export CSV
+                <a href="{{ route('reports.export-docx') }}?date_from={{ $report->date_from }}&date_to={{ $report->date_to }}&destination_id={{ $report->destination_id }}"
+                    class="inline-flex items-center gap-1.5 bg-blue-700 hover:bg-blue-800 text-white rounded-xl px-4 py-2 text-sm font-semibold shadow-sm transition">
+                    <i class="ti ti-file-text text-base"></i> Export DOCX
                 </a>
             </div>
         </div>
