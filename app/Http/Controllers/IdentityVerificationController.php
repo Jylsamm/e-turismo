@@ -366,4 +366,37 @@ class IdentityVerificationController extends Controller
 
         return back()->with('success', "Staff account {$user->name} deleted successfully.");
     }
+
+    /**
+     * Admin: update a staff member's details.
+     */
+    public function updateStaff(Request $request, \App\Models\User $user)
+    {
+        $this->authorize('admin-only');
+
+        $rules = [
+            'name'      => 'required|string|max:100',
+            'last_name' => 'required|string|max:100',
+            'email'     => 'required|string|email|max:255|unique:users,email,' . $user->id . '|regex:/^[a-zA-Z0-9._%+-]+@gmail\.com$/i',
+            'contact'   => 'required|string|max:50',
+            'password'  => 'nullable|string|min:8|confirmed',
+        ];
+
+        $request->validate($rules);
+
+        $userData = [
+            'name'      => trim($request->name),
+            'last_name' => trim($request->last_name),
+            'email'     => strtolower(trim($request->email)),
+            'contact'   => trim($request->contact),
+        ];
+
+        if ($request->filled('password')) {
+            $userData['password'] = Hash::make($request->password);
+        }
+
+        $user->update($userData);
+
+        return back()->with('success', "Staff member {$user->name}'s details updated successfully.");
+    }
 }

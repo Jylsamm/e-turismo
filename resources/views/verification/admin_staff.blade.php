@@ -37,7 +37,23 @@
         </div>
     </x-slot>
 
-    <div class="pb-12 pt-0 animate-fade-in-up" x-data="{ deleteUrl: '' }">
+    <div class="pb-12 pt-0 animate-fade-in-up" x-data="{
+        deleteUrl: '',
+        editOpen: false,
+        editUrl: '',
+        editName: '',
+        editLastName: '',
+        editEmail: '',
+        editContact: '',
+        openEditModal(user) {
+            this.editUrl = '/admin/verifications/staff/' + user.id;
+            this.editName = user.name;
+            this.editLastName = user.last_name || '';
+            this.editEmail = user.email;
+            this.editContact = user.contact || '';
+            this.editOpen = true;
+        }
+    }">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
 
             <!-- Sub-Navigation Tabs -->
@@ -174,16 +190,24 @@
                                             </form>
                                         </td>
                                         <td class="px-5 py-4">
-                                            @if($user->id !== Auth::id())
+                                            <div class="flex items-center gap-2">
                                                 <button type="button"
-                                                    @click="deleteUrl = '{{ route('verification.staff.delete', $user) }}'; $dispatch('open-confirm-modal', { id: 'delete-staff-modal' })"
-                                                    class="text-red-500 hover:text-red-750 p-1.5 rounded-xl hover:bg-red-50 transition-all duration-150 flex items-center justify-center"
-                                                    title="Delete staff account">
-                                                    <i class="ti ti-trash text-lg"></i>
+                                                    @click="openEditModal({{ json_encode($user->only(['id', 'name', 'last_name', 'email', 'contact'])) }})"
+                                                    class="text-blue-600 hover:text-blue-800 p-1.5 rounded-xl hover:bg-blue-50 transition-all duration-150 flex items-center justify-center"
+                                                    title="Edit staff details">
+                                                    <i class="ti ti-edit text-lg"></i>
                                                 </button>
-                                            @else
-                                                <span class="text-xs text-gray-400 italic">Self (Protected)</span>
-                                            @endif
+                                                @if($user->id !== Auth::id())
+                                                    <button type="button"
+                                                        @click="deleteUrl = '{{ route('verification.staff.delete', $user) }}'; $dispatch('open-confirm-modal', { id: 'delete-staff-modal' })"
+                                                        class="text-red-500 hover:text-red-750 p-1.5 rounded-xl hover:bg-red-50 transition-all duration-150 flex items-center justify-center"
+                                                        title="Delete staff account">
+                                                        <i class="ti ti-trash text-lg"></i>
+                                                    </button>
+                                                @else
+                                                    <span class="text-xs text-gray-400 italic">Self (Protected)</span>
+                                                @endif
+                                            </div>
                                         </td>
                                     </tr>
                                 @empty
@@ -200,6 +224,101 @@
             </div>
         </div>
 
+        {{-- Edit Staff Modal --}}
+        <div x-show="editOpen"
+             class="fixed inset-0 z-50 flex items-center justify-center p-4 overflow-y-auto"
+             style="display: none;"
+             role="dialog"
+             aria-modal="true"
+             x-cloak>
+            
+            {{-- Backdrop overlay with blur --}}
+            <div x-show="editOpen"
+                 x-transition:enter="ease-out duration-300"
+                 x-transition:enter-start="opacity-0"
+                 x-transition:enter-end="opacity-100"
+                 x-transition:leave="ease-in duration-200"
+                 x-transition:leave-start="opacity-100"
+                 x-transition:leave-end="opacity-0"
+                 @click="editOpen = false"
+                 class="fixed inset-0 bg-gray-900/50 backdrop-blur-sm transition-opacity"></div>
+
+            {{-- Dialog box --}}
+            <div x-show="editOpen"
+                 x-transition:enter="ease-out duration-300"
+                 x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                 x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100"
+                 x-transition:leave="ease-in duration-200"
+                 x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
+                 x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                 @keydown.escape.window="editOpen = false"
+                 class="bg-white border border-gray-250 rounded-2xl max-w-md w-full shadow-2xl relative z-10 transition-all flex flex-col max-h-[90vh]">
+                
+                {{-- Header --}}
+                <div class="flex items-center justify-between p-5 border-b shrink-0">
+                    <h3 class="text-base font-bold text-gray-900 flex items-center gap-1.5">
+                        <i class="ti ti-edit text-brand-600 text-lg"></i> Edit Staff Account
+                    </h3>
+                    <button type="button" @click="editOpen = false" class="text-gray-400 hover:text-gray-600 transition">
+                        <i class="ti ti-x text-lg"></i>
+                    </button>
+                </div>
+
+                {{-- Scrollable Form Content --}}
+                <form method="POST" :action="editUrl" class="flex flex-col flex-grow overflow-hidden">
+                    @csrf
+                    @method('PATCH')
+
+                    <div class="p-5 space-y-4 overflow-y-auto flex-grow">
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-600 mb-1">First Name</label>
+                                <input type="text" name="name" x-model="editName" required class="w-full border-gray-200 focus:border-brand-500 focus:ring-brand-500 rounded-lg px-3 py-2 text-sm shadow-sm bg-white" />
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-600 mb-1">Last Name</label>
+                                <input type="text" name="last_name" x-model="editLastName" required class="w-full border-gray-200 focus:border-brand-500 focus:ring-brand-500 rounded-lg px-3 py-2 text-sm shadow-sm bg-white" />
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-600 mb-1">Email Address</label>
+                            <input type="email" name="email" x-model="editEmail" required class="w-full border-gray-200 focus:border-brand-500 focus:ring-brand-500 rounded-lg px-3 py-2 text-sm shadow-sm bg-white" />
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-600 mb-1">Contact Number</label>
+                            <input type="text" name="contact" x-model="editContact" required class="w-full border-gray-200 focus:border-brand-500 focus:ring-brand-500 rounded-lg px-3 py-2 text-sm shadow-sm bg-white" />
+                        </div>
+
+                        <div class="border-t pt-3">
+                            <p class="text-xs text-gray-400 mb-2">Leave blank to keep the current password.</p>
+                            <div class="grid grid-cols-2 gap-3">
+                                <div>
+                                    <label class="block text-xs font-semibold text-gray-600 mb-1">New Password</label>
+                                    <input type="password" name="password" class="w-full border-gray-200 focus:border-brand-500 focus:ring-brand-500 rounded-lg px-3 py-2 text-sm shadow-sm bg-white" />
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold text-gray-600 mb-1">Confirm New Password</label>
+                                    <input type="password" name="password_confirmation" class="w-full border-gray-200 focus:border-brand-500 focus:ring-brand-500 rounded-lg px-3 py-2 text-sm shadow-sm bg-white" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {{-- Footer --}}
+                    <div class="flex justify-end gap-2 p-5 border-t shrink-0 bg-gray-50 rounded-b-2xl">
+                        <button type="button" @click="editOpen = false" class="px-4 py-2 border border-gray-300 bg-white hover:bg-gray-50 text-gray-700 font-semibold text-xs rounded-lg transition">
+                            Cancel
+                        </button>
+                        <button type="submit" class="px-4 py-2 bg-green-700 hover:bg-green-800 text-white font-semibold text-xs rounded-lg shadow-sm hover:shadow transition">
+                            Save Changes
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
         {{-- Delete Staff Confirmation Modal --}}
         <x-confirm-modal id="delete-staff-modal" title="Delete Staff Account"
             message="Are you sure you want to delete this staff account? This will permanently remove their access credentials.">
@@ -207,7 +326,7 @@
                 @csrf
                 @method('DELETE')
                 <button type="submit" @click.stop
-                    class="px-4 py-2.5 rounded-xl bg-red-650 hover:bg-red-700 text-white font-semibold text-sm transition-all duration-200 hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
+                    class="px-4 py-2.5 rounded-xl bg-red-600 hover:bg-red-700 text-white font-semibold text-sm transition-all duration-200 hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
                     Delete
                 </button>
             </form>

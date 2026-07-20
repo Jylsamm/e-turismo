@@ -177,6 +177,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/admin/verifications/staff', [IdentityVerificationController::class, 'adminStaff'])->name('verification.staff');
         Route::post('/admin/verifications/staff/{user}/reassign', [IdentityVerificationController::class, 'reassignStaff'])->name('verification.staff.reassign');
         Route::delete('/admin/verifications/staff/{user}', [IdentityVerificationController::class, 'deleteStaff'])->name('verification.staff.delete');
+        Route::patch('/admin/verifications/staff/{user}', [IdentityVerificationController::class, 'updateStaff'])->name('verification.staff.update');
         Route::get('/admin/verifications/add-account', [IdentityVerificationController::class, 'adminAddAccount'])->name('verification.add_account');
         
         Route::post('/admin/verifications/{user}/decide', [IdentityVerificationController::class, 'adminDecide'])->name('verification.decide');

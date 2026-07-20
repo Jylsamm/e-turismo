@@ -158,33 +158,32 @@
                          }
                      }">
                      
-                    <div class="px-6 py-4 border-b border-gray-100 bg-gradient-to-r from-gray-50/50 to-white flex items-center justify-between">
+                    <div class="px-5 py-3 border-b border-gray-100 bg-gradient-to-r from-gray-50/50 to-white flex items-center justify-between">
                         <div>
-                            <h3 class="text-lg font-bold text-gray-800">Register New Staff</h3>
-
+                            <h3 class="text-base font-bold text-gray-800">Register New Staff</h3>
                         </div>
-                        <span x-show="emailVerified" class="inline-flex items-center gap-1 px-3 py-1 bg-green-50 text-green-700 border border-green-200 text-xs font-bold rounded-full transition duration-300">
+                        <span x-show="emailVerified" class="inline-flex items-center gap-1 px-2.5 py-0.5 bg-green-50 text-green-700 border border-green-200 text-xs font-bold rounded-full transition duration-300">
                             <i class="ti ti-shield-check"></i> Email Verified
                         </span>
                     </div>
 
-                    <form id="add-staff-form" method="POST" action="{{ route('admin.accounts.store') }}" class="p-6 space-y-6">
+                    <form id="add-staff-form" method="POST" action="{{ route('admin.accounts.store') }}" class="p-5 space-y-4">
                         @csrf
                         <input type="hidden" name="role" value="staff" />
 
-                        <!-- Step 1: Email Verification via OTP -->
-                        <div class="space-y-4">
-                            <h4 class="font-bold text-sm text-brand-700 flex items-center gap-1.5">
+                        {{-- Step 1: Email Verification via OTP --}}
+                        <div class="space-y-3">
+                            <h4 class="font-bold text-xs text-brand-700 flex items-center gap-1 uppercase tracking-wide">
                                 <i class="ti ti-mail text-brand-600"></i> Email Verification
                             </h4>
                             
                             <div>
-                                <label class="block text-sm font-semibold text-gray-700 mb-1">Email Address</label>
+                                <label class="block text-xs font-semibold text-gray-600 mb-1">Email Address</label>
                                 <div class="flex items-center gap-2">
-                                    <input type="email" name="email" x-model="email" :readonly="emailVerified" placeholder="e.g. staff@gmail.com" class="flex-1 min-w-0 border-gray-200 focus:border-brand-500 focus:ring-brand-500 rounded-xl px-3 py-2 text-sm shadow-sm bg-white" required />
-                                    <button type="button" @click="sendOtp()" :disabled="sendingOtp || (otpSent && countdown > 0) || emailVerified" class="shrink-0 px-3 py-2 bg-green-700 hover:bg-green-800 text-white rounded-xl text-xs font-bold shadow-sm transition h-[38px] flex items-center justify-center gap-1 disabled:opacity-50 whitespace-nowrap">
+                                    <input type="email" name="email" x-model="email" :readonly="emailVerified" placeholder="e.g. staff@gmail.com" class="flex-1 min-w-0 border-gray-200 focus:border-brand-500 focus:ring-brand-500 rounded-lg px-3 py-2 text-sm shadow-sm bg-white" required />
+                                    <button type="button" @click="sendOtp()" :disabled="sendingOtp || (otpSent && countdown > 0) || emailVerified" class="shrink-0 px-3 py-2 bg-green-700 hover:bg-green-800 text-white rounded-lg text-xs font-bold shadow-sm transition h-[36px] flex items-center justify-center gap-1 disabled:opacity-50 whitespace-nowrap">
                                         <template x-if="sendingOtp">
-                                            <svg class="animate-spin h-3.5 w-3.5" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path></svg>
+                                            <svg class="animate-spin h-3 w-3" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path></svg>
                                         </template>
                                         <i class="ti ti-mail-forward text-sm"></i>
                                         <span x-text="countdown > 0 ? 'Resend ' + countdown + 's' : (otpSent ? 'Resend OTP' : 'Get OTP')"></span>
@@ -192,19 +191,19 @@
                                 </div>
                             </div>
 
-                            <!-- OTP Code entry row -->
-                            <div x-show="otpSent && !emailVerified" x-transition class="p-4 bg-gray-50 border border-gray-200 rounded-2xl space-y-3">
-                                <p class="text-xs text-gray-500 font-medium">Please check the staff member's inbox and enter the 6-digit verification code below.</p>
-                                <div class="flex flex-col sm:flex-row gap-3 items-center">
-                                    <input type="text" x-model="otpCode" placeholder="Enter 6-digit OTP" maxlength="6" class="w-full border-gray-200 focus:border-brand-500 focus:ring-brand-500 rounded-xl px-3 py-2 text-center text-sm shadow-sm bg-white font-mono tracking-widest" />
-                                    <button type="button" @click="verifyOtp()" :disabled="verifyingOtp" class="w-full sm:w-auto px-5 py-2.5 bg-green-700 hover:bg-green-800 disabled:bg-gray-100 text-white rounded-xl text-xs font-bold shadow-sm transition shrink-0">
+                            {{-- OTP Code entry row --}}
+                            <div x-show="otpSent && !emailVerified" x-transition class="p-3 bg-gray-50 border border-gray-200 rounded-xl space-y-2">
+                                <p class="text-xs text-gray-500">Please check the staff member's inbox and enter the 6-digit code below.</p>
+                                <div class="flex flex-col sm:flex-row gap-2 items-center">
+                                    <input type="text" x-model="otpCode" placeholder="Enter 6-digit OTP" maxlength="6" class="w-full border-gray-200 focus:border-brand-500 focus:ring-brand-500 rounded-lg px-3 py-2 text-center text-sm shadow-sm bg-white font-mono tracking-widest" />
+                                    <button type="button" @click="verifyOtp()" :disabled="verifyingOtp" class="w-full sm:w-auto px-4 py-2 bg-green-700 hover:bg-green-800 disabled:bg-gray-100 text-white rounded-lg text-xs font-bold shadow-sm transition shrink-0">
                                         <span x-show="!verifyingOtp">Verify OTP</span>
                                         <span x-show="verifyingOtp">Verifying...</span>
                                     </button>
                                 </div>
                             </div>
 
-                            <!-- OTP Alerts -->
+                            {{-- OTP Alerts --}}
                             <div x-show="otpError" x-transition class="text-xs text-red-600 font-semibold flex items-center gap-1">
                                 <i class="ti ti-alert-circle"></i> <span x-text="otpError"></span>
                             </div>
@@ -213,47 +212,45 @@
                             </div>
                         </div>
 
-                        <!-- Step 2: Roster credentials & assignments (Locked until emailVerified is true) -->
-                        <div :class="emailVerified ? '' : 'opacity-40 pointer-events-none'" class="space-y-6 border-t pt-6 transition-all duration-300">
+                        {{-- Step 2: Roster credentials & assignments --}}
+                        <div :class="emailVerified ? '' : 'opacity-40 pointer-events-none'" class="space-y-3 border-t pt-4 transition-all duration-300">
                             
-                            <!-- Contact Number -->
+                            {{-- Contact Number --}}
                             <div>
-                                <label class="block text-sm font-semibold text-gray-700 mb-1">Active Contact Number</label>
-                                <input type="text" name="contact" placeholder="e.g. 09123456789" value="{{ old('contact') }}" :required="emailVerified" :disabled="!emailVerified" class="w-full border-gray-200 focus:border-brand-500 focus:ring-brand-500 rounded-xl px-3 py-2 text-sm shadow-sm bg-white" />
+                                <label class="block text-xs font-semibold text-gray-600 mb-1">Active Contact Number</label>
+                                <input type="text" name="contact" placeholder="e.g. 09123456789" value="{{ old('contact') }}" :required="emailVerified" :disabled="!emailVerified" class="w-full border-gray-200 focus:border-brand-500 focus:ring-brand-500 rounded-lg px-3 py-2 text-sm shadow-sm bg-white" />
                             </div>
 
-                            <!-- Passwords -->
-                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            {{-- Passwords --}}
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                                 <div>
-                                    <label class="block text-sm font-semibold text-gray-700 mb-1">Password</label>
-                                    <input type="password" name="password" :required="emailVerified" :disabled="!emailVerified" class="w-full border-gray-200 focus:border-brand-500 focus:ring-brand-500 rounded-xl px-3 py-2 text-sm shadow-sm bg-white" />
+                                    <label class="block text-xs font-semibold text-gray-600 mb-1">Password</label>
+                                    <input type="password" name="password" :required="emailVerified" :disabled="!emailVerified" class="w-full border-gray-200 focus:border-brand-500 focus:ring-brand-500 rounded-lg px-3 py-2 text-sm shadow-sm bg-white" />
                                 </div>
                                 <div>
-                                    <label class="block text-sm font-semibold text-gray-700 mb-1">Confirm Password</label>
-                                    <input type="password" name="password_confirmation" :required="emailVerified" :disabled="!emailVerified" class="w-full border-gray-200 focus:border-brand-500 focus:ring-brand-500 rounded-xl px-3 py-2 text-sm shadow-sm bg-white" />
+                                    <label class="block text-xs font-semibold text-gray-600 mb-1">Confirm Password</label>
+                                    <input type="password" name="password_confirmation" :required="emailVerified" :disabled="!emailVerified" class="w-full border-gray-200 focus:border-brand-500 focus:ring-brand-500 rounded-lg px-3 py-2 text-sm shadow-sm bg-white" />
                                 </div>
                             </div>
 
-                            <!-- Assign Destination Spot details -->
-                            <div class="space-y-4 border-t pt-4">
-                                <h4 class="font-bold text-sm text-brand-700 flex items-center gap-1.5">
+                            {{-- Assign Destination --}}
+                            <div class="space-y-2 border-t pt-3">
+                                <h4 class="font-bold text-xs text-brand-700 flex items-center gap-1 uppercase tracking-wide">
                                     <i class="ti ti-map-pin text-brand-600"></i> Staff Assignment
                                 </h4>
-
                                 <div>
-                                    <label class="block text-sm font-semibold text-gray-700 mb-1">Assign Destination Spot</label>
-                                    <input type="text" name="assigned_destination_name" list="destinations-list" :disabled="!emailVerified" placeholder="Type or select destination spot..." class="w-full border-gray-200 focus:border-brand-500 focus:ring-brand-500 rounded-xl px-3 py-2 text-sm shadow-sm bg-white" value="{{ old('assigned_destination_name') }}" />
+                                    <label class="block text-xs font-semibold text-gray-600 mb-1">Assign Destination Spot</label>
+                                    <input type="text" name="assigned_destination_name" list="destinations-list" :disabled="!emailVerified" placeholder="Type or select destination spot..." class="w-full border-gray-200 focus:border-brand-500 focus:ring-brand-500 rounded-lg px-3 py-2 text-sm shadow-sm bg-white" value="{{ old('assigned_destination_name') }}" />
                                     <datalist id="destinations-list">
                                         @foreach($destinations as $dest)
                                             <option value="{{ $dest->name }}"></option>
                                         @endforeach
                                     </datalist>
-
                                 </div>
                             </div>
 
-                            <div class="flex justify-end pt-4 border-t">
-                                <button type="button" @click="if (document.getElementById('add-staff-form').reportValidity()) $dispatch('open-confirm-modal', { id: 'create-staff-modal' })" class="px-6 py-2.5 bg-green-700 hover:bg-green-800 text-white rounded-xl text-sm font-semibold shadow-sm hover:shadow transition duration-200 hover:-translate-y-0.5 active:translate-y-0">
+                            <div class="flex justify-end pt-2 border-t">
+                                <button type="button" @click="if (document.getElementById('add-staff-form').reportValidity()) $dispatch('open-confirm-modal', { id: 'create-staff-modal' })" class="px-5 py-2 bg-green-700 hover:bg-green-800 text-white rounded-lg text-sm font-semibold shadow-sm hover:shadow transition duration-200 hover:-translate-y-0.5 active:translate-y-0">
                                     Create Staff Account
                                 </button>
                             </div>
