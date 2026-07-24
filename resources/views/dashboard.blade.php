@@ -844,7 +844,7 @@
                 fetchKpis() {
                     this.isLoadingKpis = true;
                     fetch(`{{ route('admin.analytics.kpis') }}?range=${this.dateRange}`)
-                        .then(r => { if (!r.ok) throw new Error('Failed'); return r.json(); })
+                        .then(r => { if (!r.ok) throw new Error(`HTTP error! status: ${r.status} ${r.statusText}`); return r.json(); })
                         .then(data => {
                             this.kpis = {
                                 activeTourists: data.activeTourists,
@@ -865,7 +865,7 @@
                 fetchCoreCharts() {
                     this.isLoadingCore = true;
                     fetch(`{{ route('admin.analytics.trends') }}?range=${this.dateRange}`)
-                        .then(r => { if (!r.ok) throw new Error('Failed'); return r.json(); })
+                        .then(r => { if (!r.ok) throw new Error(`HTTP error! status: ${r.status} ${r.statusText}`); return r.json(); })
                         .then(data => {
                             this.coreData = data;
                             this.renderTrendChart(data.trends);
@@ -881,7 +881,7 @@
                 fetchDestinations() {
                     this.isLoadingDestinations = true;
                     fetch(`{{ route('admin.analytics.destinations') }}?range=${this.dateRange}`)
-                        .then(r => { if (!r.ok) throw new Error('Failed'); return r.json(); })
+                        .then(r => { if (!r.ok) throw new Error(`HTTP error! status: ${r.status} ${r.statusText}`); return r.json(); })
                         .then(data => {
                             this.destinationsData = data;
                             this.renderDestinationsChart(data);
@@ -896,7 +896,7 @@
                 fetchAdvancedCharts() {
                     this.isLoadingAdvanced = true;
                     fetch(`{{ route('admin.analytics.advanced') }}?range=${this.dateRange}`)
-                        .then(r => { if (!r.ok) throw new Error('Failed'); return r.json(); })
+                        .then(r => { if (!r.ok) throw new Error(`HTTP error! status: ${r.status} ${r.statusText}`); return r.json(); })
                         .then(data => {
                             this.advancedData = data;
                             this.renderGauges(data.gauges);

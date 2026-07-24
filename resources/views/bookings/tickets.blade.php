@@ -229,6 +229,10 @@
                 </div>
                 @endforeach
             </div>
+            
+            <div style="margin-top: 24px;">
+                {{ $bookings->links() }}
+            </div>
             @endif
         </div>
     </div>

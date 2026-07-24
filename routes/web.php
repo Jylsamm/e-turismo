@@ -44,11 +44,9 @@ Route::post('/check-email', function (\Illuminate\Http\Request $request) {
 })->name('email.check');
 
 Route::post('/register/send-code', [RegistrationOtpController::class, 'sendCode'])
-    ->middleware('guest')
     ->name('register.send_code');
 
 Route::post('/register/verify-code', [RegistrationOtpController::class, 'verifyCode'])
-    ->middleware('guest')
     ->name('register.verify_code');
 
 /*
@@ -167,7 +165,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
         // Reports
         Route::get('/reports', [ReportController::class, 'index'])->name('reports.index');
-        Route::post('/reports/generate', [ReportController::class, 'generate'])->name('reports.generate');
+        Route::get('/reports/generate-visitor-record', [ReportController::class, 'generateVisitorRecord'])->name('reports.generate-visitor-record');
+        Route::get('/reports/export-visitor-record', [ReportController::class, 'exportVisitorRecord'])->name('reports.export-visitor-record');
         Route::get('/reports/export-docx', [ReportController::class, 'exportDocx'])->name('reports.export-docx');
         Route::get('/reports/{report}', [ReportController::class, 'show'])->name('reports.show');
 

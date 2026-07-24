@@ -7,6 +7,10 @@ use App\Models\Destination;
 use App\Models\Notification;
 use App\Models\Ticket;
 use Illuminate\Http\Request;
+use App\Jobs\SendBookingNotificationJob;
+use App\Jobs\GenerateQrTicketJob;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Str;
 
 class BookingController extends Controller
 {
@@ -45,16 +49,10 @@ class BookingController extends Controller
         ]);
 
         // Notify all staff assigned to this destination
-        $staffUsers = $destination->staff;
-        foreach ($staffUsers as $staff) {
-            Notification::create([
-                'recipient_id' => $staff->id,
-                'recipient_type' => 'staff',
-                'type' => 'booking_alert',
-                'message' => "New booking request from " . auth()->user()->name . " for " . $destination->name . " on " . $request->visit_date . ".",
-                'related_booking_id' => $booking->id,
-            ]);
-        }
+        $staffIds = $destination->staff()->pluck('id')->toArray();
+        $message = "New booking request from " . auth()->user()->name . " for " . $destination->name . " on " . $request->visit_date . ".";
+        
+        SendBookingNotificationJob::dispatch($staffIds, 'staff', 'booking_alert', $message, $booking->id);
 
         return redirect()->route('bookings.index')->with('success', 'Booking submitted! You will be notified once it is reviewed.');
     }
@@ -70,12 +68,12 @@ class BookingController extends Controller
             $bookings = Booking::with(['destination', 'ticket'])
                 ->where('tourist_id', $user->id)
                 ->latest()
-                ->get();
+                ->cursorPaginate(20);
         } elseif ($user->isStaff()) {
             $bookings = Booking::with(['tourist', 'destination', 'ticket'])
                 ->where('destination_id', $user->assigned_destination_id)
                 ->latest()
-                ->get();
+                ->cursorPaginate(20);
         } else {
             // Admin is not allowed here (blocked at the route level via 'cannot:admin-only')
             abort(403, 'Admins do not have access to booking management.');
@@ -144,20 +142,12 @@ class BookingController extends Controller
 
         // Generate QR ticket code
         $destination = $booking->destination;
-        $qrCode = strtoupper($destination->initials) . random_int(100000, 999999);
+        do {
+            $qrCode = strtoupper($destination->initials) . strtoupper(Str::random(6));
+        } while (Ticket::where('qr_code', $qrCode)->exists());
 
-        // Ensure QR uniqueness
-        while (Ticket::where('qr_code', $qrCode)->exists()) {
-            $qrCode = strtoupper($destination->initials) . random_int(100000, 999999);
-        }
-
-        // Generate QR SVG file in storage
-        \Illuminate\Support\Facades\Storage::disk('public')->makeDirectory('qr-tickets');
-        $qrPath = 'qr-tickets/' . $booking->id . '.svg';
-        $qrCodeImage = \SimpleSoftwareIO\QrCode\Facades\QrCode::size(250)
-            ->margin(1)
-            ->generate($qrCode);
-        \Illuminate\Support\Facades\Storage::disk('public')->put($qrPath, $qrCodeImage);
+        // Offload QR Code file generation to queue
+        GenerateQrTicketJob::dispatch($qrCode, $booking->id);
 
         // Update booking and payment statuses
         $booking->update([
@@ -172,14 +162,9 @@ class BookingController extends Controller
             'qr_code' => $qrCode,
         ]);
 
-        // Notify tourist
-        Notification::create([
-            'recipient_id' => $booking->tourist_id,
-            'recipient_type' => 'tourist',
-            'type' => 'booking_alert',
-            'message' => "Your booking for " . $destination->name . " on " . $booking->visit_date . " has been CONFIRMED! Your QR ticket code is: {$qrCode}.",
-            'related_booking_id' => $booking->id,
-        ]);
+        // Notify tourist via Job
+        $message = "Your booking for " . $destination->name . " on " . $booking->visit_date . " has been CONFIRMED! Your QR ticket code is: {$qrCode}.";
+        SendBookingNotificationJob::dispatch([$booking->tourist_id], 'tourist', 'booking_alert', $message, $booking->id);
 
         return back()->with('success', 'Booking confirmed and QR ticket generated.');
     }
@@ -214,13 +199,8 @@ class BookingController extends Controller
         ]);
 
         // Notify tourist
-        Notification::create([
-            'recipient_id' => $booking->tourist_id,
-            'recipient_type' => 'tourist',
-            'type' => 'booking_alert',
-            'message' => "Your booking for " . $booking->destination->name . " on " . $booking->visit_date . " has been DECLINED. Reason: " . $request->decline_reason,
-            'related_booking_id' => $booking->id,
-        ]);
+        $message = "Your booking for " . $booking->destination->name . " on " . $booking->visit_date . " has been DECLINED. Reason: " . $request->decline_reason;
+        SendBookingNotificationJob::dispatch([$booking->tourist_id], 'tourist', 'booking_alert', $message, $booking->id);
 
         return back()->with('success', 'Booking declined and tourist has been notified.');
     }
@@ -272,13 +252,8 @@ class BookingController extends Controller
         // Generate secure unguessable qr token
         $qrToken = 'TKT-' . bin2hex(random_bytes(16));
 
-        // Generate QR code SVG and store it
-        \Illuminate\Support\Facades\Storage::disk('public')->makeDirectory('qr-tickets');
-        $qrPath = 'qr-tickets/' . $booking->id . '.svg';
-        $qrCodeImage = \SimpleSoftwareIO\QrCode\Facades\QrCode::size(250)
-            ->margin(1)
-            ->generate($qrToken);
-        \Illuminate\Support\Facades\Storage::disk('public')->put($qrPath, $qrCodeImage);
+        // Generate QR code SVG and store it via Job
+        GenerateQrTicketJob::dispatch($qrToken, $booking->id);
 
         // Update booking and payment statuses together
         $booking->update([
@@ -296,14 +271,9 @@ class BookingController extends Controller
             ['qr_code' => $qrToken]
         );
 
-        // Notify tourist
-        Notification::create([
-            'recipient_id' => $booking->tourist_id,
-            'recipient_type' => 'tourist',
-            'type' => 'booking_alert',
-            'message' => "Your payment and booking request for " . $booking->destination->name . " on " . $booking->visit_date . " has been APPROVED! Your QR ticket is ready.",
-            'related_booking_id' => $booking->id,
-        ]);
+        // Notify tourist via Job
+        $message = "Your payment and booking request for " . $booking->destination->name . " on " . $booking->visit_date . " has been APPROVED! Your QR ticket is ready.";
+        SendBookingNotificationJob::dispatch([$booking->tourist_id], 'tourist', 'booking_alert', $message, $booking->id);
 
         return back()->with('success', 'Booking and payment approved successfully! QR ticket generated.');
     }
@@ -335,14 +305,9 @@ class BookingController extends Controller
             'reviewed_by' => $user->id,
         ]);
 
-        // Notify tourist
-        Notification::create([
-            'recipient_id' => $booking->tourist_id,
-            'recipient_type' => 'tourist',
-            'type' => 'booking_alert',
-            'message' => "Your booking/payment for " . $booking->destination->name . " on " . $booking->visit_date . " was REJECTED. Reason: " . $request->rejection_reason,
-            'related_booking_id' => $booking->id,
-        ]);
+        // Notify tourist via Job
+        $message = "Your booking/payment for " . $booking->destination->name . " on " . $booking->visit_date . " was REJECTED. Reason: " . $request->rejection_reason;
+        SendBookingNotificationJob::dispatch([$booking->tourist_id], 'tourist', 'booking_alert', $message, $booking->id);
 
         return back()->with('success', 'Booking and payment rejected.');
     }
@@ -362,7 +327,7 @@ class BookingController extends Controller
             ->whereIn('status', ['confirmed', 'completed'])
             ->whereNotNull('qr_token')
             ->latest()
-            ->get();
+            ->cursorPaginate(20);
 
         return view('bookings.tickets', compact('bookings'));
     }
@@ -498,17 +463,13 @@ class BookingController extends Controller
             $ticket->update(['scanned_at' => now()]);
         }
 
-        // Notify admins
-        $admins = User::where('role', 'admin')->get();
-        foreach ($admins as $admin) {
-            Notification::create([
-                'recipient_id' => $admin->id,
-                'recipient_type' => 'admin',
-                'type' => 'info',
-                'message' => $booking->tourist->name . " has arrived at " . $booking->destination->name . " (checked in via scanner at " . now()->format('h:i A') . ").",
-                'related_booking_id' => $booking->id,
-            ]);
-        }
+        // Notify admins via Job
+        $adminIds = Cache::remember('system_admin_ids', 86400, function () {
+            return \App\Models\User::where('role', 'admin')->pluck('id')->toArray();
+        });
+
+        $message = $booking->tourist->name . " has arrived at " . $booking->destination->name . " (checked in via scanner at " . now()->format('h:i A') . ").";
+        SendBookingNotificationJob::dispatch($adminIds, 'admin', 'info', $message, $booking->id);
 
         return response()->json([
             'valid' => true,

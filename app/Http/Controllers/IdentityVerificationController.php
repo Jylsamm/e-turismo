@@ -213,6 +213,7 @@ class IdentityVerificationController extends Controller
 
     /**
      * Admin: manually register a tourist or staff account.
+     */
     public function adminStoreAccount(Request $request)
     {
         $this->authorize('admin-only');
@@ -257,7 +258,26 @@ class IdentityVerificationController extends Controller
         if ($request->filled('assigned_destination_name')) {
             $dest = Destination::where('name', $request->assigned_destination_name)->first();
             if (!$dest) {
-                $dest = Destination::create(['name' => $request->assigned_destination_name]);
+                $name = $request->assigned_destination_name;
+                $cleanName = preg_replace('/[^a-zA-Z0-9]/', '', $name);
+                $baseInitials = strtoupper(substr($cleanName, 0, 3));
+                if (empty($baseInitials)) {
+                    $baseInitials = 'DST';
+                }
+                
+                $initials = $baseInitials;
+                $counter = 1;
+                while (Destination::where('initials', $initials)->exists()) {
+                    $initials = substr($baseInitials, 0, 8) . $counter;
+                    $counter++;
+                }
+
+                $dest = Destination::create([
+                    'name'     => $name,
+                    'initials' => $initials,
+                    'location' => 'TBD',
+                    'capacity' => 100
+                ]);
             }
             $destId = $dest->id;
         }
@@ -373,6 +393,9 @@ class IdentityVerificationController extends Controller
     public function updateStaff(Request $request, \App\Models\User $user)
     {
         $this->authorize('admin-only');
+
+        // Flash the user ID so the modal can reopen on validation error
+        $request->session()->flash('edit_user_id', $user->id);
 
         $rules = [
             'name'      => 'required|string|max:100',

@@ -39,18 +39,25 @@
 
     <div class="pb-12 pt-0 animate-fade-in-up" x-data="{
         deleteUrl: '',
-        editOpen: false,
-        editUrl: '',
-        editName: '',
-        editLastName: '',
-        editEmail: '',
-        editContact: '',
+        editOpen: {{ session('edit_user_id') && $errors->any() ? 'true' : 'false' }},
+        editUrl: '{{ session('edit_user_id') ? route('verification.staff.update', session('edit_user_id')) : '' }}',
+        editName: '{{ old('name', '') }}',
+        editLastName: '{{ old('last_name', '') }}',
+        editEmail: '{{ old('email', '') }}',
+        editContact: '{{ old('contact', '') }}',
         openEditModal(user) {
-            this.editUrl = '/admin/verifications/staff/' + user.id;
+            this.editUrl = '{{ url('/admin/verifications/staff') }}/' + user.id;
             this.editName = user.name;
             this.editLastName = user.last_name || '';
             this.editEmail = user.email;
             this.editContact = user.contact || '';
+            
+            // Explicitly set the form action to avoid Alpine teleport binding issues
+            setTimeout(() => {
+                const form = document.getElementById('editStaffForm');
+                if (form) form.action = this.editUrl;
+            }, 50);
+
             this.editOpen = true;
         }
     }">
@@ -58,21 +65,21 @@
 
             <!-- Sub-Navigation Tabs -->
             <div class="flex flex-wrap gap-2 border-b border-gray-200 pb-3">
-                <a href="{{ route('verification.reviews') }}"
-                    class="px-4 py-2 text-sm font-semibold rounded-xl transition-all duration-200 transform hover:-translate-y-0.5 active:translate-y-0 {{ request()->routeIs('verification.reviews') ? 'bg-green-700 text-white shadow-md shadow-green-700/15' : 'text-gray-500 hover:text-gray-800 hover:bg-gray-100 hover:shadow-sm' }}">
-                    <i class="ti ti-checklist mr-1"></i> ID Verification Reviews
+                <a href="{{ route('verification.reviews') }}" aria-label="ID Verification Reviews"
+                    class="flex items-center justify-center h-11 px-4 py-2 md:h-auto md:w-auto text-sm font-semibold rounded-xl transition-all duration-200 transform hover:-translate-y-0.5 active:translate-y-0 {{ request()->routeIs('verification.reviews') ? 'bg-green-700 text-white shadow-md shadow-green-700/15' : 'text-gray-500 hover:text-gray-800 hover:bg-gray-100 hover:shadow-sm' }}">
+                    <i class="ti ti-checklist md:mr-1 text-lg md:text-base"></i> <span class="hidden md:inline">ID Verification Reviews</span>
                 </a>
-                <a href="{{ route('verification.accounts') }}"
-                    class="px-4 py-2 text-sm font-semibold rounded-xl transition-all duration-200 transform hover:-translate-y-0.5 active:translate-y-0 {{ request()->routeIs('verification.accounts') ? 'bg-green-700 text-white shadow-md shadow-green-700/15' : 'text-gray-500 hover:text-gray-800 hover:bg-gray-100 hover:shadow-sm' }}">
-                    <i class="ti ti-users mr-1"></i> Verify Tourists
+                <a href="{{ route('verification.accounts') }}" aria-label="Verify Tourists"
+                    class="flex items-center justify-center h-11 px-4 py-2 md:h-auto md:w-auto text-sm font-semibold rounded-xl transition-all duration-200 transform hover:-translate-y-0.5 active:translate-y-0 {{ request()->routeIs('verification.accounts') ? 'bg-green-700 text-white shadow-md shadow-green-700/15' : 'text-gray-500 hover:text-gray-800 hover:bg-gray-100 hover:shadow-sm' }}">
+                    <i class="ti ti-users md:mr-1 text-lg md:text-base"></i> <span class="hidden md:inline">Verify Tourists</span>
                 </a>
-                <a href="{{ route('verification.staff') }}"
-                    class="px-4 py-2 text-sm font-semibold rounded-xl transition-all duration-200 transform hover:-translate-y-0.5 active:translate-y-0 {{ request()->routeIs('verification.staff') ? 'bg-green-700 text-white shadow-md shadow-green-700/15' : 'text-gray-500 hover:text-gray-800 hover:bg-gray-100 hover:shadow-sm' }}">
-                    <i class="ti ti-user-cog mr-1"></i> Manage Staff
+                <a href="{{ route('verification.staff') }}" aria-label="Manage Staff"
+                    class="flex items-center justify-center h-11 px-4 py-2 md:h-auto md:w-auto text-sm font-semibold rounded-xl transition-all duration-200 transform hover:-translate-y-0.5 active:translate-y-0 {{ request()->routeIs('verification.staff') ? 'bg-green-700 text-white shadow-md shadow-green-700/15' : 'text-gray-500 hover:text-gray-800 hover:bg-gray-100 hover:shadow-sm' }}">
+                    <i class="ti ti-user-cog md:mr-1 text-lg md:text-base"></i> <span class="hidden md:inline">Manage Staff</span>
                 </a>
-                <a href="{{ route('verification.add_account') }}"
-                    class="px-4 py-2 text-sm font-semibold rounded-xl transition-all duration-200 transform hover:-translate-y-0.5 active:translate-y-0 {{ request()->routeIs('verification.add_account') ? 'bg-green-700 text-white shadow-md shadow-green-700/15' : 'text-gray-500 hover:text-gray-800 hover:bg-gray-100 hover:shadow-sm' }}">
-                    <i class="ti ti-user-plus mr-1"></i> Add Account
+                <a href="{{ route('verification.add_account') }}" aria-label="Add Account"
+                    class="flex items-center justify-center h-11 px-4 py-2 md:h-auto md:w-auto text-sm font-semibold rounded-xl transition-all duration-200 transform hover:-translate-y-0.5 active:translate-y-0 {{ request()->routeIs('verification.add_account') ? 'bg-green-700 text-white shadow-md shadow-green-700/15' : 'text-gray-500 hover:text-gray-800 hover:bg-gray-100 hover:shadow-sm' }}">
+                    <i class="ti ti-user-plus md:mr-1 text-lg md:text-base"></i> <span class="hidden md:inline">Add Account</span>
                 </a>
             </div>
 
@@ -103,10 +110,6 @@
                         <div>
 
                         </div>
-                        <a href="{{ route('verification.add_account') }}"
-                            class="px-4 py-2 bg-green-700 hover:bg-green-800 text-white font-semibold rounded-xl text-xs transition flex items-center gap-1.5 shadow-sm">
-                            <i class="ti ti-user-plus text-sm"></i> Add New Staff
-                        </a>
                     </div>
 
                     <div class="max-h-[550px] overflow-y-auto overflow-x-auto relative">
@@ -142,52 +145,11 @@
                                             @endif
                                         </td>
                                         <td class="px-5 py-4">
-                                            <form method="POST" action="{{ route('verification.staff.reassign', $user) }}"
-                                                class="flex items-center gap-1.5" x-data="{ showDestDropdown: false, activeDestId: '{{ $user->assigned_destination_id }}', activeDestName: '{{ $user->assignedDestination ? $user->assignedDestination->name : 'No Spot Assigned' }}' }">
-                                                @csrf
-                                                <input type="hidden" name="assigned_destination_id" :value="activeDestId" />
-                                                <div class="flex items-center gap-1.5 relative">
-                                                    <!-- Dropdown Trigger Button -->
-                                                    <button type="button" @click="showDestDropdown = !showDestDropdown" @click.away="showDestDropdown = false" class="flex justify-between items-center w-48 rounded-xl border border-gray-250 bg-white px-3 py-1.5 text-xs text-gray-700 font-semibold hover:bg-gray-50 transition focus:outline-none focus:ring-1 focus:ring-brand-500 shadow-sm">
-                                                        <span class="truncate" x-text="activeDestName"></span>
-                                                        <svg class="h-3 w-3 text-gray-450 transform transition-transform duration-200 shrink-0 ml-1" :class="showDestDropdown ? 'rotate-180' : ''" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7" />
-                                                        </svg>
-                                                    </button>
-
-                                                    <!-- Dropdown Menu -->
-                                                    <div x-show="showDestDropdown" 
-                                                         x-transition:enter="transition ease-out duration-150"
-                                                         x-transition:enter-start="opacity-0 scale-95"
-                                                         x-transition:enter-end="opacity-100 scale-100"
-                                                         x-transition:leave="transition ease-in duration-100"
-                                                         x-transition:leave-start="opacity-100 scale-100"
-                                                         x-transition:leave-end="opacity-0 scale-95"
-                                                         class="absolute left-0 bottom-full mb-1.5 z-30 w-48 rounded-xl bg-white border border-gray-200 shadow-xl py-1 max-h-36 overflow-y-auto"
-                                                         style="display: none;">
-                                                        <button type="button" @click="activeDestId = ''; activeDestName = 'No Spot Assigned'; showDestDropdown = false" class="w-full text-left px-3 py-1.5 text-xs hover:bg-green-50/40 hover:text-green-950 transition-colors">
-                                                            -- No Spot Assigned --
-                                                        </button>
-                                                        @foreach($destinations as $dest)
-                                                            @php
-                                                                $assignedToOther = $staffUsers->where('id', '!=', $user->id)
-                                                                    ->where('assigned_destination_id', $dest->id)
-                                                                    ->isNotEmpty();
-                                                            @endphp
-                                                            @if(!$assignedToOther)
-                                                                <button type="button" @click="activeDestId = '{{ $dest->id }}'; activeDestName = '{{ addslashes($dest->name) }}'; showDestDropdown = false" class="w-full text-left px-3 py-1.5 text-xs hover:bg-green-50/40 hover:text-green-950 transition-colors">
-                                                                    {{ $dest->name }}
-                                                                </button>
-                                                            @endif
-                                                        @endforeach
-                                                    </div>
-
-                                                    <button type="submit"
-                                                        class="px-3 py-1.5 bg-green-700 hover:bg-green-800 text-white rounded-xl text-xs font-semibold shadow-sm hover:shadow transition-all duration-200 hover:-translate-y-0.5 active:translate-y-0 flex items-center gap-1">
-                                                        <i class="ti ti-device-floppy text-sm"></i> Save
-                                                    </button>
-                                                </div>
-                                            </form>
+                                            @if($user->assignedDestination)
+                                                <span class="text-xs text-gray-700 font-semibold">{{ $user->assignedDestination->name }}</span>
+                                            @else
+                                                <span class="text-gray-400 italic text-xs">No Spot Assigned</span>
+                                            @endif
                                         </td>
                                         <td class="px-5 py-4">
                                             <div class="flex items-center gap-2">
@@ -225,13 +187,14 @@
         </div>
 
         {{-- Edit Staff Modal --}}
-        <div x-show="editOpen"
-             class="fixed inset-0 z-50 flex items-center justify-center p-4 overflow-y-auto"
-             style="display: none;"
-             role="dialog"
-             aria-modal="true"
-             x-cloak>
-            
+        <template x-teleport="body">
+            <div x-show="editOpen"
+                 class="fixed inset-0 z-[100] flex items-center justify-center p-4 overflow-y-auto"
+                 style="display: none;"
+                 role="dialog"
+                 aria-modal="true"
+                 x-cloak>
+                
             {{-- Backdrop overlay with blur --}}
             <div x-show="editOpen"
                  x-transition:enter="ease-out duration-300"
@@ -265,7 +228,7 @@
                 </div>
 
                 {{-- Scrollable Form Content --}}
-                <form method="POST" :action="editUrl" class="flex flex-col flex-grow overflow-hidden">
+                <form id="editStaffForm" method="POST" :action="editUrl" class="flex flex-col flex-grow overflow-hidden">
                     @csrf
                     @method('PATCH')
 
@@ -296,11 +259,11 @@
                             <div class="grid grid-cols-2 gap-3">
                                 <div>
                                     <label class="block text-xs font-semibold text-gray-600 mb-1">New Password</label>
-                                    <input type="password" name="password" class="w-full border-gray-200 focus:border-brand-500 focus:ring-brand-500 rounded-lg px-3 py-2 text-sm shadow-sm bg-white" />
+                                    <input type="password" name="password" autocomplete="new-password" class="w-full border-gray-200 focus:border-brand-500 focus:ring-brand-500 rounded-lg px-3 py-2 text-sm shadow-sm bg-white" />
                                 </div>
                                 <div>
                                     <label class="block text-xs font-semibold text-gray-600 mb-1">Confirm New Password</label>
-                                    <input type="password" name="password_confirmation" class="w-full border-gray-200 focus:border-brand-500 focus:ring-brand-500 rounded-lg px-3 py-2 text-sm shadow-sm bg-white" />
+                                    <input type="password" name="password_confirmation" autocomplete="new-password" class="w-full border-gray-200 focus:border-brand-500 focus:ring-brand-500 rounded-lg px-3 py-2 text-sm shadow-sm bg-white" />
                                 </div>
                             </div>
                         </div>
@@ -317,7 +280,7 @@
                     </div>
                 </form>
             </div>
-        </div>
+        </template>
 
         {{-- Delete Staff Confirmation Modal --}}
         <x-confirm-modal id="delete-staff-modal" title="Delete Staff Account"

@@ -2,16 +2,18 @@
 
 <div x-data="{ open: false }"
      @open-confirm-modal.window="if ($event.detail.id === '{{ $id }}') open = true"
-     @close-confirm-modal.window="if ($event.detail.id === '{{ $id }}') open = false"
-     x-show="open"
-     class="fixed inset-0 z-50 flex items-center justify-center p-4"
-     style="display: none;"
-     role="dialog"
-     aria-modal="true"
-     x-cloak>
+     @close-confirm-modal.window="if ($event.detail.id === '{{ $id }}') open = false">
     
-    {{-- Backdrop overlay with blur --}}
-    <div x-show="open"
+    <template x-teleport="body">
+        <div x-show="open"
+             class="fixed inset-0 z-[100] flex items-center justify-center p-4"
+             style="display: none;"
+             role="dialog"
+             aria-modal="true"
+             x-cloak>
+            
+            {{-- Backdrop overlay with blur --}}
+            <div x-show="open"
          x-transition:enter="ease-out duration-300"
          x-transition:enter-start="opacity-0"
          x-transition:enter-end="opacity-100"
@@ -58,5 +60,6 @@
                 {{ $slot }}
             </div>
         </div>
-    </div>
+        </div>
+    </template>
 </div>
