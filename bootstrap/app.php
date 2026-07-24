@@ -16,7 +16,10 @@ return Application::configure(basePath: dirname(__DIR__))
 
         $middleware->alias([
             'identity.verified' => \App\Http\Middleware\RequireIdentityVerified::class,
+            'check.booking.status' => \App\Http\Middleware\CheckBookingStatus::class,
         ]);
+
+        $middleware->append(\App\Http\Middleware\LogSlowQueries::class);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //

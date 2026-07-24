@@ -188,7 +188,7 @@
                             Verify your government ID to unlock bookings and full account access.
                         </p>
                         <div class="mt-4">
-                            <button type="button" id="btn-start-verification" class="text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 px-4 py-2 rounded-lg transition shadow-sm">
+                            <button type="button" id="btn-start-verification" class="text-sm font-medium text-white bg-brand-700 hover:bg-brand-800 px-4 py-2 rounded-lg transition shadow-sm">
                                 Start Verification
                             </button>
                         </div>
@@ -237,7 +237,7 @@
                 <div style="margin-top:1.5rem;padding-top:1.25rem;border-top:1px solid #f3f4f6;">
                     <p style="color:#9ca3af;font-size:0.7rem;text-transform:uppercase;letter-spacing:.05em;margin-bottom:.5rem;">Uploaded ID Photo</p>
                     {{-- image-orientation: from-image reads EXIF rotation metadata, fixing sideways phone photos --}}
-                    <img src="{{ asset('storage/' . $user->id_photo) }}" alt="Uploaded ID"
+                    <img src="{{ Storage::url($user->id_photo) }}" alt="Uploaded ID"
                          style="width:100%;max-height:16rem;object-fit:contain;border-radius:0.75rem;border:1px solid #e5e7eb;box-shadow:0 1px 3px rgba(0,0,0,.1);image-orientation:from-image;" />
                 </div>
                 @endif
@@ -290,7 +290,7 @@
                     <div class="grid grid-cols-2 gap-3">
                         <div>
                             <x-input-label for="id_type" :value="__('ID Type')" />
-                            <select id="id_type" name="id_type" class="block mt-1 w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" required>
+                            <select id="id_type" name="id_type" class="block mt-1 w-full border-gray-300 focus:border-brand-500 focus:ring-brand-500 rounded-md shadow-sm" required>
                                 @foreach(['Passport', 'National ID', "Driver's License", 'SSS ID', 'GSIS ID', 'PhilHealth ID', 'Pag-IBIG ID', 'Voter ID', 'Postal ID', 'School ID', 'Barangay ID', 'Company ID'] as $type)
                                     <option value="{{ $type }}" {{ $user->id_type === $type ? 'selected' : '' }}>{{ $type }}</option>
                                 @endforeach
@@ -303,7 +303,7 @@
                     </div>
                     <div>
                         <x-input-label for="classification" :value="__('Classification')" />
-                        <select id="classification" name="classification" class="block mt-1 w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" required>
+                        <select id="classification" name="classification" class="block mt-1 w-full border-gray-300 focus:border-brand-500 focus:ring-brand-500 rounded-md shadow-sm" required>
                             <option value="Local" {{ $user->classification === 'Local' ? 'selected' : '' }}>Local</option>
                             <option value="Domestic" {{ $user->classification === 'Domestic' ? 'selected' : '' }}>Domestic</option>
                             <option value="Foreign" {{ $user->classification === 'Foreign' ? 'selected' : '' }}>Foreign</option>
@@ -311,7 +311,7 @@
                     </div>
                     <div class="pt-4 flex justify-end gap-3">
                         <button type="button" class="btn-close-modal px-4 py-2 bg-gray-100 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-200">Cancel</button>
-                        <button type="submit" class="px-4 py-2 bg-gray-800 text-white rounded-lg text-sm font-medium hover:bg-gray-700 transition">
+                        <button type="submit" class="px-4 py-2 bg-brand-700 text-white rounded-lg text-sm font-medium hover:bg-brand-800 transition">
                             Save Details & Re-verify
                         </button>
                     </div>
@@ -337,14 +337,14 @@
                         <div class="camera-box mt-1 flex flex-col items-center justify-center relative min-h-[320px] bg-slate-950 text-white rounded-lg overflow-hidden border border-slate-700">
                             <!-- Initial State / Start Camera View -->
                             <div id="camera-prompt" class="flex flex-col items-center justify-center text-center p-6 space-y-4 w-full">
-                                <div class="w-16 h-16 bg-slate-900 rounded-full flex items-center justify-center text-indigo-400">
+                                <div class="w-16 h-16 bg-slate-900 rounded-full flex items-center justify-center text-brand-400">
                                     <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
                                 </div>
                                 <div>
                                     <h5 class="font-bold text-sm text-slate-200">Camera Access Required</h5>
                                     <p class="text-xs text-slate-400 mt-1">Please allow camera access to capture your ID directly.</p>
                                 </div>
-                                <button type="button" id="btn-activate-camera" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-xs font-semibold shadow-md transition duration-150">
+                                <button type="button" id="btn-activate-camera" class="px-4 py-2 bg-brand-700 hover:bg-brand-800 text-white rounded-lg text-xs font-semibold shadow-md transition duration-150">
                                     Start Camera
                                 </button>
                             </div>
@@ -383,8 +383,8 @@
                                         <span id="orientation-label">Landscape Guide</span>
                                     </button>
 
-                                    <button type="button" id="btn-capture-photo" class="w-12 h-12 bg-white hover:bg-slate-100 rounded-full border-4 border-slate-700 hover:border-indigo-500 shadow-lg flex items-center justify-center transition focus:outline-none">
-                                        <div class="w-7 h-7 bg-indigo-600 rounded-full"></div>
+                                    <button type="button" id="btn-capture-photo" class="w-12 h-12 bg-white hover:bg-slate-100 rounded-full border-4 border-slate-700 hover:border-brand-500 shadow-lg flex items-center justify-center transition focus:outline-none">
+                                        <div class="w-7 h-7 bg-brand-700 rounded-full"></div>
                                     </button>
 
                                     <button type="button" id="btn-switch-camera" class="p-2 bg-slate-800 hover:bg-slate-700 rounded-lg text-slate-300 hover:text-white transition flex items-center gap-1 text-[11px]">
@@ -423,7 +423,7 @@
                     </div>
                     <div class="pt-4 flex justify-end gap-3 border-t border-gray-100 mt-4">
                         <button type="button" class="btn-close-modal px-4 py-2 bg-gray-100 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-200">Cancel</button>
-                        <button type="submit" id="submit-upload-btn" disabled class="px-5 py-2 bg-indigo-600 text-white rounded-lg text-sm font-medium hover:bg-indigo-700 transition opacity-50 cursor-not-allowed">
+                        <button type="submit" id="submit-upload-btn" disabled class="px-5 py-2 bg-brand-700 text-white rounded-lg text-sm font-medium hover:bg-brand-800 transition opacity-50 cursor-not-allowed">
                             Submit ID Photo
                         </button>
                     </div>

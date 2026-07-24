@@ -16,7 +16,87 @@ class CheckInController extends Controller
      */
     public function create()
     {
-        return view('checkins.create');
+        $user = auth()->user();
+        if ($user->isAdmin()) {
+            abort(403, 'Admins cannot access the check-in screen.');
+        }
+
+        $destination = \App\Models\Destination::find($user->assigned_destination_id);
+        $stats = $this->getLiveStatsData($destination);
+
+        return view('checkins.create', compact('destination', 'stats'));
+    }
+
+    /**
+     * Fetch real-time check-in stats for AJAX refresh.
+     */
+    public function stats()
+    {
+        $user = auth()->user();
+        if (!$user || $user->isAdmin()) {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
+
+        $destination = \App\Models\Destination::find($user->assigned_destination_id);
+        $stats = $this->getLiveStatsData($destination);
+
+        return response()->json($stats);
+    }
+
+    private function getLiveStatsData($destination)
+    {
+        if (!$destination) {
+            return [
+                'today_checkins' => 0,
+                'pending_arrivals' => 0,
+                'current_visitors' => 0,
+                'destination_name' => 'No assigned spot'
+            ];
+        }
+
+        $todayStart = now()->startOfDay();
+        $todayEnd = now()->endOfDay();
+
+        // Today's Checkins (Completed check-ins today)
+        $todayCheckins = CheckIn::whereHas('booking', function ($q) use ($destination) {
+            $q->where('destination_id', $destination->id);
+        })->whereBetween('arrival_time', [$todayStart, $todayEnd])->count();
+
+        // Pending Arrivals (Confirmed bookings for today that haven't checked in yet)
+        $pendingArrivals = Booking::where('destination_id', $destination->id)
+            ->where('status', 'confirmed')
+            ->whereDate('visit_date', today())
+            ->whereNull('checked_in_at')
+            ->count();
+
+        // Pending list for queue panel (max 20 for perf)
+        $pendingList = Booking::with('tourist')
+            ->where('destination_id', $destination->id)
+            ->where('status', 'confirmed')
+            ->whereDate('visit_date', today())
+            ->whereNull('checked_in_at')
+            ->whereNotNull('qr_token')
+            ->orderBy('created_at')
+            ->limit(20)
+            ->get()
+            ->map(fn($b) => [
+                'id'           => $b->id,
+                'tourist_name' => $b->tourist?->name ?? 'Unknown',
+                'qr_token'     => $b->qr_token,
+            ])
+            ->values()
+            ->toArray();
+
+        // Current Visitors (Proxy count matching active check-ins today)
+        $currentVisitors = $todayCheckins;
+
+        return [
+            'today_checkins'   => $todayCheckins,
+            'pending_arrivals' => $pendingArrivals,
+            'current_visitors' => $currentVisitors,
+            'destination_name' => $destination->name,
+            'pending_list'     => $pendingList,
+        ];
     }
 
     /**

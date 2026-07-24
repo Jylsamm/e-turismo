@@ -8,6 +8,22 @@ use Illuminate\Support\Facades\Log;
 
 class IdentityVerificationService
 {
+    private string $apiKey;
+
+    public function __construct()
+    {
+        $key = config('services.ocr.key');
+
+        if (empty($key)) {
+            throw new \RuntimeException(
+                'OCR_SPACE_API_KEY is not set in your .env file. ' .
+                'Obtain a free key at https://ocr.space/ocrapi/freekey and add it to .env.'
+            );
+        }
+
+        $this->apiKey = $key;
+    }
+
     /**
      * Run the full verification pipeline for a user.
      * Returns: ['status', 'score', 'notes']
@@ -89,7 +105,7 @@ class IdentityVerificationService
             CURLOPT_URL            => 'https://api.ocr.space/parse/image',
             CURLOPT_POST           => true,
             CURLOPT_POSTFIELDS     => [
-                'apikey'            => env('OCR_SPACE_API_KEY', 'helloworld'),
+                'apikey'            => $this->apiKey,  // Fix 1: no helloworld fallback
                 'language'          => 'eng',
                 'isOverlayRequired' => 'false',
                 'OCREngine'         => '2',
@@ -142,10 +158,10 @@ class IdentityVerificationService
         $notes      = [];
         $totalScore = 0;
 
-        // Name matching (weight: 40%)
-        $registeredName = strtolower(trim(
-            $user->name . ' ' . ($user->middle_initial ?? '') . ' ' . ($user->last_name ?? '')
-        ));
+        // Fix 3: Use $user->name directly — it already contains the full composed name
+        // ("FIRST [M.I.] LAST") built in RegisteredUserController. Do NOT append
+        // middle_initial / last_name again or the OCR string will be doubled.
+        $registeredName = strtolower(trim($user->name));
         $nameScore = $this->similarityScore($registeredName, $extractedText);
         $totalScore += $nameScore * 0.40;
 

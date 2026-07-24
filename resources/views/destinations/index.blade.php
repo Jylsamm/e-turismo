@@ -6,23 +6,23 @@
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Fraunces:ital,wght@0,600;1,600&display=swap');
 
         :root {
-            --teal:       #0d9488;
-            --teal-light: #14b8a6;
-            --teal-dark:  #0f766e;
-            --ocean:      #0891b2;
-            --sand:       #f59e0b;
+            --teal:       #16a34a;
+            --teal-light: #4ade80;
+            --teal-dark:  #166534;
+            --ocean:      #22c55e;
+            --sand:       #a3e635;
             --emerald:    #10b981;
             --rose:       #f43f5e;
-            --indigo:     #6366f1;
-            --bg:         #f0fdfc;
-            --border:     #ccfbf1;
-            --text-1:     #134e4a;
+            --indigo:     #0B3D2E;
+            --bg:         #f0fdf4;
+            --border:     #dcfce7;
+            --text-1:     #0B3D2E;
             --text-2:     #374151;
             --text-3:     #6b7280;
             --text-4:     #9ca3af;
             --t:          0.22s cubic-bezier(0.4,0,0.2,1);
             --sh-card:    0 2px 12px rgba(0,0,0,.07);
-            --sh-lg:      0 12px 40px rgba(13,148,136,.18);
+            --sh-lg:      0 12px 40px rgba(22,197,94,.18);
             --r-sm: 8px; --r-md: 14px; --r-lg: 20px; --r-xl: 28px;
         }
 
@@ -30,7 +30,7 @@
 
         /* ── Hero ── */
         .dest-hero {
-            background: linear-gradient(135deg, #0d9488 0%, #0891b2 55%, #6366f1 100%);
+            background: linear-gradient(135deg, #0B3D2E 0%, #166534 40%, #16a34a 70%, #4ADE80 100%);
             padding: 52px 24px 68px;
             text-align: center;
             position: relative;
@@ -245,7 +245,7 @@
         {{-- ══ Hero Section ══════════════════════════════════════════════ --}}
         <section class="dest-hero" aria-label="Search destinations">
             <div class="dest-hero-inner">
-                <div class="hero-tag">🗺️ Tigbao Tourism Portal</div>
+                <div class="hero-tag flex items-center gap-1.5"><svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21"/><line x1="9" x2="9" y1="3" y2="18"/><line x1="15" x2="15" y1="6" y2="21"/></svg> Tigbao Tourism Portal</div>
                 <h1>Find Your Perfect<br>Destination</h1>
                 <p>Search verified spots in Tigbao, Zamboanga del Sur, check real-time availability, and book in minutes.</p>
 
@@ -282,9 +282,9 @@
                 {{-- Category pills --}}
                 <div class="hero-pills" role="group" aria-label="Filter by category" id="category-pills">
                     <button class="hero-pill active" onclick="setCategory('all', this)">All</button>
-                    <button class="hero-pill" onclick="setCategory('Nature', this)">🌿 Nature</button>
-                    <button class="hero-pill" onclick="setCategory('Heritage', this)">🏛️ Heritage</button>
-                    <button class="hero-pill" onclick="setCategory('Adventure', this)">🏔️ Adventure</button>
+                    <button class="hero-pill flex items-center gap-1.5" onclick="setCategory('Nature', this)"><svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/></svg> Nature</button>
+                    <button class="hero-pill flex items-center gap-1.5" onclick="setCategory('Heritage', this)"><svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="22" x2="21" y2="22"/><line x1="6" y1="18" x2="6" y2="11"/><line x1="10" y1="18" x2="10" y2="11"/><line x1="14" y1="18" x2="14" y2="11"/><line x1="18" y1="18" x2="18" y2="11"/><polygon points="12 2 20 7 4 7"/></svg> Heritage</button>
+                    <button class="hero-pill flex items-center gap-1.5" onclick="setCategory('Adventure', this)"><svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m8 3 4 8 5-5 5 15H2L8 3z"/></svg> Adventure</button>
                 </div>
             </div>
         </section>
@@ -294,8 +294,8 @@
 
             {{-- Flash --}}
             @if(session('success'))
-                <div style="background:#ecfdf5;border:1px solid #6ee7b7;color:#065f46;padding:12px 18px;border-radius:12px;font-size:.88rem;margin-top:20px;">
-                    ✅ {{ session('success') }}
+                <div style="background:#ecfdf5;border:1px solid #6ee7b7;color:#065f46;padding:12px 18px;border-radius:12px;font-size:.88rem;margin-top:20px;display:flex;align-items:center;gap:8px;">
+                    <svg style="width:16px;height:16px;flex-shrink:0;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg> {{ session('success') }}
                 </div>
             @endif
 
@@ -332,7 +332,7 @@
 
             @if($destinations->isEmpty())
             <div class="empty-state">
-                <div class="empty-illus" aria-hidden="true">🗺️</div>
+                <div class="empty-illus scale-150" aria-hidden="true"><svg style="width:2.5rem;height:2.5rem;opacity:0.4;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21"/><line x1="9" x2="9" y1="3" y2="18"/><line x1="15" x2="15" y1="6" y2="21"/></svg></div>
                 <div class="empty-title">No Destinations Yet</div>
                 <p class="empty-desc">There are no tourist destinations registered yet. Check back soon — our team is actively adding new spots!</p>
             </div>
@@ -341,14 +341,18 @@
             <div class="dest-grid" id="dest-grid" role="list" aria-label="Destination list">
                 @foreach($destinations as $dest)
                 @php
-                    $category = 'Nature'; $categoryIcon = '🌿'; $gradient = 'linear-gradient(135deg,#15803d,#166534)';
+                    $natureIcon    = '<svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/></svg>';
+                    $heritageIcon  = '<svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="22" x2="21" y2="22"/><line x1="6" y1="18" x2="6" y2="11"/><line x1="10" y1="18" x2="10" y2="11"/><line x1="14" y1="18" x2="14" y2="11"/><line x1="18" y1="18" x2="18" y2="11"/><polygon points="12 2 20 7 4 7"/></svg>';
+                    $adventureIcon = '<svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m8 3 4 8 5-5 5 15H2L8 3z"/></svg>';
+
+                    $category = 'Nature'; $categoryIcon = $natureIcon; $gradient = 'linear-gradient(135deg,#15803d,#166534)';
                     $n = strtolower($dest->name);
                     if (str_contains($n,'casas')||str_contains($n,'shrine')||str_contains($n,'heritage')) {
-                        $category='Heritage'; $categoryIcon='🏛️'; $gradient='linear-gradient(135deg,#b45309,#92400e)';
+                        $category='Heritage'; $categoryIcon=$heritageIcon; $gradient='linear-gradient(135deg,#b45309,#92400e)';
                     } elseif (str_contains($n,'park')||str_contains($n,'rapids')||str_contains($n,'river')||str_contains($n,'adventure')) {
-                        $category='Adventure'; $categoryIcon='🏔️'; $gradient='linear-gradient(135deg,#0d9488,#0f766e)';
+                        $category='Adventure'; $categoryIcon=$adventureIcon; $gradient='linear-gradient(135deg,#0d9488,#0f766e)';
                     } elseif (str_contains($n,'lake')||str_contains($n,'falls')||str_contains($n,'maragang')) {
-                        $category='Nature'; $categoryIcon='🌿'; $gradient='linear-gradient(135deg,#0ea5e9,#0369a1)';
+                        $category='Nature'; $categoryIcon=$natureIcon; $gradient='linear-gradient(135deg,#0ea5e9,#0369a1)';
                     }
                     $confirmedToday = $dest->bookings()->where('status','confirmed')->where('visit_date', now()->toDateString())->count();
                     $pct = $dest->capacity > 0 ? min(100, round(($confirmedToday/$dest->capacity)*100)) : 0;
@@ -358,7 +362,7 @@
                     if ($dest->availability_status === 'Available' && $pct >= 100) $status = 'full';
                     $badgeCls = ['open'=>'badge-open','limited'=>'badge-limited','full'=>'badge-full','closed'=>'badge-closed'][$status] ?? 'badge-closed';
                     $badgeLbl = ['open'=>'Open','limited'=>'Limited','full'=>'Full','closed'=>'Unavailable'][$status] ?? 'Unavailable';
-                    $emoji = $category === 'Heritage' ? '🏛️' : ($category === 'Adventure' ? '🚣' : '🌿');
+                    $cardIllus = $categoryIcon; // SVG string for empty photo placeholder
                 @endphp
                 <article class="dest-card" role="listitem"
                     data-name="{{ strtolower($dest->name) }}"
@@ -375,13 +379,13 @@
                         @if($dest->photos)
                             <img src="{{ Storage::url($dest->photos) }}" alt="{{ $dest->name }}">
                         @else
-                            <span>{{ $emoji }}</span>
+                            <span class="scale-150" style="display:inline-flex;opacity:0.6;">{!! $cardIllus !!}</span>
                         @endif
                         <span class="card-badge {{ $badgeCls }}">{{ $badgeLbl }}</span>
                     </div>
 
                     <div class="card-body">
-                        <div class="card-cat-tag">{{ $categoryIcon }} {{ $category }}</div>
+                        <div class="card-cat-tag flex items-center gap-1">{!! $categoryIcon !!} {{ $category }}</div>
                         <div class="card-top">
                             <div class="card-name">{{ $dest->name }}</div>
                         </div>
@@ -399,10 +403,10 @@
 
                     @if(auth()->user()->isAdmin())
                     <div class="card-admin-row" onclick="event.stopPropagation()">
-                        <a href="{{ route('destinations.edit', $dest) }}" style="font-size:.75rem;color:#b45309;font-weight:600;text-decoration:none;padding:4px 10px;border-radius:6px;background:#fef3c7;border:1px solid #fcd34d;">✏️ Edit</a>
+                        <a href="{{ route('destinations.edit', $dest) }}" style="font-size:.75rem;color:#b45309;font-weight:600;text-decoration:none;padding:4px 10px;border-radius:6px;background:#fef3c7;border:1px solid #fcd34d;display:inline-flex;align-items:center;gap:4px;"><svg style="width:12px;height:12px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg> Edit</a>
                         <form action="{{ route('destinations.destroy', $dest) }}" method="POST" onsubmit="return confirm('Delete {{ $dest->name }}?')" style="margin:0;">
                             @csrf @method('DELETE')
-                            <button type="submit" style="font-size:.75rem;color:#991b1b;font-weight:600;padding:4px 10px;border-radius:6px;background:#fee2e2;border:1px solid #fca5a5;cursor:pointer;font-family:inherit;">🗑 Delete</button>
+                            <button type="submit" style="font-size:.75rem;color:#991b1b;font-weight:600;padding:4px 10px;border-radius:6px;background:#fee2e2;border:1px solid #fca5a5;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:4px;"><svg style="width:12px;height:12px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg> Delete</button>
                         </form>
                     </div>
                     @endif
@@ -411,7 +415,7 @@
 
                 {{-- No-results state (shown via JS) --}}
                 <div id="no-results" class="no-results" style="display:none;" role="status">
-                    <div class="nr-ico">🔍</div>
+                    <div class="nr-ico"><svg style="width:2rem;height:2rem;opacity:0.35;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg></div>
                     <p>No destinations match your search.<br>Try a different keyword or filter.</p>
                     <button class="btn-sm" onclick="clearFilters()">Clear all filters</button>
                 </div>

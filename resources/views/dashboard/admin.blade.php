@@ -1,9 +1,22 @@
 <x-app-layout>
+    @push('head')
+    <style>
+        .admin-card-hover {
+            transition: all 0.3s ease-in-out !important;
+        }
+        .admin-card-hover:hover {
+            transform: translateY(-4px) !important;
+            box-shadow: 0 10px 25px -5px rgba(21, 128, 61, 0.15), 0 4px 10px -5px rgba(21, 128, 61, 0.1) !important;
+            border-color: #bbf7d0 !important;
+        }
+    </style>
+    @endpush
+
     <x-slot name="header">
         <h1 class="text-2xl font-bold text-gray-800">Admin Dashboard</h1>
     </x-slot>
 
-    <div class="py-8 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+    <div class="pb-8 pt-0 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
 
         {{-- Flash Messages --}}
         @if(session('success'))
@@ -14,7 +27,7 @@
         <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
             @php
             $cards = [
-                ['label' => 'Total Tourists', 'value' => $stats['total_tourists'], 'color' => 'indigo'],
+                ['label' => 'Total Tourists', 'value' => $stats['total_tourists'], 'color' => 'brand'],
                 ['label' => 'Destinations', 'value' => $stats['total_destinations'], 'color' => 'emerald'],
                 ['label' => 'Pending Bookings', 'value' => $stats['pending_bookings'], 'color' => 'amber'],
                 ['label' => 'Confirmed', 'value' => $stats['confirmed_bookings'], 'color' => 'green'],
@@ -23,7 +36,7 @@
             ];
             @endphp
             @foreach($cards as $card)
-            <div class="bg-white rounded-xl shadow p-5 border-t-4 border-{{ $card['color'] }}-500">
+            <div class="bg-white rounded-xl shadow p-5 border-t-4 border-{{ $card['color'] }}-500 border-l border-r border-b border-gray-200 admin-card-hover">
                 <p class="text-xs text-gray-500 uppercase tracking-wide">{{ $card['label'] }}</p>
                 <p class="text-3xl font-bold text-gray-800 mt-1">{{ $card['value'] }}</p>
             </div>
@@ -32,10 +45,10 @@
 
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
             {{-- Recent Bookings --}}
-            <div class="lg:col-span-2 bg-white rounded-xl shadow overflow-hidden">
+            <div class="lg:col-span-2 bg-white rounded-xl shadow overflow-hidden border border-gray-200 admin-card-hover">
                 <div class="px-6 py-4 border-b flex items-center justify-between">
                     <h2 class="font-semibold text-gray-700">Recent Bookings</h2>
-                    <a href="{{ route('bookings.index') }}" class="text-sm text-indigo-600 hover:underline">View all →</a>
+                    <a href="{{ route('bookings.index') }}" class="text-sm text-brand-700 hover:underline">View all →</a>
                 </div>
                 <div class="overflow-x-auto">
                     <table class="w-full text-sm">
@@ -49,7 +62,7 @@
                         </thead>
                         <tbody class="divide-y divide-gray-100">
                             @forelse($recentBookings as $booking)
-                            <tr class="hover:bg-gray-50">
+                            <tr class="hover:bg-gray-50 transition-colors">
                                 <td class="px-4 py-3 font-medium text-gray-800">{{ $booking->tourist?->name ?? 'N/A' }}</td>
                                 <td class="px-4 py-3 text-gray-600">{{ $booking->destination?->name ?? 'N/A' }}</td>
                                 <td class="px-4 py-3 text-gray-600">{{ $booking->visit_date }}</td>
@@ -71,13 +84,13 @@
 
             {{-- Top Destinations & Quick Actions --}}
             <div class="space-y-6">
-                <div class="bg-white rounded-xl shadow p-5">
+                <div class="bg-white rounded-xl shadow p-5 border border-gray-200 admin-card-hover">
                     <h2 class="font-semibold text-gray-700 mb-3">Top Destinations</h2>
                     <ul class="space-y-2">
                         @forelse($topDestinations as $dest)
-                        <li class="flex items-center justify-between text-sm">
+                        <li class="flex items-center justify-between text-sm py-0.5 border-b border-gray-50 last:border-0">
                             <span class="text-gray-700 font-medium">{{ $dest->name }}</span>
-                            <span class="text-indigo-600 font-bold">{{ $dest->bookings_count }} bookings</span>
+                            <span class="text-brand-700 font-bold">{{ $dest->bookings_count }} bookings</span>
                         </li>
                         @empty
                         <li class="text-gray-400 text-sm">No data yet.</li>
@@ -85,11 +98,11 @@
                     </ul>
                 </div>
 
-                <div class="bg-white rounded-xl shadow p-5">
+                <div class="bg-white rounded-xl shadow p-5 border border-gray-200 admin-card-hover">
                     <h2 class="font-semibold text-gray-700 mb-3">Quick Actions</h2>
                     <div class="space-y-2">
-                        <a href="{{ route('destinations.create') }}" class="block w-full text-center bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg py-2 text-sm font-medium transition">+ Add Destination</a>
-                        <a href="{{ route('reports.index') }}" class="block w-full text-center bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg py-2 text-sm font-medium transition">📊 Generate Report</a>
+                        <a href="{{ route('destinations.create') }}" class="block w-full text-center bg-brand-700 hover:bg-brand-800 text-white rounded-lg py-2.5 text-sm font-semibold transition-all duration-200 transform hover:-translate-y-0.5 active:translate-y-0 shadow-sm hover:shadow">+ Add Destination</a>
+                        <a href="{{ route('reports.index') }}" class="block w-full text-center bg-emerald-700 hover:bg-emerald-800 text-white rounded-lg py-2.5 text-sm font-semibold transition-all duration-200 transform hover:-translate-y-0.5 active:translate-y-0 shadow-sm hover:shadow"><i class="ti ti-chart-bar mr-1"></i> Generate Report</a>
                     </div>
                 </div>
             </div>
@@ -97,16 +110,16 @@
 
         {{-- Unread Notifications --}}
         @if($notifications->count())
-        <div class="bg-amber-50 border border-amber-200 rounded-xl p-5">
-            <h2 class="font-semibold text-amber-800 mb-3">🔔 Unread Notifications</h2>
+        <div class="bg-amber-50 border border-amber-250 rounded-xl p-5 transition-all duration-300 hover:shadow-md hover:border-amber-350">
+            <h2 class="font-semibold text-amber-800 mb-3 flex items-center gap-1.5"><i class="ti ti-bell-ringing"></i> Unread Notifications</h2>
             <ul class="space-y-2">
                 @foreach($notifications as $notif)
-                <li class="text-sm text-amber-900">{{ $notif->message }}</li>
+                <li class="text-sm text-amber-900 border-b border-amber-200/40 pb-1.5 last:border-0 last:pb-0">{{ $notif->message }}</li>
                 @endforeach
             </ul>
             <form action="{{ route('notifications.read-all') }}" method="POST" class="mt-3">
                 @csrf
-                <button class="text-xs text-amber-700 underline">Mark all as read</button>
+                <button class="text-xs text-amber-700 underline font-medium hover:text-amber-900 transition-colors">Mark all as read</button>
             </form>
         </div>
         @endif

@@ -1,9 +1,12 @@
 <x-app-layout>
     <x-slot name="header">
-        <h1 class="text-2xl font-bold text-gray-800">Welcome back, {{ auth()->user()->name }}! 👋</h1>
+        <h1 class="flex items-center gap-2 text-2xl font-bold text-gray-800">
+            Welcome back, {{ auth()->user()->name }}!
+            <svg class="w-6 h-6 text-amber-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 11V6a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v0"/><path d="M14 10V4a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v2"/><path d="M10 10.5V6a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v8"/><path d="M18 8a2 2 0 1 1 4 0v6a8 8 0 0 1-8 8h-2c-2.8 0-4.5-.86-5.99-2.34l-3.6-3.6a2 2 0 0 1 2.83-2.82L7 15"/><path d="M6 14v-1.5a2 2 0 0 1 2-2v0a2 2 0 0 1 2 2v0"/></svg>
+        </h1>
     </x-slot>
 
-    <div class="py-8 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+    <div id="tourist-dashboard-root" class="opacity-0 transition-opacity duration-700 ease-out pb-8 pt-0 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
 
         @if(session('success'))
             <div class="bg-green-50 border border-green-300 text-green-800 px-4 py-3 rounded-lg">{{ session('success') }}</div>
@@ -12,14 +15,35 @@
         {{-- Verification Banner --}}
         @php
             $status = auth()->user()->id_verification_status ?? 'unverified';
-            // Pending: show full banner only on first dashboard visit per session
+            // Pending/processing: show full banner only on first dashboard visit per session
             $pendingBannerSeen = session()->has('pending_banner_seen');
-            if ($status === 'pending' && !$pendingBannerSeen) {
+            if (in_array($status, ['pending', 'processing']) && !$pendingBannerSeen) {
                 session(['pending_banner_seen' => true]);
             }
         @endphp
 
-        @if($status === 'unverified')
+        @if($status === 'processing')
+            {{-- Shown immediately after registration while OCR runs in background --}}
+            <div class="bg-indigo-50 border-l-4 border-indigo-400 p-4 rounded-r-lg shadow-sm" id="verification-banner">
+                <div class="flex items-start justify-between">
+                    <div class="flex items-center">
+                        <div class="flex-shrink-0">
+                            <svg class="h-5 w-5 text-indigo-500 animate-spin" fill="none" viewBox="0 0 24 24">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
+                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"/>
+                            </svg>
+                        </div>
+                        <div class="ml-3">
+                            <h3 class="text-sm font-medium text-indigo-800">Your ID is being verified…</h3>
+                            <p class="text-sm text-indigo-700 mt-1">This usually takes under a minute. Refresh the page to check the latest status.</p>
+                        </div>
+                    </div>
+                    <div>
+                        <button onclick="window.location.reload()" class="text-sm font-semibold text-indigo-800 hover:text-indigo-600 bg-indigo-100 px-3 py-1.5 rounded-lg border border-indigo-200">Refresh ↻</button>
+                    </div>
+                </div>
+            </div>
+        @elseif($status === 'unverified')
             {{-- Always show — user needs to act --}}
             <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded-r-lg shadow-sm" id="verification-banner">
                 <div class="flex items-start justify-between">
@@ -96,7 +120,7 @@
         {{-- Notifications --}}
         @if($notifications->count())
         <div class="bg-blue-50 border border-blue-200 rounded-xl p-5">
-            <h2 class="font-semibold text-blue-800 mb-2">🔔 Your Notifications</h2>
+            <h2 class="font-semibold text-blue-800 mb-2 flex items-center gap-1.5"><i class="ti ti-bell-ringing"></i> Your Notifications</h2>
             <ul class="space-y-1">
                 @foreach($notifications as $notif)
                 <li class="text-sm text-blue-900">{{ $notif->message }}</li>
@@ -110,13 +134,13 @@
         @endif
 
         {{-- Explore Destinations CTA --}}
-        <div class="bg-gradient-to-r from-indigo-600 to-purple-600 rounded-2xl p-8 text-white flex items-center justify-between">
+        <div class="bg-et-gradient rounded-2xl p-8 text-white flex items-center justify-between">
             <div>
                 <h2 class="text-2xl font-bold">Explore Tourist Destinations</h2>
-                <p class="text-indigo-200 mt-1">Browse available destinations and book your next adventure.</p>
+                <p class="text-brand-100 mt-1">Browse available destinations and book your next adventure.</p>
             </div>
             <a href="{{ route('destinations.index') }}"
-                class="bg-white text-indigo-700 font-semibold px-6 py-3 rounded-xl hover:bg-indigo-50 transition text-sm">
+                class="bg-white text-brand-900 font-semibold px-6 py-3 rounded-xl hover:bg-brand-50 transition text-sm">
                 Browse Destinations →
             </a>
         </div>
@@ -126,7 +150,7 @@
             <div class="bg-white rounded-xl shadow overflow-hidden">
                 <div class="px-6 py-4 border-b flex items-center justify-between">
                     <h2 class="font-semibold text-gray-700">My Bookings</h2>
-                    <a href="{{ route('bookings.index') }}" class="text-sm text-indigo-600 hover:underline">View all →</a>
+                    <a href="{{ route('bookings.index') }}" class="text-sm text-brand-700 hover:underline">View all →</a>
                 </div>
                 <ul class="divide-y divide-gray-100">
                     @forelse($myBookings as $booking)
@@ -136,7 +160,7 @@
                             <p class="text-xs text-gray-400">{{ $booking->visit_date }}</p>
                             @if($booking->ticket)
                             <p class="text-xs mt-0.5">
-                                <a href="{{ route('tickets.show', $booking->ticket) }}" class="text-indigo-600 font-mono hover:underline inline-flex items-center gap-1">
+                                <a href="{{ route('tickets.show', $booking->ticket) }}" class="text-brand-700 font-mono hover:underline inline-flex items-center gap-1">
                                     <span>View QR: {{ $booking->ticket->qr_code }}</span>
                                 </a>
                             </p>
@@ -167,7 +191,7 @@
                             <p class="text-xs text-gray-400">{{ $dest->location }}</p>
                         </div>
                         <a href="{{ route('bookings.create', $dest) }}"
-                            class="text-xs bg-indigo-100 text-indigo-700 px-3 py-1.5 rounded-full font-medium hover:bg-indigo-200 transition">
+                            class="text-xs bg-brand-100 text-brand-700 px-3 py-1.5 rounded-full font-medium hover:bg-brand-200 transition">
                             Book Now
                         </a>
                     </li>
@@ -178,4 +202,62 @@
             </div>
         </div>
     </div>
+
+    <style>
+        .dashboard-welcome-flash {
+            position: fixed;
+            inset: 0;
+            background: linear-gradient(135deg, #0b3d2e 0%, #061810 100%);
+            z-index: 9999;
+            opacity: 1;
+            transition: opacity 0.8s cubic-bezier(0.25, 1, 0.5, 1);
+            pointer-events: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .dashboard-welcome-flash.fade-out {
+            opacity: 0;
+        }
+    </style>
+    <div id="welcome-flash" class="dashboard-welcome-flash" style="display: none;">
+        <div class="text-center px-4">
+            <h2 class="text-3xl font-black text-white tracking-tight">E-Turismo</h2>
+            <p class="text-emerald-400 text-sm mt-2">Setting up your profile...</p>
+        </div>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const flash = document.getElementById('welcome-flash');
+            const root = document.getElementById('tourist-dashboard-root');
+            
+            const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+            
+            if (sessionStorage.getItem('just_registered') === 'true') {
+                sessionStorage.removeItem('just_registered'); // clear it
+                
+                if (reducedMotion) {
+                    if (root) root.classList.remove('opacity-0');
+                    return;
+                }
+                
+                if (flash) {
+                    flash.style.display = 'flex';
+                    setTimeout(() => {
+                        flash.classList.add('fade-out');
+                        if (root) root.classList.remove('opacity-0');
+                    }, 1200);
+                    setTimeout(() => {
+                        flash.remove();
+                    }, 2000);
+                }
+            } else {
+                // Regular load
+                if (root) {
+                    root.style.transition = 'opacity 0.25s ease-out';
+                    root.classList.remove('opacity-0');
+                }
+            }
+        });
+    </script>
 </x-app-layout>

@@ -6,7 +6,7 @@
         </div>
     </x-slot>
 
-    <div class="py-8 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
+    <div class="pb-8 pt-0 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
 
         {{-- Report Meta --}}
         <div class="bg-white rounded-2xl shadow p-6">
@@ -25,9 +25,9 @@
                         @endif
                     </p>
                 </div>
-                <a href="{{ route('reports.export') }}?date_from={{ $report->date_from }}&date_to={{ $report->date_to }}&destination_id={{ $report->destination_id }}"
-                    class="inline-flex items-center gap-2 bg-gray-700 hover:bg-gray-900 text-white rounded-lg px-4 py-2 text-sm transition">
-                    ⬇️ Export CSV
+                <a href="{{ route('reports.export-docx') }}?date_from={{ $report->date_from }}&date_to={{ $report->date_to }}&destination_id={{ $report->destination_id }}"
+                    class="inline-flex items-center gap-1.5 bg-blue-700 hover:bg-blue-800 text-white rounded-xl px-4 py-2 text-sm font-semibold shadow-sm transition">
+                    <i class="ti ti-file-text text-base"></i> Export DOCX
                 </a>
             </div>
         </div>
@@ -36,7 +36,7 @@
         <div class="grid grid-cols-2 md:grid-cols-5 gap-4">
             @php
             $cards = [
-                ['label'=>'Total Bookings','value'=>$stats['total_bookings'],'color'=>'indigo'],
+                ['label'=>'Total Bookings','value'=>$stats['total_bookings'],'color'=>'brand'],
                 ['label'=>'Confirmed','value'=>$stats['confirmed'],'color'=>'green'],
                 ['label'=>'Declined','value'=>$stats['declined'],'color'=>'red'],
                 ['label'=>'Pending','value'=>$stats['pending'],'color'=>'amber'],
@@ -61,10 +61,10 @@
                 <div>
                     <div class="flex items-center justify-between text-sm mb-1">
                         <span class="font-medium text-gray-700">{{ $i + 1 }}. {{ $dest->name }}</span>
-                        <span class="text-indigo-600 font-bold">{{ $dest->total }}</span>
+                        <span class="text-brand-700 font-bold">{{ $dest->total }}</span>
                     </div>
                     <div class="w-full bg-gray-100 rounded-full h-2">
-                        <div class="bg-indigo-500 h-2 rounded-full" style="width: {{ ($dest->total / $max) * 100 }}%"></div>
+                        <div class="bg-brand-600 h-2 rounded-full" style="width: {{ ($dest->total / $max) * 100 }}%"></div>
                     </div>
                 </div>
                 @endforeach

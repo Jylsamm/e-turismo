@@ -44,4 +44,40 @@ class NotificationController extends Controller
 
         return back()->with('success', 'All notifications marked as read.');
     }
+
+    /**
+     * Get the latest unread broadcast alert for polling.
+     */
+    public function getLatestAlert()
+    {
+        $notification = Notification::where('recipient_id', auth()->id())
+            ->where('is_read', false)
+            ->where('type', 'broadcast_alert')
+            ->latest()
+            ->first();
+
+        if ($notification) {
+            return response()->json([
+                'has_alert' => true,
+                'id' => $notification->id,
+                'message' => $notification->message,
+            ]);
+        }
+
+        return response()->json(['has_alert' => false]);
+    }
+
+    /**
+     * Dismiss an active broadcast alert.
+     */
+    public function dismissAlert(Notification $notification)
+    {
+        if ($notification->recipient_id !== auth()->id()) {
+            return response()->json(['success' => false, 'message' => 'Unauthorized'], 403);
+        }
+
+        $notification->update(['is_read' => true]);
+
+        return response()->json(['success' => true]);
+    }
 }

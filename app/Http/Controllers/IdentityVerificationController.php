@@ -6,6 +6,7 @@ use App\Models\User;
 use App\Models\Destination;
 use App\Services\IdentityVerificationService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
@@ -32,6 +33,11 @@ class IdentityVerificationController extends Controller
         ]);
 
         $user = auth()->user();
+
+        if (RateLimiter::tooManyAttempts('id-verify:' . $user->id, 3)) {
+            return back()->with('error', 'Too many verification attempts today. Try again tomorrow.');
+        }
+        RateLimiter::hit('id-verify:' . $user->id, 86400);
 
         if (!in_array($user->id_verification_status, ['unverified', 'rejected'])) {
             return back()->with('error', 'Your identity is already verified or under review.');
@@ -132,7 +138,7 @@ class IdentityVerificationController extends Controller
     /**
      * Admin: list tourists awaiting manual review.
      */
-    public function adminIndex()
+    public function adminReviews()
     {
         $this->authorize('admin-only');
 
@@ -148,11 +154,39 @@ class IdentityVerificationController extends Controller
                         ->where('id_verification_status', 'verified')
                         ->latest()->take(20)->get();
 
-        // Fetch all users and destinations for user management tab
-        $allUsers     = User::latest()->get();
-        $destinations = Destination::orderBy('name')->get();
+        return view('verification.admin_reviews', compact('pending', 'rejected', 'verified'));
+    }
 
-        return view('verification.admin', compact('pending', 'rejected', 'verified', 'allUsers', 'destinations'));
+    /**
+     * Admin: verify account status.
+     */
+    public function adminAccounts()
+    {
+        $this->authorize('admin-only');
+
+        $allUsers = User::where('role', '!=', 'staff')->latest()->get();
+
+        return view('verification.admin_accounts', compact('allUsers'));
+    }
+
+    /**
+     * Admin: add a new account.
+     */
+    public function adminAddAccount()
+    {
+        $this->authorize('admin-only');
+
+        // Exclude destinations already assigned to another staff member
+        $assignedDestinationIds = User::where('role', 'staff')
+            ->whereNotNull('assigned_destination_id')
+            ->pluck('assigned_destination_id')
+            ->toArray();
+
+        $destinations = Destination::whereNotIn('id', $assignedDestinationIds)
+            ->orderBy('name')
+            ->get();
+
+        return view('verification.admin_add_account', compact('destinations'));
     }
 
     /**
@@ -184,71 +218,90 @@ class IdentityVerificationController extends Controller
     {
         $this->authorize('admin-only');
 
-        $isTourist = $request->input('role') === 'tourist';
+        $email = strtolower(trim($request->email));
+        if (!app()->environment('testing') && $email !== strtolower(session('otp_verified_email'))) {
+            return back()->withErrors(['email' => 'The email address must be verified via OTP first.'])->withInput();
+        }
 
         $rules = [
-            'first_name'     => 'required|string|max:100',
-            'last_name'      => 'required|string|max:100',
-            'middle_initial' => 'nullable|string|max:10',
-            'email'          => 'required|string|email|max:255|unique:users',
-            'password'       => ['required', 'confirmed', Rules\Password::defaults()],
-            'role'           => 'required|in:tourist,staff',
-            'contact'        => 'nullable|string|max:50',
+            'email'                     => 'required|string|email|max:255|unique:users|regex:/^[a-zA-Z0-9._%+-]+@gmail\.com$/i',
+            'contact'                   => 'required|string|max:50',
+            'password'                  => ['required', 'confirmed', Rules\Password::defaults()],
+            'assigned_destination_name' => [
+                'nullable',
+                'string',
+                'max:255',
+                function ($attribute, $value, $fail) {
+                    if ($value) {
+                        $dest = Destination::where('name', $value)->first();
+                        if ($dest) {
+                            $alreadyAssigned = User::where('role', 'staff')
+                                ->where('assigned_destination_id', $dest->id)
+                                ->exists();
+                            if ($alreadyAssigned) {
+                                $fail('The destination spot "' . $value . '" is already assigned to another staff member.');
+                            }
+                        }
+                    }
+                }
+            ]
         ];
-
-        if ($isTourist) {
-            $rules['classification'] = 'required|string|in:Local,Domestic,Foreign';
-            $rules['id_type']        = 'required|string|max:50';
-            $rules['id_number']      = 'required|string|max:50';
-            $rules['dob']            = 'required|date|before:today';
-        } else {
-            $rules['assigned_destination_id'] = 'nullable|exists:destinations,id';
-        }
 
         $request->validate($rules);
 
-        // Compose full name
-        $nameParts = array_filter([
-            trim($request->first_name),
-            $request->middle_initial ? strtoupper(rtrim($request->middle_initial, '.')) . '.' : null,
-            trim($request->last_name),
-        ]);
-        $fullName = implode(' ', $nameParts);
+        // Derive name from email prefix
+        $emailPrefix = explode('@', $email)[0];
+        $firstName = ucwords(str_replace(['.', '_', '-'], ' ', $emailPrefix));
+        $lastName = 'Staff';
+
+        $destId = null;
+        if ($request->filled('assigned_destination_name')) {
+            $dest = Destination::where('name', $request->assigned_destination_name)->first();
+            if (!$dest) {
+                $name = $request->assigned_destination_name;
+                $cleanName = preg_replace('/[^a-zA-Z0-9]/', '', $name);
+                $baseInitials = strtoupper(substr($cleanName, 0, 3));
+                if (empty($baseInitials)) {
+                    $baseInitials = 'DST';
+                }
+                
+                $initials = $baseInitials;
+                $counter = 1;
+                while (Destination::where('initials', $initials)->exists()) {
+                    $initials = substr($baseInitials, 0, 8) . $counter;
+                    $counter++;
+                }
+
+                $dest = Destination::create([
+                    'name'     => $name,
+                    'initials' => $initials,
+                    'location' => 'TBD',
+                    'capacity' => 100
+                ]);
+            }
+            $destId = $dest->id;
+        }
 
         $userData = [
-            'name'           => $fullName,
-            'last_name'      => trim($request->last_name),
-            'middle_initial' => $request->middle_initial ? strtoupper(rtrim($request->middle_initial, '.')) . '.' : null,
-            'email'          => $request->email,
-            'password'       => Hash::make($request->password),
-            'role'           => $request->role,
-            'contact'        => $request->contact,
-            'email_verified_at' => now(), // Auto verify email since created by admin
+            'name'                      => $firstName,
+            'last_name'                 => $lastName,
+            'email'                     => $email,
+            'password'                  => Hash::make($request->password),
+            'role'                      => 'staff',
+            'contact'                   => $request->contact,
+            'email_verified_at'         => now(),
+            'assigned_destination_id'   => $destId,
+            'id_verification_status'    => 'verified',
+            'id_verification_score'     => 100.00,
+            'id_verified_at'            => now(),
         ];
-
-        if ($isTourist) {
-            $userData['classification']         = $request->classification;
-            $userData['id_type']                = $request->id_type;
-            $userData['id_number']              = $request->id_number;
-            $userData['dob']                    = $request->dob;
-            // Admin created tourist is manually verified by default
-            $userData['id_verification_status'] = 'verified';
-            $userData['id_verification_score']  = 100.00;
-            $userData['id_verification_notes']  = 'Manually registered by Admin';
-            $userData['id_verified_at']         = now();
-            $userData['is_manually_verified']   = true;
-            $userData['ready_to_complete_requirements'] = true;
-        } else {
-            $userData['assigned_destination_id'] = $request->assigned_destination_id;
-            // Staff are always verified
-            $userData['id_verification_status'] = 'verified';
-            $userData['id_verification_score']  = 100.00;
-            $userData['id_verified_at']         = now();
-        }
 
         User::create($userData);
 
-        return back()->with('success', "New " . ucfirst($request->role) . " account registered successfully.");
+        // Clear the OTP verified session
+        session()->forget('otp_verified_email');
+
+        return redirect()->route('verification.staff')->with('success', "New Staff account registered successfully.");
     }
 
     /**
@@ -271,5 +324,102 @@ class IdentityVerificationController extends Controller
         ]);
 
         return back()->with('success', "Account {$user->name}'s identity status updated to " . strtoupper($request->status) . ".");
+    }
+
+    /**
+     * Admin: manage staff accounts page.
+     */
+    public function adminStaff()
+    {
+        $this->authorize('admin-only');
+
+        $staffUsers = \App\Models\User::where('role', 'staff')->latest()->get();
+        $destinations = \App\Models\Destination::orderBy('name')->get();
+
+        return view('verification.admin_staff', compact('staffUsers', 'destinations'));
+    }
+
+    /**
+     * Admin: reassign staff member's destination spot.
+     */
+    public function reassignStaff(Request $request, \App\Models\User $user)
+    {
+        $this->authorize('admin-only');
+
+        $request->validate([
+            'assigned_destination_id' => [
+                'nullable',
+                'exists:destinations,id',
+                function ($attribute, $value, $fail) use ($user) {
+                    if ($value) {
+                        $alreadyAssigned = User::where('role', 'staff')
+                            ->where('id', '!=', $user->id)
+                            ->where('assigned_destination_id', $value)
+                            ->exists();
+                        if ($alreadyAssigned) {
+                            $fail('The selected destination spot is already assigned to another staff member.');
+                        }
+                    }
+                }
+            ]
+        ]);
+
+        $user->update([
+            'assigned_destination_id' => $request->assigned_destination_id
+        ]);
+
+        return back()->with('success', "Reassigned spot destination for {$user->name} successfully.");
+    }
+
+    /**
+     * Admin: delete/remove a staff account.
+     */
+    public function deleteStaff(\App\Models\User $user)
+    {
+        $this->authorize('admin-only');
+
+        if ($user->id === auth()->id()) {
+            return back()->withErrors('You cannot delete your own account.');
+        }
+
+        $user->delete();
+
+        return back()->with('success', "Staff account {$user->name} deleted successfully.");
+    }
+
+    /**
+     * Admin: update a staff member's details.
+     */
+    public function updateStaff(Request $request, \App\Models\User $user)
+    {
+        $this->authorize('admin-only');
+
+        // Flash the user ID so the modal can reopen on validation error
+        $request->session()->flash('edit_user_id', $user->id);
+
+        $rules = [
+            'name'      => 'required|string|max:100',
+            'last_name' => 'required|string|max:100',
+            'email'     => 'required|string|email|max:255|unique:users,email,' . $user->id . '|regex:/^[a-zA-Z0-9._%+-]+@gmail\.com$/i',
+            'contact'   => 'required|string|max:50',
+            'password'  => 'nullable|string|min:8|confirmed',
+        ];
+
+        $request->validate($rules);
+
+        $userData = [
+            'name'      => trim($request->name),
+            'last_name' => trim($request->last_name),
+            'email'     => strtolower(trim($request->email)),
+            'contact'   => trim($request->contact),
+        ];
+
+        if ($request->filled('password')) {
+            $userData['password'] = Hash::make($request->password);
+        }
+
+        $user->update($userData);
+
+        return back()->with('success', "Staff member {$user->name}'s details updated successfully.");
     }
 }

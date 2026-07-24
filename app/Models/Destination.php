@@ -14,6 +14,20 @@ class Destination extends Model
         'description',
         'photos',
         'availability_status',
+        'checkin_latitude',
+        'checkin_longitude',
+        'checkin_radius',
+        'last_updated_by',
+    ];
+
+    /**
+     * Cast coordinates to float so they are never returned as strings.
+     * Blade templates and JSON responses will both get proper numeric values.
+     */
+    protected $casts = [
+        'checkin_latitude'  => 'float',
+        'checkin_longitude' => 'float',
+        'checkin_radius'    => 'integer',
     ];
 
     public function staff()
@@ -24,5 +38,15 @@ class Destination extends Model
     public function bookings()
     {
         return $this->hasMany(Booking::class);
+    }
+
+    public function images()
+    {
+        return $this->hasMany(DestinationImage::class)->orderByDesc('is_primary');
+    }
+
+    public function primaryImage()
+    {
+        return $this->hasOne(DestinationImage::class)->where('is_primary', true);
     }
 }
