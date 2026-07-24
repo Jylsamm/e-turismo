@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jul 20, 2026 at 05:43 AM
+-- Generation Time: Jul 24, 2026 at 07:12 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -65,7 +65,6 @@ INSERT INTO `bookings` (`id`, `tourist_id`, `destination_id`, `visit_date`, `sta
 (68, 8, 5, '2026-07-16', 'confirmed', NULL, NULL, '2026-07-14 15:32:36', '2026-07-14 15:32:36', NULL, NULL, 'approved', NULL, NULL, NULL, NULL, 'QR000008', '2026-07-14 15:32:36', NULL, NULL),
 (69, 9, 5, '2026-07-27', 'completed', NULL, NULL, '2026-07-14 15:32:36', '2026-07-14 15:32:36', NULL, NULL, 'approved', NULL, NULL, NULL, NULL, 'QR000009', '2026-07-14 15:32:36', NULL, NULL),
 (70, 10, 5, '2026-07-29', 'confirmed', NULL, NULL, '2026-07-14 15:32:36', '2026-07-14 15:32:36', NULL, NULL, 'approved', NULL, NULL, NULL, NULL, 'QR000010', '2026-07-14 15:32:36', NULL, NULL),
-(71, 11, 5, '2026-08-01', 'pending', NULL, NULL, '2026-07-14 15:32:36', '2026-07-14 15:32:36', NULL, NULL, 'pending', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
 (72, 12, 5, '2026-08-03', 'confirmed', NULL, NULL, '2026-07-14 15:32:36', '2026-07-14 15:32:36', NULL, NULL, 'approved', NULL, NULL, NULL, NULL, 'QR000012', '2026-07-14 15:32:36', NULL, NULL),
 (73, 13, 5, '2026-08-05', 'completed', NULL, NULL, '2026-07-14 15:32:36', '2026-07-14 15:32:36', NULL, NULL, 'approved', NULL, NULL, NULL, NULL, 'QR000013', '2026-07-14 15:32:36', NULL, NULL),
 (74, 14, 5, '2026-08-07', 'cancelled', NULL, NULL, '2026-07-14 15:32:36', '2026-07-14 15:32:36', NULL, NULL, 'rejected', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
@@ -86,8 +85,8 @@ INSERT INTO `bookings` (`id`, `tourist_id`, `destination_id`, `visit_date`, `sta
 (89, 29, 5, '2026-09-06', 'pending', NULL, NULL, '2026-07-14 15:32:36', '2026-07-14 15:32:36', NULL, NULL, 'pending', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
 (90, 30, 5, '2026-09-08', 'confirmed', NULL, NULL, '2026-07-14 15:32:36', '2026-07-14 15:32:36', NULL, NULL, 'approved', NULL, NULL, NULL, NULL, 'QR000030', '2026-07-14 15:32:36', NULL, NULL),
 (91, 2, 5, '2026-07-21', 'confirmed', NULL, 7, '2026-07-14 08:16:24', '2026-07-14 08:19:20', '8042132002937', 'payment_screenshots/TnJzGHnPBicLbPX17N83F8WHAAYb6jueqSKfTxLy.jpg', 'pending_verification', NULL, '2026-07-14 08:19:20', NULL, NULL, NULL, NULL, NULL, NULL),
-(92, 10, 5, '2026-07-18', 'pending', NULL, NULL, '2026-07-16 01:11:55', '2026-07-16 01:11:55', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
-(93, 10, 5, '2026-07-19', 'pending', NULL, NULL, '2026-07-16 01:14:40', '2026-07-16 01:14:40', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+(92, 10, 5, '2026-07-18', 'confirmed', NULL, 7, '2026-07-16 01:11:55', '2026-07-23 01:12:02', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'LMIFB5R2', '2026-07-23 01:12:02', NULL, NULL),
+(93, 10, 5, '2026-07-19', 'confirmed', NULL, 7, '2026-07-16 01:14:40', '2026-07-23 01:02:15', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'LMPRROV7', '2026-07-23 01:02:15', NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -106,10 +105,10 @@ CREATE TABLE `cache` (
 --
 
 INSERT INTO `cache` (`key`, `value`, `expiration`) VALUES
-('e-turismo-cache-admin_kpis_today', 'a:7:{s:14:\"activeTourists\";i:3;s:15:\"pendingRequests\";i:7;s:14:\"capacityHealth\";d:0;s:7:\"qrScans\";i:0;s:14:\"bookingsHalted\";b:0;s:8:\"pipeline\";O:29:\"Illuminate\\Support\\Collection\":2:{s:8:\"\0*\0items\";a:10:{i:0;a:6:{s:2:\"id\";i:93;s:9:\"reference\";s:9:\"#TRB-0093\";s:12:\"tourist_name\";s:22:\"ARNEL L. GABATO GABATO\";s:16:\"destination_name\";s:13:\"Lake Maragang\";s:10:\"visit_date\";s:10:\"2026-07-19\";s:6:\"status\";s:7:\"pending\";}i:1;a:6:{s:2:\"id\";i:92;s:9:\"reference\";s:9:\"#TRB-0092\";s:12:\"tourist_name\";s:22:\"ARNEL L. GABATO GABATO\";s:16:\"destination_name\";s:13:\"Lake Maragang\";s:10:\"visit_date\";s:10:\"2026-07-18\";s:6:\"status\";s:7:\"pending\";}i:2;a:6:{s:2:\"id\";i:61;s:9:\"reference\";s:9:\"#TRB-0061\";s:12:\"tourist_name\";s:17:\"TOURISM PERSONNEL\";s:16:\"destination_name\";s:13:\"Lake Maragang\";s:10:\"visit_date\";s:10:\"2026-07-15\";s:6:\"status\";s:9:\"completed\";}i:3;a:6:{s:2:\"id\";i:62;s:9:\"reference\";s:9:\"#TRB-0062\";s:12:\"tourist_name\";s:13:\"JYLSAM QUIROG\";s:16:\"destination_name\";s:13:\"Lake Maragang\";s:10:\"visit_date\";s:10:\"2026-07-18\";s:6:\"status\";s:8:\"declined\";}i:4;a:6:{s:2:\"id\";i:63;s:9:\"reference\";s:9:\"#TRB-0063\";s:12:\"tourist_name\";s:7:\"Unknown\";s:16:\"destination_name\";s:13:\"Lake Maragang\";s:10:\"visit_date\";s:10:\"2026-07-20\";s:6:\"status\";s:9:\"confirmed\";}i:5;a:6:{s:2:\"id\";i:64;s:9:\"reference\";s:9:\"#TRB-0064\";s:12:\"tourist_name\";s:7:\"Unknown\";s:16:\"destination_name\";s:13:\"Lake Maragang\";s:10:\"visit_date\";s:10:\"2026-07-23\";s:6:\"status\";s:9:\"cancelled\";}i:6;a:6:{s:2:\"id\";i:65;s:9:\"reference\";s:9:\"#TRB-0065\";s:12:\"tourist_name\";s:7:\"Unknown\";s:16:\"destination_name\";s:13:\"Lake Maragang\";s:10:\"visit_date\";s:10:\"2026-07-17\";s:6:\"status\";s:9:\"completed\";}i:7;a:6:{s:2:\"id\";i:66;s:9:\"reference\";s:9:\"#TRB-0066\";s:12:\"tourist_name\";s:7:\"Unknown\";s:16:\"destination_name\";s:13:\"Lake Maragang\";s:10:\"visit_date\";s:10:\"2026-07-21\";s:6:\"status\";s:9:\"confirmed\";}i:8;a:6:{s:2:\"id\";i:67;s:9:\"reference\";s:9:\"#TRB-0067\";s:12:\"tourist_name\";s:8:\"STAFF LM\";s:16:\"destination_name\";s:13:\"Lake Maragang\";s:10:\"visit_date\";s:10:\"2026-07-25\";s:6:\"status\";s:9:\"confirmed\";}i:9;a:6:{s:2:\"id\";i:68;s:9:\"reference\";s:9:\"#TRB-0068\";s:12:\"tourist_name\";s:7:\"Unknown\";s:16:\"destination_name\";s:13:\"Lake Maragang\";s:10:\"visit_date\";s:10:\"2026-07-16\";s:6:\"status\";s:9:\"confirmed\";}}s:28:\"\0*\0escapeWhenCastingToString\";b:0;}s:10:\"sparklines\";a:4:{s:14:\"activeTourists\";a:7:{i:0;i:1;i:1;i:1;i:2;i:1;i:3;i:3;i:4;i:3;i:5;i:3;i:6;i:3;}s:15:\"pendingRequests\";a:7:{i:0;i:0;i:1;i:5;i:2;i:5;i:3;i:7;i:4;i:7;i:5;i:7;i:6;i:7;}s:14:\"capacityHealth\";a:7:{i:0;d:0;i:1;d:0;i:2;d:1;i:3;d:0;i:4;d:0;i:5;d:0;i:6;d:0;}s:7:\"qrScans\";a:7:{i:0;i:0;i:1;i:0;i:2;i:0;i:3;i:0;i:4;i:0;i:5;i:0;i:6;i:0;}}}', 1784481151),
-('e-turismo-cache-admin_trends_today', 'a:3:{s:6:\"trends\";a:3:{s:10:\"categories\";a:12:{i:0;s:5:\"06:00\";i:1;s:5:\"07:00\";i:2;s:5:\"08:00\";i:3;s:5:\"09:00\";i:4;s:5:\"10:00\";i:5;s:5:\"11:00\";i:6;s:5:\"12:00\";i:7;s:5:\"13:00\";i:8;s:5:\"14:00\";i:9;s:5:\"15:00\";i:10;s:5:\"16:00\";i:11;s:5:\"17:00\";}s:8:\"bookings\";a:12:{i:0;i:0;i:1;i:0;i:2;i:0;i:3;i:0;i:4;i:0;i:5;i:0;i:6;i:0;i:7;i:0;i:8;i:0;i:9;i:0;i:10;i:0;i:11;i:0;}s:8:\"checkins\";a:12:{i:0;i:0;i:1;i:0;i:2;i:0;i:3;i:0;i:4;i:0;i:5;i:0;i:6;i:0;i:7;i:0;i:8;i:0;i:9;i:0;i:10;i:0;i:11;i:0;}}s:12:\"demographics\";a:2:{s:6:\"labels\";a:4:{i:0;s:5:\"Local\";i:1;s:8:\"Regional\";i:2;s:8:\"National\";i:3;s:7:\"Foreign\";}s:6:\"values\";a:4:{i:0;i:3;i:1;i:1;i:2;i:0;i:3;i:0;}}s:6:\"status\";a:2:{s:6:\"labels\";a:3:{i:0;s:8:\"Approved\";i:1;s:7:\"Pending\";i:2;s:9:\"Cancelled\";}s:6:\"values\";a:3:{i:0;i:0;i:1;i:7;i:2;i:3;}}}', 1784481151),
-('e-turismo-cache-registration-otp-send:::1', 'i:1;', 1784476654),
-('e-turismo-cache-registration-otp-send:::1:timer', 'i:1784476654;', 1784476654);
+('e-turismo-cache-admin_kpis_today', 'a:7:{s:14:\"activeTourists\";i:3;s:15:\"pendingRequests\";i:4;s:14:\"capacityHealth\";d:0;s:7:\"qrScans\";i:0;s:14:\"bookingsHalted\";b:0;s:8:\"pipeline\";O:29:\"Illuminate\\Support\\Collection\":2:{s:8:\"\0*\0items\";a:10:{i:0;a:6:{s:2:\"id\";i:93;s:9:\"reference\";s:9:\"#TRB-0093\";s:12:\"tourist_name\";s:22:\"ARNEL L. GABATO GABATO\";s:16:\"destination_name\";s:13:\"Lake Maragang\";s:10:\"visit_date\";s:10:\"2026-07-19\";s:6:\"status\";s:9:\"confirmed\";}i:1;a:6:{s:2:\"id\";i:92;s:9:\"reference\";s:9:\"#TRB-0092\";s:12:\"tourist_name\";s:22:\"ARNEL L. GABATO GABATO\";s:16:\"destination_name\";s:13:\"Lake Maragang\";s:10:\"visit_date\";s:10:\"2026-07-18\";s:6:\"status\";s:9:\"confirmed\";}i:2;a:6:{s:2:\"id\";i:61;s:9:\"reference\";s:9:\"#TRB-0061\";s:12:\"tourist_name\";s:17:\"TOURISM PERSONNEL\";s:16:\"destination_name\";s:13:\"Lake Maragang\";s:10:\"visit_date\";s:10:\"2026-07-15\";s:6:\"status\";s:9:\"completed\";}i:3;a:6:{s:2:\"id\";i:62;s:9:\"reference\";s:9:\"#TRB-0062\";s:12:\"tourist_name\";s:13:\"JYLSAM QUIROG\";s:16:\"destination_name\";s:13:\"Lake Maragang\";s:10:\"visit_date\";s:10:\"2026-07-18\";s:6:\"status\";s:8:\"declined\";}i:4;a:6:{s:2:\"id\";i:63;s:9:\"reference\";s:9:\"#TRB-0063\";s:12:\"tourist_name\";s:7:\"Unknown\";s:16:\"destination_name\";s:13:\"Lake Maragang\";s:10:\"visit_date\";s:10:\"2026-07-20\";s:6:\"status\";s:9:\"confirmed\";}i:5;a:6:{s:2:\"id\";i:64;s:9:\"reference\";s:9:\"#TRB-0064\";s:12:\"tourist_name\";s:7:\"Unknown\";s:16:\"destination_name\";s:13:\"Lake Maragang\";s:10:\"visit_date\";s:10:\"2026-07-23\";s:6:\"status\";s:9:\"cancelled\";}i:6;a:6:{s:2:\"id\";i:65;s:9:\"reference\";s:9:\"#TRB-0065\";s:12:\"tourist_name\";s:7:\"Unknown\";s:16:\"destination_name\";s:13:\"Lake Maragang\";s:10:\"visit_date\";s:10:\"2026-07-17\";s:6:\"status\";s:9:\"completed\";}i:7;a:6:{s:2:\"id\";i:66;s:9:\"reference\";s:9:\"#TRB-0066\";s:12:\"tourist_name\";s:7:\"Unknown\";s:16:\"destination_name\";s:13:\"Lake Maragang\";s:10:\"visit_date\";s:10:\"2026-07-21\";s:6:\"status\";s:9:\"confirmed\";}i:8;a:6:{s:2:\"id\";i:67;s:9:\"reference\";s:9:\"#TRB-0067\";s:12:\"tourist_name\";s:8:\"LM Staff\";s:16:\"destination_name\";s:13:\"Lake Maragang\";s:10:\"visit_date\";s:10:\"2026-07-25\";s:6:\"status\";s:9:\"confirmed\";}i:9;a:6:{s:2:\"id\";i:68;s:9:\"reference\";s:9:\"#TRB-0068\";s:12:\"tourist_name\";s:7:\"Unknown\";s:16:\"destination_name\";s:13:\"Lake Maragang\";s:10:\"visit_date\";s:10:\"2026-07-16\";s:6:\"status\";s:9:\"confirmed\";}}s:28:\"\0*\0escapeWhenCastingToString\";b:0;}s:10:\"sparklines\";a:4:{s:14:\"activeTourists\";a:7:{i:0;i:3;i:1;i:3;i:2;i:3;i:3;i:3;i:4;i:3;i:5;i:3;i:6;i:3;}s:15:\"pendingRequests\";a:7:{i:0;i:4;i:1;i:4;i:2;i:4;i:3;i:4;i:4;i:4;i:5;i:4;i:6;i:4;}s:14:\"capacityHealth\";a:7:{i:0;d:0;i:1;d:0;i:2;d:0;i:3;d:0;i:4;d:0;i:5;d:0;i:6;d:0;}s:7:\"qrScans\";a:7:{i:0;i:0;i:1;i:0;i:2;i:0;i:3;i:0;i:4;i:0;i:5;i:0;i:6;i:0;}}}', 1784870184),
+('e-turismo-cache-admin_trends_today', 'a:3:{s:6:\"trends\";a:3:{s:10:\"categories\";a:12:{i:0;s:5:\"18:00\";i:1;s:5:\"19:00\";i:2;s:5:\"20:00\";i:3;s:5:\"21:00\";i:4;s:5:\"22:00\";i:5;s:5:\"23:00\";i:6;s:5:\"00:00\";i:7;s:5:\"01:00\";i:8;s:5:\"02:00\";i:9;s:5:\"03:00\";i:10;s:5:\"04:00\";i:11;s:5:\"05:00\";}s:8:\"bookings\";a:12:{i:0;i:0;i:1;i:0;i:2;i:0;i:3;i:0;i:4;i:0;i:5;i:0;i:6;i:0;i:7;i:0;i:8;i:0;i:9;i:0;i:10;i:0;i:11;i:0;}s:8:\"checkins\";a:12:{i:0;i:0;i:1;i:0;i:2;i:0;i:3;i:0;i:4;i:0;i:5;i:0;i:6;i:0;i:7;i:0;i:8;i:0;i:9;i:0;i:10;i:0;i:11;i:0;}}s:12:\"demographics\";a:2:{s:6:\"labels\";a:4:{i:0;s:5:\"Local\";i:1;s:8:\"Regional\";i:2;s:8:\"National\";i:3;s:7:\"Foreign\";}s:6:\"values\";a:4:{i:0;i:3;i:1;i:1;i:2;i:0;i:3;i:0;}}s:6:\"status\";a:2:{s:6:\"labels\";a:3:{i:0;s:8:\"Approved\";i:1;s:7:\"Pending\";i:2;s:9:\"Cancelled\";}s:6:\"values\";a:3:{i:0;i:0;i:1;i:4;i:2;i:3;}}}', 1784870183),
+('e-turismo-cache-registration-otp-send:::1', 'i:1;', 1784800009),
+('e-turismo-cache-registration-otp-send:::1:timer', 'i:1784800009;', 1784800009);
 
 -- --------------------------------------------------------
 
@@ -155,7 +154,8 @@ CREATE TABLE `destinations` (
 --
 
 INSERT INTO `destinations` (`id`, `name`, `initials`, `location`, `capacity`, `description`, `photos`, `availability_status`, `checkin_latitude`, `checkin_longitude`, `checkin_radius`, `last_updated_by`, `created_at`, `updated_at`) VALUES
-(5, 'Lake Maragang', 'LM', '7043, Limas, Tigbao, Zamboanga del Sur, Philippines', 100, NULL, NULL, 'Available', 7.819258, 123.288880, 100, 'STAFF', '2026-07-06 00:18:42', '2026-07-19 02:24:22');
+(5, 'Lake Maragang', 'LM', '7043, Limas, Tigbao, Zamboanga del Sur, Philippines', 100, NULL, NULL, 'Available', 7.819258, 123.288880, 100, 'STAFF', '2026-07-06 00:18:42', '2026-07-19 02:24:22'),
+(6, 'Timberland', 'TIM', 'TBD', 100, NULL, NULL, 'Available', NULL, NULL, 100, NULL, '2026-07-23 01:32:00', '2026-07-23 01:32:00');
 
 -- --------------------------------------------------------
 
@@ -297,7 +297,9 @@ INSERT INTO `notifications` (`id`, `recipient_id`, `recipient_type`, `type`, `me
 (4, 7, 'tourist', 'booking_alert', 'Your booking for Lake Maragang on 2026-07-25 has been CONFIRMED! Your QR ticket code is: LM781432.', 67, 1, '2026-07-14 08:34:19', '2026-07-15 06:35:09'),
 (5, 2, 'tourist', 'booking_alert', 'Your booking for Lake Maragang on 2026-07-18 has been DECLINED. Reason: ', 62, 0, '2026-07-16 00:01:43', '2026-07-16 00:01:43'),
 (6, 7, 'staff', 'booking_alert', 'New booking request from ARNEL L. GABATO for Lake Maragang on 2026-07-18.', 92, 1, '2026-07-16 01:11:55', '2026-07-17 23:49:49'),
-(7, 7, 'staff', 'booking_alert', 'New booking request from ARNEL L. GABATO for Lake Maragang on 2026-07-19.', 93, 1, '2026-07-16 01:14:40', '2026-07-17 23:49:47');
+(7, 7, 'staff', 'booking_alert', 'New booking request from ARNEL L. GABATO for Lake Maragang on 2026-07-19.', 93, 1, '2026-07-16 01:14:40', '2026-07-17 23:49:47'),
+(8, 10, 'tourist', 'booking_alert', 'Your booking for Lake Maragang on 2026-07-19 has been CONFIRMED! Your QR ticket code is: LMPRROV7.', 93, 0, '2026-07-23 01:02:21', '2026-07-23 01:02:21'),
+(9, 10, 'tourist', 'booking_alert', 'Your booking for Lake Maragang on 2026-07-18 has been CONFIRMED! Your QR ticket code is: LMIFB5R2.', 92, 0, '2026-07-23 01:12:03', '2026-07-23 01:12:03');
 
 -- --------------------------------------------------------
 
@@ -345,7 +347,9 @@ CREATE TABLE `reports` (
 
 INSERT INTO `reports` (`id`, `generated_by_admin_id`, `destination_id`, `type`, `date_from`, `date_to`, `total_visitors`, `total_bookings`, `confirmed_bookings`, `declined_bookings`, `created_at`, `updated_at`) VALUES
 (1, 1, NULL, 'monthly', '2026-07-01', '2026-07-16', 0, 2, 2, 0, '2026-07-15 23:54:41', '2026-07-15 23:54:41'),
-(2, 1, NULL, 'monthly', '2026-07-01', '2026-07-19', 0, 6, 3, 1, '2026-07-19 06:33:43', '2026-07-19 06:33:43');
+(2, 1, NULL, 'monthly', '2026-07-01', '2026-07-19', 0, 6, 3, 1, '2026-07-19 06:33:43', '2026-07-19 06:33:43'),
+(3, 1, NULL, 'monthly', '2026-07-01', '2026-07-23', 0, 10, 8, 1, '2026-07-23 02:50:50', '2026-07-23 02:50:50'),
+(4, 1, 5, 'monthly', '2026-07-01', '2026-07-23', 0, 10, 8, 1, '2026-07-23 03:55:04', '2026-07-23 03:55:04');
 
 -- --------------------------------------------------------
 
@@ -367,8 +371,10 @@ CREATE TABLE `sessions` (
 --
 
 INSERT INTO `sessions` (`id`, `user_id`, `ip_address`, `user_agent`, `payload`, `last_activity`) VALUES
-('S84H5tAnZs2MsucS4XYAyqzpc3QyIbVbP07KySVo', 1, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36 Edg/150.0.0.0', 'YTo0OntzOjY6Il90b2tlbiI7czo0MDoiRzdoeGFISGIzdGtnYnpxSDMxcjZkd1NSU0V6ZTVhbGpvMWhCVzRJZiI7czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6NjA6Imh0dHA6Ly9sb2NhbGhvc3QvZS10dXJpc21vL3B1YmxpYy9ub3RpZmljYXRpb25zL2xhdGVzdC1hbGVydCI7czo1OiJyb3V0ZSI7czoyNjoibm90aWZpY2F0aW9ucy5sYXRlc3QtYWxlcnQiO31zOjUwOiJsb2dpbl93ZWJfNTliYTM2YWRkYzJiMmY5NDAxNTgwZjAxNGM3ZjU4ZWE0ZTMwOTg5ZCI7aToxO30=', 1784481911),
-('ZFzn6M2FE37tqncKn6mowi1xIoLQMYwA8G0Vsagj', NULL, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36 Edg/150.0.0.0', 'YTo0OntzOjY6Il90b2tlbiI7czo0MDoiQ0Q4M2dVNjE3d2NwTWpUeFVoOVpVWjNhdzBjNW9VME81MTBJTmFBcCI7czozOiJ1cmwiO2E6MTp7czo4OiJpbnRlbmRlZCI7czo0MzoiaHR0cDovL2xvY2FsaG9zdC9lLXR1cmlzbW8vcHVibGljL2Rhc2hib2FyZCI7fXM6OToiX3ByZXZpb3VzIjthOjI6e3M6MzoidXJsIjtzOjQzOiJodHRwOi8vbG9jYWxob3N0L2UtdHVyaXNtby9wdWJsaWMvZGFzaGJvYXJkIjtzOjU6InJvdXRlIjtzOjk6ImRhc2hib2FyZCI7fXM6NjoiX2ZsYXNoIjthOjI6e3M6Mzoib2xkIjthOjA6e31zOjM6Im5ldyI7YTowOnt9fX0=', 1784478338);
+('64NDXiSjZbqcE7caNGFXSykHUvOcajq7Q2uNUNCW', 1, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36 Edg/150.0.0.0', 'YTo0OntzOjY6Il90b2tlbiI7czo0MDoiNjlsOTlUcHNaZHBRYllBZFRxVUxnTmxMM2NBWFlNSGFiRVNGUDA2MCI7czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6NjA6Imh0dHA6Ly9sb2NhbGhvc3QvZS10dXJpc21vL3B1YmxpYy9ub3RpZmljYXRpb25zL2xhdGVzdC1hbGVydCI7czo1OiJyb3V0ZSI7czoyNjoibm90aWZpY2F0aW9ucy5sYXRlc3QtYWxlcnQiO31zOjY6Il9mbGFzaCI7YToyOntzOjM6Im9sZCI7YTowOnt9czozOiJuZXciO2E6MDp7fX1zOjUwOiJsb2dpbl93ZWJfNTliYTM2YWRkYzJiMmY5NDAxNTgwZjAxNGM3ZjU4ZWE0ZTMwOTg5ZCI7aToxO30=', 1784869950),
+('GVCyGBxxDmVGMY4v3QZDmfCKCqz2eRZHpIPtahhT', NULL, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36 Edg/150.0.0.0', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiYXpwSWlpcTN6dVI4eGI2YmFDTnVzQ09rdkoyRzNGTHdZdVl3U1prZyI7czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6MzM6Imh0dHA6Ly9sb2NhbGhvc3QvZS10dXJpc21vL3B1YmxpYyI7czo1OiJyb3V0ZSI7czo0OiJob21lIjt9czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319fQ==', 1784869799),
+('pP4hfJyTK3C3eJ00paDZuNduD32g0g46eAMlw0ty', 1, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36 Edg/150.0.0.0', 'YTo0OntzOjY6Il90b2tlbiI7czo0MDoicG42S1BFM3pIZG5Ca2JrS0x4bzB5ZFZsSE03WTZCR2x3VEhzV0hyUyI7czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6NjA6Imh0dHA6Ly9sb2NhbGhvc3QvZS10dXJpc21vL3B1YmxpYy9ub3RpZmljYXRpb25zL2xhdGVzdC1hbGVydCI7czo1OiJyb3V0ZSI7czoyNjoibm90aWZpY2F0aW9ucy5sYXRlc3QtYWxlcnQiO31zOjUwOiJsb2dpbl93ZWJfNTliYTM2YWRkYzJiMmY5NDAxNTgwZjAxNGM3ZjU4ZWE0ZTMwOTg5ZCI7aToxO30=', 1784811571),
+('WV76bp3D9zF4S2NtUcwivqHVMfkcLUjEQ4A2Bxle', NULL, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36 Edg/150.0.0.0', 'YTo0OntzOjY6Il90b2tlbiI7czo0MDoiRVZwdWdxdTZzOTdyTmh4TldQWURzZ0FTYm5hbkRzMHU3MjZqbEdBdSI7czozOiJ1cmwiO2E6MTp7czo4OiJpbnRlbmRlZCI7czo2MToiaHR0cDovL2xvY2FsaG9zdC9lLXR1cmlzbW8vcHVibGljL2FkbWluL3ZlcmlmaWNhdGlvbnMvcmV2aWV3cyI7fXM6OToiX3ByZXZpb3VzIjthOjI6e3M6MzoidXJsIjtzOjYxOiJodHRwOi8vbG9jYWxob3N0L2UtdHVyaXNtby9wdWJsaWMvYWRtaW4vdmVyaWZpY2F0aW9ucy9yZXZpZXdzIjtzOjU6InJvdXRlIjtzOjIwOiJ2ZXJpZmljYXRpb24ucmV2aWV3cyI7fXM6NjoiX2ZsYXNoIjthOjI6e3M6Mzoib2xkIjthOjA6e31zOjM6Im5ldyI7YTowOnt9fX0=', 1784803720);
 
 -- --------------------------------------------------------
 
@@ -392,7 +398,9 @@ CREATE TABLE `tickets` (
 INSERT INTO `tickets` (`id`, `booking_id`, `qr_code`, `scanned_at`, `created_at`, `updated_at`) VALUES
 (1, 62, 'LM976695', NULL, '2026-07-14 07:49:37', '2026-07-14 07:49:37'),
 (2, 91, 'LM666744', NULL, '2026-07-14 08:17:32', '2026-07-14 08:17:32'),
-(3, 67, 'LM781432', NULL, '2026-07-14 08:34:19', '2026-07-14 08:34:19');
+(3, 67, 'LM781432', NULL, '2026-07-14 08:34:19', '2026-07-14 08:34:19'),
+(4, 93, 'LMPRROV7', NULL, '2026-07-23 01:02:15', '2026-07-23 01:02:15'),
+(5, 92, 'LMIFB5R2', NULL, '2026-07-23 01:12:02', '2026-07-23 01:12:02');
 
 -- --------------------------------------------------------
 
@@ -434,11 +442,12 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `name`, `last_name`, `suffix`, `gender`, `middle_initial`, `dob`, `email`, `email_verified_at`, `password`, `role`, `contact`, `classification`, `id_type`, `id_number`, `id_photo`, `is_manually_verified`, `id_verification_status`, `ready_to_complete_requirements`, `id_verification_score`, `id_verification_notes`, `id_verified_at`, `assigned_destination_id`, `remember_token`, `created_at`, `updated_at`) VALUES
-(1, 'TOURISM', 'PERSONNEL', NULL, NULL, NULL, '2026-07-01', 'admin@eturismo.com', '2026-07-05 01:50:56', '$2y$12$CHN284cR51/Uujjqi21FH.kVn0Doli2ellYVxicNhKyMYRcWOeK0.', 'admin', NULL, 'Local', NULL, NULL, NULL, 0, 'verified', 0, NULL, NULL, '2026-07-05 01:53:24', NULL, '21nl9ybjQcxZK7rjQq08Ea9b4LtkiVHiyLQEfshY4rKbIgMGcGneKvFw9mJl', '2026-07-05 01:49:29', '2026-07-05 01:53:24'),
-(2, 'JYLSAM', 'QUIROG', NULL, NULL, 'M.', '2004-12-10', 'jylsam123@gmail.com', '2026-07-05 04:50:47', '$2y$12$p5WPmZI4RMZr4WeTXZFYzuN96UkvHlv91P8IVFPcHSVoRfA91KfVq', 'tourist', NULL, 'Local', 'School ID', '2022-041633', 'id_photos/1783245704_2d6ed43b-f01e-47ce-b616-8910397fa53c.jpg', 0, 'verified', 1, 100.00, 'Name match: 100% (found) | ID Number: 100% (found) | DOB: Skipped — this ID type does not print a date of birth', '2026-07-05 05:23:04', NULL, '97LAq8ZqGVzjHs7Lz97srLV3OVWBUQuvIcBniFNWEPHGpmJ1Gch4Jqayi0fc', '2026-07-05 02:01:46', '2026-07-15 22:25:01'),
-(7, 'STAFF', 'LM', NULL, NULL, NULL, '2026-07-01', 'staff@eturismo.com', '2026-07-09 18:44:01', '$2y$12$uFeKOW4ZUwyjtFcQPx7bWeJg3hFeWRVfKUtc6DwO.KkjAFywlaZ0y', 'staff', '09854754736', NULL, NULL, NULL, NULL, 1, 'verified', 0, 100.00, 'Status manually updated by Admin.', '2026-07-09 10:39:55', 5, 'q2uT1Sn78xBK9L4SiPg3QRMVu97Nhnkh9FiBZTWt93cRqm30MVS4Jc7wzfPu', '2026-07-09 10:38:11', '2026-07-09 10:39:55'),
+(1, 'TOURISM', 'PERSONNEL', NULL, NULL, NULL, '2026-07-01', 'admin@eturismo.com', '2026-07-05 01:50:56', '$2y$12$CHN284cR51/Uujjqi21FH.kVn0Doli2ellYVxicNhKyMYRcWOeK0.', 'admin', NULL, 'Local', NULL, NULL, NULL, 0, 'verified', 0, NULL, NULL, '2026-07-05 01:53:24', NULL, 'opxAs6HUGl0RLLWx0gua1UbaWO99QzFC69LCTsVMghlJnMUEwvhNgqu417Ci', '2026-07-05 01:49:29', '2026-07-05 01:53:24'),
+(2, 'JYLSAM', 'QUIROG', NULL, NULL, 'M.', '2004-12-10', 'jylsam123@gmail.com', '2026-07-05 04:50:47', '$2y$12$p5WPmZI4RMZr4WeTXZFYzuN96UkvHlv91P8IVFPcHSVoRfA91KfVq', 'tourist', NULL, 'Local', 'School ID', '2022-041633', 'id_photos/1783245704_2d6ed43b-f01e-47ce-b616-8910397fa53c.jpg', 0, 'verified', 1, 100.00, 'Name match: 100% (found) | ID Number: 100% (found) | DOB: Skipped — this ID type does not print a date of birth', '2026-07-05 05:23:04', NULL, 'piGnVauXVQESkqL2aOjSplYmnj4cKZ4eRopxftzWJqeVl9eX3TCNCBsWLlyz', '2026-07-05 02:01:46', '2026-07-15 22:25:01'),
+(7, 'LM', 'Staff', NULL, NULL, NULL, '2026-07-01', 'teststaff@gmail.com', '2026-07-09 18:44:01', '$2y$12$uFeKOW4ZUwyjtFcQPx7bWeJg3hFeWRVfKUtc6DwO.KkjAFywlaZ0y', 'staff', '1234567890', NULL, NULL, NULL, NULL, 1, 'verified', 0, 100.00, 'Status manually updated by Admin.', '2026-07-09 10:39:55', 5, 'WxOzKwNhr28JLUle373Ugx5vG9hA8j3zMAiX0ZdFv7AB7aRbBASJl49OIAX5', '2026-07-09 10:38:11', '2026-07-23 02:27:35'),
 (9, 'DANRYL JAMES B. B. USA', 'USA', NULL, NULL, 'B.', '2005-01-02', 'danrylboncales@gmail.com', '2026-07-15 23:45:40', '$2y$12$czH4QQK1HpST4kGLRjj6kekYx26Etcw1m.ZcE1oDVhsAzkLv9GlDS', 'tourist', NULL, 'Local', 'School ID', '2022-044712', 'id_photos/1784188211_captured_id_1784188206570.jpg', 1, 'verified', 1, 31.17, 'Status manually updated by Admin.', '2026-07-16 00:59:14', NULL, NULL, '2026-07-15 23:45:40', '2026-07-16 00:59:14'),
-(10, 'ARNEL L. GABATO', 'GABATO', NULL, NULL, 'L.', '1978-04-15', 'tigbaotourismoffice@gmail.com', '2026-07-16 01:00:49', '$2y$12$83RWCjm6h1HJkkxV2wMllOv4.pd6HmAykWHvMAl5KgGb/9xLOY0om', 'tourist', NULL, 'Local', 'Company ID', '097344000-000-0559', 'id_photos/1784192449_id_composite_1784192412378.jpg', 1, 'verified', 1, 79.75, 'Status manually updated by Admin.', '2026-07-16 01:01:27', NULL, NULL, '2026-07-16 01:00:50', '2026-07-16 01:01:27');
+(10, 'ARNEL L. GABATO', 'GABATO', NULL, NULL, 'L.', '1978-04-15', 'tigbaotourismoffice@gmail.com', '2026-07-16 01:00:49', '$2y$12$83RWCjm6h1HJkkxV2wMllOv4.pd6HmAykWHvMAl5KgGb/9xLOY0om', 'tourist', NULL, 'Local', 'Company ID', '097344000-000-0559', 'id_photos/1784192449_id_composite_1784192412378.jpg', 1, 'verified', 1, 79.75, 'Status manually updated by Admin.', '2026-07-16 01:01:27', NULL, NULL, '2026-07-16 01:00:50', '2026-07-16 01:01:27'),
+(12, 'TM', 'Staff', NULL, NULL, NULL, NULL, 'cevibill@gmail.com', '2026-07-23 01:39:08', '$2y$12$19QuFBeDnHzaUYr.s/.1Dekjs4xVKTXCEiE3pwC1nmePguIFInB6m', 'staff', '09386616553', NULL, NULL, NULL, NULL, 0, 'verified', 0, 100.00, NULL, '2026-07-23 01:39:08', 6, NULL, '2026-07-23 01:39:08', '2026-07-23 02:27:23');
 
 -- --------------------------------------------------------
 
@@ -617,7 +626,7 @@ ALTER TABLE `check_ins`
 -- AUTO_INCREMENT for table `destinations`
 --
 ALTER TABLE `destinations`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `destination_images`
@@ -635,7 +644,7 @@ ALTER TABLE `failed_jobs`
 -- AUTO_INCREMENT for table `jobs`
 --
 ALTER TABLE `jobs`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT for table `migrations`
@@ -647,25 +656,25 @@ ALTER TABLE `migrations`
 -- AUTO_INCREMENT for table `notifications`
 --
 ALTER TABLE `notifications`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT for table `reports`
 --
 ALTER TABLE `reports`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `tickets`
 --
 ALTER TABLE `tickets`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- AUTO_INCREMENT for table `walk_ins`
