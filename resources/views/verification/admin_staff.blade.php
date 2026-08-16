@@ -1,22 +1,6 @@
 <x-app-layout>
     @push('head')
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css" />
         <style>
-            @keyframes fadeInUp {
-                from {
-                    opacity: 0;
-                    transform: translateY(12px);
-                }
-
-                to {
-                    opacity: 1;
-                    transform: translateY(0);
-                }
-            }
-
-            .animate-fade-in-up {
-                animation: fadeInUp 0.4s ease-out forwards;
-            }
             .admin-card-hover {
                 transition: all 0.3s ease-in-out !important;
             }
@@ -31,13 +15,13 @@
     <x-slot name="header">
         <div class="flex items-center justify-between">
             <h2 class="font-semibold text-xl text-gray-800 leading-tight flex items-center gap-2">
-                <i class="ti ti-user-cog text-2xl text-green-700"></i>
-                Manage Staff Accounts
+                <i class="ti ti-user-cog text-2xl text-emerald-700"></i>
+                <span>Manage Staff</span>
             </h2>
         </div>
     </x-slot>
 
-    <div class="pb-12 pt-0 animate-fade-in-up" x-data="{
+    <div class="pb-12 pt-0" x-data="{
         deleteUrl: '',
         editOpen: {{ session('edit_user_id') && $errors->any() ? 'true' : 'false' }},
         editUrl: '{{ session('edit_user_id') ? route('verification.staff.update', session('edit_user_id')) : '' }}',
@@ -66,20 +50,24 @@
             <!-- Sub-Navigation Tabs -->
             <div class="flex flex-wrap gap-2 border-b border-gray-200 pb-3">
                 <a href="{{ route('verification.reviews') }}" aria-label="ID Verification Reviews"
-                    class="flex items-center justify-center h-11 px-4 py-2 md:h-auto md:w-auto text-sm font-semibold rounded-xl transition-all duration-200 transform hover:-translate-y-0.5 active:translate-y-0 {{ request()->routeIs('verification.reviews') ? 'bg-green-700 text-white shadow-md shadow-green-700/15' : 'text-gray-500 hover:text-gray-800 hover:bg-gray-100 hover:shadow-sm' }}">
-                    <i class="ti ti-checklist md:mr-1 text-lg md:text-base"></i> <span class="hidden md:inline">ID Verification Reviews</span>
+                   class="inline-flex items-center justify-center h-10 px-4 text-xs sm:text-sm font-bold rounded-xl transition-colors duration-150 {{ request()->routeIs('verification.reviews') ? 'bg-emerald-700 text-white shadow-sm' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100' }}">
+                    <i class="ti ti-checklist text-base shrink-0 mr-1.5"></i>
+                    <span>ID Verification Reviews</span>
                 </a>
                 <a href="{{ route('verification.accounts') }}" aria-label="Verify Tourists"
-                    class="flex items-center justify-center h-11 px-4 py-2 md:h-auto md:w-auto text-sm font-semibold rounded-xl transition-all duration-200 transform hover:-translate-y-0.5 active:translate-y-0 {{ request()->routeIs('verification.accounts') ? 'bg-green-700 text-white shadow-md shadow-green-700/15' : 'text-gray-500 hover:text-gray-800 hover:bg-gray-100 hover:shadow-sm' }}">
-                    <i class="ti ti-users md:mr-1 text-lg md:text-base"></i> <span class="hidden md:inline">Verify Tourists</span>
+                   class="inline-flex items-center justify-center h-10 px-4 text-xs sm:text-sm font-bold rounded-xl transition-colors duration-150 {{ request()->routeIs('verification.accounts') ? 'bg-emerald-700 text-white shadow-sm' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100' }}">
+                    <i class="ti ti-users text-base shrink-0 mr-1.5"></i>
+                    <span>Verify Tourists</span>
                 </a>
                 <a href="{{ route('verification.staff') }}" aria-label="Manage Staff"
-                    class="flex items-center justify-center h-11 px-4 py-2 md:h-auto md:w-auto text-sm font-semibold rounded-xl transition-all duration-200 transform hover:-translate-y-0.5 active:translate-y-0 {{ request()->routeIs('verification.staff') ? 'bg-green-700 text-white shadow-md shadow-green-700/15' : 'text-gray-500 hover:text-gray-800 hover:bg-gray-100 hover:shadow-sm' }}">
-                    <i class="ti ti-user-cog md:mr-1 text-lg md:text-base"></i> <span class="hidden md:inline">Manage Staff</span>
+                   class="inline-flex items-center justify-center h-10 px-4 text-xs sm:text-sm font-bold rounded-xl transition-colors duration-150 {{ request()->routeIs('verification.staff') ? 'bg-emerald-700 text-white shadow-sm' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100' }}">
+                    <i class="ti ti-user-cog text-base shrink-0 mr-1.5"></i>
+                    <span>Manage Staff</span>
                 </a>
                 <a href="{{ route('verification.add_account') }}" aria-label="Add Account"
-                    class="flex items-center justify-center h-11 px-4 py-2 md:h-auto md:w-auto text-sm font-semibold rounded-xl transition-all duration-200 transform hover:-translate-y-0.5 active:translate-y-0 {{ request()->routeIs('verification.add_account') ? 'bg-green-700 text-white shadow-md shadow-green-700/15' : 'text-gray-500 hover:text-gray-800 hover:bg-gray-100 hover:shadow-sm' }}">
-                    <i class="ti ti-user-plus md:mr-1 text-lg md:text-base"></i> <span class="hidden md:inline">Add Account</span>
+                   class="inline-flex items-center justify-center h-10 px-4 text-xs sm:text-sm font-bold rounded-xl transition-colors duration-150 {{ request()->routeIs('verification.add_account') ? 'bg-emerald-700 text-white shadow-sm' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100' }}">
+                    <i class="ti ti-user-plus text-base shrink-0 mr-1.5"></i>
+                    <span>Add Account</span>
                 </a>
             </div>
 

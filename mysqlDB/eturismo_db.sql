@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jul 24, 2026 at 07:12 AM
+-- Generation Time: Aug 16, 2026 at 07:57 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -32,6 +32,7 @@ CREATE TABLE `bookings` (
   `tourist_id` bigint(20) UNSIGNED NOT NULL,
   `destination_id` bigint(20) UNSIGNED NOT NULL,
   `visit_date` date NOT NULL,
+  `duration_days` int(11) NOT NULL DEFAULT 1,
   `status` varchar(255) NOT NULL DEFAULT 'pending',
   `decline_reason` text DEFAULT NULL,
   `decided_by_staff_id` bigint(20) UNSIGNED DEFAULT NULL,
@@ -54,39 +55,46 @@ CREATE TABLE `bookings` (
 -- Dumping data for table `bookings`
 --
 
-INSERT INTO `bookings` (`id`, `tourist_id`, `destination_id`, `visit_date`, `status`, `decline_reason`, `decided_by_staff_id`, `created_at`, `updated_at`, `gcash_reference_number`, `payment_screenshot_path`, `payment_status`, `rejection_reason`, `payment_submitted_at`, `payment_reviewed_at`, `reviewed_by`, `qr_token`, `qr_generated_at`, `checked_in_at`, `checked_in_by`) VALUES
-(61, 1, 5, '2026-07-15', 'completed', NULL, NULL, '2026-07-14 15:32:36', '2026-07-15 03:54:00', NULL, NULL, 'approved', NULL, NULL, NULL, NULL, 'QR000001', '2026-07-14 15:32:36', '2026-07-15 03:54:00', 7),
-(62, 2, 5, '2026-07-18', 'declined', 'Payment issue', 7, '2026-07-14 15:32:36', '2026-07-16 00:01:43', NULL, NULL, 'pending', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
-(63, 3, 5, '2026-07-20', 'confirmed', NULL, NULL, '2026-07-14 15:32:36', '2026-07-14 15:32:36', NULL, NULL, 'approved', NULL, NULL, NULL, NULL, 'QR000003', '2026-07-14 15:32:36', NULL, NULL),
-(64, 4, 5, '2026-07-23', 'cancelled', NULL, NULL, '2026-07-14 15:32:36', '2026-07-14 15:32:36', NULL, NULL, 'rejected', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
-(65, 5, 5, '2026-07-17', 'completed', NULL, NULL, '2026-07-14 15:32:36', '2026-07-14 15:32:36', NULL, NULL, 'approved', NULL, NULL, NULL, NULL, 'QR000005', '2026-07-14 15:32:36', NULL, NULL),
-(66, 6, 5, '2026-07-21', 'confirmed', NULL, NULL, '2026-07-14 15:32:36', '2026-07-14 15:32:36', NULL, NULL, 'approved', NULL, NULL, NULL, NULL, 'QR000006', '2026-07-14 15:32:36', NULL, NULL),
-(67, 7, 5, '2026-07-25', 'confirmed', NULL, 7, '2026-07-14 15:32:36', '2026-07-14 08:34:19', NULL, NULL, 'pending', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
-(68, 8, 5, '2026-07-16', 'confirmed', NULL, NULL, '2026-07-14 15:32:36', '2026-07-14 15:32:36', NULL, NULL, 'approved', NULL, NULL, NULL, NULL, 'QR000008', '2026-07-14 15:32:36', NULL, NULL),
-(69, 9, 5, '2026-07-27', 'completed', NULL, NULL, '2026-07-14 15:32:36', '2026-07-14 15:32:36', NULL, NULL, 'approved', NULL, NULL, NULL, NULL, 'QR000009', '2026-07-14 15:32:36', NULL, NULL),
-(70, 10, 5, '2026-07-29', 'confirmed', NULL, NULL, '2026-07-14 15:32:36', '2026-07-14 15:32:36', NULL, NULL, 'approved', NULL, NULL, NULL, NULL, 'QR000010', '2026-07-14 15:32:36', NULL, NULL),
-(72, 12, 5, '2026-08-03', 'confirmed', NULL, NULL, '2026-07-14 15:32:36', '2026-07-14 15:32:36', NULL, NULL, 'approved', NULL, NULL, NULL, NULL, 'QR000012', '2026-07-14 15:32:36', NULL, NULL),
-(73, 13, 5, '2026-08-05', 'completed', NULL, NULL, '2026-07-14 15:32:36', '2026-07-14 15:32:36', NULL, NULL, 'approved', NULL, NULL, NULL, NULL, 'QR000013', '2026-07-14 15:32:36', NULL, NULL),
-(74, 14, 5, '2026-08-07', 'cancelled', NULL, NULL, '2026-07-14 15:32:36', '2026-07-14 15:32:36', NULL, NULL, 'rejected', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
-(75, 15, 5, '2026-08-09', 'confirmed', NULL, NULL, '2026-07-14 15:32:36', '2026-07-14 15:32:36', NULL, NULL, 'approved', NULL, NULL, NULL, NULL, 'QR000015', '2026-07-14 15:32:36', NULL, NULL),
-(76, 16, 5, '2026-08-10', 'pending', NULL, NULL, '2026-07-14 15:32:36', '2026-07-14 15:32:36', NULL, NULL, 'pending', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
-(77, 17, 5, '2026-08-12', 'confirmed', NULL, NULL, '2026-07-14 15:32:36', '2026-07-14 15:32:36', NULL, NULL, 'approved', NULL, NULL, NULL, NULL, 'QR000017', '2026-07-14 15:32:36', NULL, NULL),
-(78, 18, 5, '2026-08-14', 'completed', NULL, NULL, '2026-07-14 15:32:36', '2026-07-14 15:32:36', NULL, NULL, 'approved', NULL, NULL, NULL, NULL, 'QR000018', '2026-07-14 15:32:36', NULL, NULL),
-(79, 19, 5, '2026-08-16', 'confirmed', NULL, NULL, '2026-07-14 15:32:36', '2026-07-14 15:32:36', NULL, NULL, 'approved', NULL, NULL, NULL, NULL, 'QR000019', '2026-07-14 15:32:36', NULL, NULL),
-(80, 20, 5, '2026-08-18', 'pending', NULL, NULL, '2026-07-14 15:32:36', '2026-07-14 15:32:36', NULL, NULL, 'pending', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
-(81, 21, 5, '2026-08-20', 'confirmed', NULL, NULL, '2026-07-14 15:32:36', '2026-07-14 15:32:36', NULL, NULL, 'approved', NULL, NULL, NULL, NULL, 'QR000021', '2026-07-14 15:32:36', NULL, NULL),
-(82, 22, 5, '2026-08-22', 'completed', NULL, NULL, '2026-07-14 15:32:36', '2026-07-14 15:32:36', NULL, NULL, 'approved', NULL, NULL, NULL, NULL, 'QR000022', '2026-07-14 15:32:36', NULL, NULL),
-(83, 23, 5, '2026-08-24', 'confirmed', NULL, NULL, '2026-07-14 15:32:36', '2026-07-14 15:32:36', NULL, NULL, 'approved', NULL, NULL, NULL, NULL, 'QR000023', '2026-07-14 15:32:36', NULL, NULL),
-(84, 24, 5, '2026-08-26', 'cancelled', NULL, NULL, '2026-07-14 15:32:36', '2026-07-14 15:32:36', NULL, NULL, 'rejected', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
-(85, 25, 5, '2026-08-28', 'pending', NULL, NULL, '2026-07-14 15:32:36', '2026-07-14 15:32:36', NULL, NULL, 'pending', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
-(86, 26, 5, '2026-08-30', 'confirmed', NULL, NULL, '2026-07-14 15:32:36', '2026-07-14 15:32:36', NULL, NULL, 'approved', NULL, NULL, NULL, NULL, 'QR000026', '2026-07-14 15:32:36', NULL, NULL),
-(87, 27, 5, '2026-09-02', 'completed', NULL, NULL, '2026-07-14 15:32:36', '2026-07-14 15:32:36', NULL, NULL, 'approved', NULL, NULL, NULL, NULL, 'QR000027', '2026-07-14 15:32:36', NULL, NULL),
-(88, 28, 5, '2026-09-04', 'confirmed', NULL, NULL, '2026-07-14 15:32:36', '2026-07-14 15:32:36', NULL, NULL, 'approved', NULL, NULL, NULL, NULL, 'QR000028', '2026-07-14 15:32:36', NULL, NULL),
-(89, 29, 5, '2026-09-06', 'pending', NULL, NULL, '2026-07-14 15:32:36', '2026-07-14 15:32:36', NULL, NULL, 'pending', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
-(90, 30, 5, '2026-09-08', 'confirmed', NULL, NULL, '2026-07-14 15:32:36', '2026-07-14 15:32:36', NULL, NULL, 'approved', NULL, NULL, NULL, NULL, 'QR000030', '2026-07-14 15:32:36', NULL, NULL),
-(91, 2, 5, '2026-07-21', 'confirmed', NULL, 7, '2026-07-14 08:16:24', '2026-07-14 08:19:20', '8042132002937', 'payment_screenshots/TnJzGHnPBicLbPX17N83F8WHAAYb6jueqSKfTxLy.jpg', 'pending_verification', NULL, '2026-07-14 08:19:20', NULL, NULL, NULL, NULL, NULL, NULL),
-(92, 10, 5, '2026-07-18', 'confirmed', NULL, 7, '2026-07-16 01:11:55', '2026-07-23 01:12:02', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'LMIFB5R2', '2026-07-23 01:12:02', NULL, NULL),
-(93, 10, 5, '2026-07-19', 'confirmed', NULL, 7, '2026-07-16 01:14:40', '2026-07-23 01:02:15', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'LMPRROV7', '2026-07-23 01:02:15', NULL, NULL);
+INSERT INTO `bookings` (`id`, `tourist_id`, `destination_id`, `visit_date`, `duration_days`, `status`, `decline_reason`, `decided_by_staff_id`, `created_at`, `updated_at`, `gcash_reference_number`, `payment_screenshot_path`, `payment_status`, `rejection_reason`, `payment_submitted_at`, `payment_reviewed_at`, `reviewed_by`, `qr_token`, `qr_generated_at`, `checked_in_at`, `checked_in_by`) VALUES
+(1, 2, 5, '2026-08-11', 1, 'confirmed', NULL, 7, '2026-08-09 23:29:03', '2026-08-12 04:30:42', NULL, NULL, 'approved', NULL, NULL, NULL, NULL, 'LMAHMCCK', '2026-08-12 04:30:42', NULL, NULL),
+(2, 2, 5, '2026-08-11', 1, 'completed', NULL, 7, '2026-08-09 23:29:08', '2026-08-13 07:08:51', '522352344', 'payment_screenshots/DZ39zGOo7ICoyO1DPYslNggne4qdLzvsJF2HloJY.png', 'approved', NULL, '2026-08-09 23:30:58', NULL, NULL, 'LMAYN5HH', '2026-08-09 23:35:35', '2026-08-13 07:08:51', 7),
+(3, 2, 5, '2026-08-17', 2, 'cancelled', 'Cancelled by tourist', 7, '2026-08-13 07:01:09', '2026-08-16 07:47:58', '964645464', 'payment_screenshots/x3RHzcLVzwSTPiSDufVAzyuOYkx6QRrJky2jQHd8.jpg', 'refund_pending', NULL, '2026-08-13 07:01:43', NULL, NULL, NULL, '2026-08-13 07:02:46', NULL, NULL),
+(4, 2, 5, '2026-08-24', 5, 'cancelled', 'Cancelled by tourist', NULL, '2026-08-16 07:05:33', '2026-08-16 07:23:18', NULL, NULL, 'not_charged', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(5, 2, 5, '2026-08-19', 1, 'cancelled', 'Cancelled by tourist', NULL, '2026-08-16 08:04:53', '2026-08-16 08:09:27', NULL, NULL, 'not_charged', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(6, 2, 5, '2026-08-25', 1, 'pending', NULL, NULL, '2026-08-16 08:10:27', '2026-08-16 08:10:27', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `booking_companions`
+--
+
+CREATE TABLE `booking_companions` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `booking_id` bigint(20) UNSIGNED NOT NULL,
+  `name` varchar(255) NOT NULL,
+  `age` int(11) NOT NULL,
+  `gender` varchar(255) NOT NULL,
+  `contact_number` varchar(255) DEFAULT NULL,
+  `email` varchar(255) DEFAULT NULL,
+  `classification` varchar(255) NOT NULL,
+  `duration_days` int(11) NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `booking_companions`
+--
+
+INSERT INTO `booking_companions` (`id`, `booking_id`, `name`, `age`, `gender`, `contact_number`, `email`, `classification`, `duration_days`, `created_at`, `updated_at`) VALUES
+(1, 1, 'sadasda', 23, 'Male', NULL, NULL, 'Local', 1, '2026-08-09 23:29:03', '2026-08-09 23:29:03'),
+(2, 2, 'sadasda', 23, 'Male', NULL, NULL, 'Local', 1, '2026-08-09 23:29:08', '2026-08-09 23:29:08'),
+(3, 3, 'JYLSAM QUIROG', 21, 'Male', NULL, 'jylsam123@gmail.com', 'Local', 2, '2026-08-13 07:01:09', '2026-08-13 07:01:09'),
+(4, 3, 'Glowen Tanaman', 12, 'Male', '09386616553', NULL, 'Local', 2, '2026-08-13 07:01:09', '2026-08-13 07:01:09'),
+(5, 4, 'JYLSAM QUIROG', 21, 'Male', NULL, 'jylsam123@gmail.com', 'Local', 5, '2026-08-16 07:05:33', '2026-08-16 07:05:33'),
+(6, 5, 'JYLSAM QUIROG', 21, 'Male', NULL, 'jylsam123@gmail.com', 'Local', 1, '2026-08-16 08:04:53', '2026-08-16 08:04:53'),
+(7, 6, 'JYLSAM QUIROG', 21, 'Male', '09723462733', 'jylsam123@gmail.com', 'Local', 1, '2026-08-16 08:10:27', '2026-08-16 08:10:27');
 
 -- --------------------------------------------------------
 
@@ -105,10 +113,15 @@ CREATE TABLE `cache` (
 --
 
 INSERT INTO `cache` (`key`, `value`, `expiration`) VALUES
-('e-turismo-cache-admin_kpis_today', 'a:7:{s:14:\"activeTourists\";i:3;s:15:\"pendingRequests\";i:4;s:14:\"capacityHealth\";d:0;s:7:\"qrScans\";i:0;s:14:\"bookingsHalted\";b:0;s:8:\"pipeline\";O:29:\"Illuminate\\Support\\Collection\":2:{s:8:\"\0*\0items\";a:10:{i:0;a:6:{s:2:\"id\";i:93;s:9:\"reference\";s:9:\"#TRB-0093\";s:12:\"tourist_name\";s:22:\"ARNEL L. GABATO GABATO\";s:16:\"destination_name\";s:13:\"Lake Maragang\";s:10:\"visit_date\";s:10:\"2026-07-19\";s:6:\"status\";s:9:\"confirmed\";}i:1;a:6:{s:2:\"id\";i:92;s:9:\"reference\";s:9:\"#TRB-0092\";s:12:\"tourist_name\";s:22:\"ARNEL L. GABATO GABATO\";s:16:\"destination_name\";s:13:\"Lake Maragang\";s:10:\"visit_date\";s:10:\"2026-07-18\";s:6:\"status\";s:9:\"confirmed\";}i:2;a:6:{s:2:\"id\";i:61;s:9:\"reference\";s:9:\"#TRB-0061\";s:12:\"tourist_name\";s:17:\"TOURISM PERSONNEL\";s:16:\"destination_name\";s:13:\"Lake Maragang\";s:10:\"visit_date\";s:10:\"2026-07-15\";s:6:\"status\";s:9:\"completed\";}i:3;a:6:{s:2:\"id\";i:62;s:9:\"reference\";s:9:\"#TRB-0062\";s:12:\"tourist_name\";s:13:\"JYLSAM QUIROG\";s:16:\"destination_name\";s:13:\"Lake Maragang\";s:10:\"visit_date\";s:10:\"2026-07-18\";s:6:\"status\";s:8:\"declined\";}i:4;a:6:{s:2:\"id\";i:63;s:9:\"reference\";s:9:\"#TRB-0063\";s:12:\"tourist_name\";s:7:\"Unknown\";s:16:\"destination_name\";s:13:\"Lake Maragang\";s:10:\"visit_date\";s:10:\"2026-07-20\";s:6:\"status\";s:9:\"confirmed\";}i:5;a:6:{s:2:\"id\";i:64;s:9:\"reference\";s:9:\"#TRB-0064\";s:12:\"tourist_name\";s:7:\"Unknown\";s:16:\"destination_name\";s:13:\"Lake Maragang\";s:10:\"visit_date\";s:10:\"2026-07-23\";s:6:\"status\";s:9:\"cancelled\";}i:6;a:6:{s:2:\"id\";i:65;s:9:\"reference\";s:9:\"#TRB-0065\";s:12:\"tourist_name\";s:7:\"Unknown\";s:16:\"destination_name\";s:13:\"Lake Maragang\";s:10:\"visit_date\";s:10:\"2026-07-17\";s:6:\"status\";s:9:\"completed\";}i:7;a:6:{s:2:\"id\";i:66;s:9:\"reference\";s:9:\"#TRB-0066\";s:12:\"tourist_name\";s:7:\"Unknown\";s:16:\"destination_name\";s:13:\"Lake Maragang\";s:10:\"visit_date\";s:10:\"2026-07-21\";s:6:\"status\";s:9:\"confirmed\";}i:8;a:6:{s:2:\"id\";i:67;s:9:\"reference\";s:9:\"#TRB-0067\";s:12:\"tourist_name\";s:8:\"LM Staff\";s:16:\"destination_name\";s:13:\"Lake Maragang\";s:10:\"visit_date\";s:10:\"2026-07-25\";s:6:\"status\";s:9:\"confirmed\";}i:9;a:6:{s:2:\"id\";i:68;s:9:\"reference\";s:9:\"#TRB-0068\";s:12:\"tourist_name\";s:7:\"Unknown\";s:16:\"destination_name\";s:13:\"Lake Maragang\";s:10:\"visit_date\";s:10:\"2026-07-16\";s:6:\"status\";s:9:\"confirmed\";}}s:28:\"\0*\0escapeWhenCastingToString\";b:0;}s:10:\"sparklines\";a:4:{s:14:\"activeTourists\";a:7:{i:0;i:3;i:1;i:3;i:2;i:3;i:3;i:3;i:4;i:3;i:5;i:3;i:6;i:3;}s:15:\"pendingRequests\";a:7:{i:0;i:4;i:1;i:4;i:2;i:4;i:3;i:4;i:4;i:4;i:5;i:4;i:6;i:4;}s:14:\"capacityHealth\";a:7:{i:0;d:0;i:1;d:0;i:2;d:0;i:3;d:0;i:4;d:0;i:5;d:0;i:6;d:0;}s:7:\"qrScans\";a:7:{i:0;i:0;i:1;i:0;i:2;i:0;i:3;i:0;i:4;i:0;i:5;i:0;i:6;i:0;}}}', 1784870184),
-('e-turismo-cache-admin_trends_today', 'a:3:{s:6:\"trends\";a:3:{s:10:\"categories\";a:12:{i:0;s:5:\"18:00\";i:1;s:5:\"19:00\";i:2;s:5:\"20:00\";i:3;s:5:\"21:00\";i:4;s:5:\"22:00\";i:5;s:5:\"23:00\";i:6;s:5:\"00:00\";i:7;s:5:\"01:00\";i:8;s:5:\"02:00\";i:9;s:5:\"03:00\";i:10;s:5:\"04:00\";i:11;s:5:\"05:00\";}s:8:\"bookings\";a:12:{i:0;i:0;i:1;i:0;i:2;i:0;i:3;i:0;i:4;i:0;i:5;i:0;i:6;i:0;i:7;i:0;i:8;i:0;i:9;i:0;i:10;i:0;i:11;i:0;}s:8:\"checkins\";a:12:{i:0;i:0;i:1;i:0;i:2;i:0;i:3;i:0;i:4;i:0;i:5;i:0;i:6;i:0;i:7;i:0;i:8;i:0;i:9;i:0;i:10;i:0;i:11;i:0;}}s:12:\"demographics\";a:2:{s:6:\"labels\";a:4:{i:0;s:5:\"Local\";i:1;s:8:\"Regional\";i:2;s:8:\"National\";i:3;s:7:\"Foreign\";}s:6:\"values\";a:4:{i:0;i:3;i:1;i:1;i:2;i:0;i:3;i:0;}}s:6:\"status\";a:2:{s:6:\"labels\";a:3:{i:0;s:8:\"Approved\";i:1;s:7:\"Pending\";i:2;s:9:\"Cancelled\";}s:6:\"values\";a:3:{i:0;i:0;i:1;i:4;i:2;i:3;}}}', 1784870183),
-('e-turismo-cache-registration-otp-send:::1', 'i:1;', 1784800009),
-('e-turismo-cache-registration-otp-send:::1:timer', 'i:1784800009;', 1784800009);
+('e-turismo-cache-admin_advanced_today', 'a:2:{s:6:\"gauges\";a:2:{i:0;a:2:{s:4:\"name\";s:13:\"Lake Maragang\";s:10:\"percentage\";d:0;}i:1;a:2:{s:4:\"name\";s:10:\"Timberland\";s:10:\"percentage\";d:0;}}s:7:\"heatmap\";a:7:{i:0;a:2:{s:4:\"name\";s:6:\"Monday\";s:4:\"data\";a:5:{i:0;a:2:{s:1:\"x\";s:5:\"08:00\";s:1:\"y\";i:0;}i:1;a:2:{s:1:\"x\";s:5:\"10:00\";s:1:\"y\";i:0;}i:2;a:2:{s:1:\"x\";s:5:\"12:00\";s:1:\"y\";i:0;}i:3;a:2:{s:1:\"x\";s:5:\"14:00\";s:1:\"y\";i:0;}i:4;a:2:{s:1:\"x\";s:5:\"16:00\";s:1:\"y\";i:0;}}}i:1;a:2:{s:4:\"name\";s:7:\"Tuesday\";s:4:\"data\";a:5:{i:0;a:2:{s:1:\"x\";s:5:\"08:00\";s:1:\"y\";i:0;}i:1;a:2:{s:1:\"x\";s:5:\"10:00\";s:1:\"y\";i:0;}i:2;a:2:{s:1:\"x\";s:5:\"12:00\";s:1:\"y\";i:0;}i:3;a:2:{s:1:\"x\";s:5:\"14:00\";s:1:\"y\";i:0;}i:4;a:2:{s:1:\"x\";s:5:\"16:00\";s:1:\"y\";i:0;}}}i:2;a:2:{s:4:\"name\";s:9:\"Wednesday\";s:4:\"data\";a:5:{i:0;a:2:{s:1:\"x\";s:5:\"08:00\";s:1:\"y\";i:0;}i:1;a:2:{s:1:\"x\";s:5:\"10:00\";s:1:\"y\";i:0;}i:2;a:2:{s:1:\"x\";s:5:\"12:00\";s:1:\"y\";i:1;}i:3;a:2:{s:1:\"x\";s:5:\"14:00\";s:1:\"y\";i:0;}i:4;a:2:{s:1:\"x\";s:5:\"16:00\";s:1:\"y\";i:0;}}}i:3;a:2:{s:4:\"name\";s:8:\"Thursday\";s:4:\"data\";a:5:{i:0;a:2:{s:1:\"x\";s:5:\"08:00\";s:1:\"y\";i:0;}i:1;a:2:{s:1:\"x\";s:5:\"10:00\";s:1:\"y\";i:0;}i:2;a:2:{s:1:\"x\";s:5:\"12:00\";s:1:\"y\";i:0;}i:3;a:2:{s:1:\"x\";s:5:\"14:00\";s:1:\"y\";i:2;}i:4;a:2:{s:1:\"x\";s:5:\"16:00\";s:1:\"y\";i:0;}}}i:4;a:2:{s:4:\"name\";s:6:\"Friday\";s:4:\"data\";a:5:{i:0;a:2:{s:1:\"x\";s:5:\"08:00\";s:1:\"y\";i:0;}i:1;a:2:{s:1:\"x\";s:5:\"10:00\";s:1:\"y\";i:0;}i:2;a:2:{s:1:\"x\";s:5:\"12:00\";s:1:\"y\";i:0;}i:3;a:2:{s:1:\"x\";s:5:\"14:00\";s:1:\"y\";i:0;}i:4;a:2:{s:1:\"x\";s:5:\"16:00\";s:1:\"y\";i:0;}}}i:5;a:2:{s:4:\"name\";s:8:\"Saturday\";s:4:\"data\";a:5:{i:0;a:2:{s:1:\"x\";s:5:\"08:00\";s:1:\"y\";i:0;}i:1;a:2:{s:1:\"x\";s:5:\"10:00\";s:1:\"y\";i:0;}i:2;a:2:{s:1:\"x\";s:5:\"12:00\";s:1:\"y\";i:0;}i:3;a:2:{s:1:\"x\";s:5:\"14:00\";s:1:\"y\";i:0;}i:4;a:2:{s:1:\"x\";s:5:\"16:00\";s:1:\"y\";i:0;}}}i:6;a:2:{s:4:\"name\";s:6:\"Sunday\";s:4:\"data\";a:5:{i:0;a:2:{s:1:\"x\";s:5:\"08:00\";s:1:\"y\";i:0;}i:1;a:2:{s:1:\"x\";s:5:\"10:00\";s:1:\"y\";i:0;}i:2;a:2:{s:1:\"x\";s:5:\"12:00\";s:1:\"y\";i:0;}i:3;a:2:{s:1:\"x\";s:5:\"14:00\";s:1:\"y\";i:0;}i:4;a:2:{s:1:\"x\";s:5:\"16:00\";s:1:\"y\";i:0;}}}}}', 1786900972),
+('e-turismo-cache-admin_kpis_today', 'a:7:{s:14:\"activeTourists\";i:3;s:15:\"pendingRequests\";i:1;s:14:\"capacityHealth\";d:0;s:7:\"qrScans\";i:0;s:14:\"bookingsHalted\";b:0;s:8:\"pipeline\";O:29:\"Illuminate\\Support\\Collection\":2:{s:8:\"\0*\0items\";a:6:{i:0;a:6:{s:2:\"id\";i:6;s:9:\"reference\";s:9:\"#TRB-0006\";s:12:\"tourist_name\";s:13:\"JYLSAM QUIROG\";s:16:\"destination_name\";s:13:\"Lake Maragang\";s:10:\"visit_date\";s:10:\"2026-08-25\";s:6:\"status\";s:7:\"pending\";}i:1;a:6:{s:2:\"id\";i:5;s:9:\"reference\";s:9:\"#TRB-0005\";s:12:\"tourist_name\";s:13:\"JYLSAM QUIROG\";s:16:\"destination_name\";s:13:\"Lake Maragang\";s:10:\"visit_date\";s:10:\"2026-08-19\";s:6:\"status\";s:9:\"cancelled\";}i:2;a:6:{s:2:\"id\";i:4;s:9:\"reference\";s:9:\"#TRB-0004\";s:12:\"tourist_name\";s:13:\"JYLSAM QUIROG\";s:16:\"destination_name\";s:13:\"Lake Maragang\";s:10:\"visit_date\";s:10:\"2026-08-24\";s:6:\"status\";s:9:\"cancelled\";}i:3;a:6:{s:2:\"id\";i:3;s:9:\"reference\";s:9:\"#TRB-0003\";s:12:\"tourist_name\";s:13:\"JYLSAM QUIROG\";s:16:\"destination_name\";s:13:\"Lake Maragang\";s:10:\"visit_date\";s:10:\"2026-08-17\";s:6:\"status\";s:9:\"cancelled\";}i:4;a:6:{s:2:\"id\";i:2;s:9:\"reference\";s:9:\"#TRB-0002\";s:12:\"tourist_name\";s:13:\"JYLSAM QUIROG\";s:16:\"destination_name\";s:13:\"Lake Maragang\";s:10:\"visit_date\";s:10:\"2026-08-11\";s:6:\"status\";s:9:\"completed\";}i:5;a:6:{s:2:\"id\";i:1;s:9:\"reference\";s:9:\"#TRB-0001\";s:12:\"tourist_name\";s:13:\"JYLSAM QUIROG\";s:16:\"destination_name\";s:13:\"Lake Maragang\";s:10:\"visit_date\";s:10:\"2026-08-11\";s:6:\"status\";s:9:\"confirmed\";}}s:28:\"\0*\0escapeWhenCastingToString\";b:0;}s:10:\"sparklines\";a:4:{s:14:\"activeTourists\";a:7:{i:0;i:3;i:1;i:3;i:2;i:3;i:3;i:3;i:4;i:3;i:5;i:3;i:6;i:3;}s:15:\"pendingRequests\";a:7:{i:0;i:1;i:1;i:1;i:2;i:1;i:3;i:1;i:4;i:1;i:5;i:1;i:6;i:1;}s:14:\"capacityHealth\";a:7:{i:0;d:0;i:1;d:0;i:2;d:0;i:3;d:1;i:4;d:0;i:5;d:0;i:6;d:0;}s:7:\"qrScans\";a:7:{i:0;i:0;i:1;i:0;i:2;i:0;i:3;i:0;i:4;i:0;i:5;i:0;i:6;i:0;}}}', 1786900972),
+('e-turismo-cache-admin_trends_today', 'a:3:{s:6:\"trends\";a:3:{s:10:\"categories\";a:12:{i:0;s:5:\"06:00\";i:1;s:5:\"07:00\";i:2;s:5:\"08:00\";i:3;s:5:\"09:00\";i:4;s:5:\"10:00\";i:5;s:5:\"11:00\";i:6;s:5:\"12:00\";i:7;s:5:\"13:00\";i:8;s:5:\"14:00\";i:9;s:5:\"15:00\";i:10;s:5:\"16:00\";i:11;s:5:\"17:00\";}s:8:\"bookings\";a:12:{i:0;i:0;i:1;i:0;i:2;i:0;i:3;i:0;i:4;i:0;i:5;i:0;i:6;i:0;i:7;i:0;i:8;i:0;i:9;i:1;i:10;i:2;i:11;i:0;}s:8:\"checkins\";a:12:{i:0;i:0;i:1;i:0;i:2;i:0;i:3;i:0;i:4;i:0;i:5;i:0;i:6;i:0;i:7;i:0;i:8;i:0;i:9;i:0;i:10;i:0;i:11;i:0;}}s:12:\"demographics\";a:2:{s:6:\"labels\";a:4:{i:0;s:5:\"Local\";i:1;s:8:\"Regional\";i:2;s:8:\"National\";i:3;s:7:\"Foreign\";}s:6:\"values\";a:4:{i:0;i:5;i:1;i:1;i:2;i:0;i:3;i:0;}}s:6:\"status\";a:2:{s:6:\"labels\";a:3:{i:0;s:8:\"Approved\";i:1;s:7:\"Pending\";i:2;s:9:\"Cancelled\";}s:6:\"values\";a:3:{i:0;i:0;i:1;i:1;i:2;i:3;}}}', 1786900972),
+('e-turismo-cache-dest_month_avail_5_2026-08', 'a:31:{s:10:\"2026-08-01\";a:4:{s:5:\"slots\";i:100;s:6:\"booked\";i:0;s:3:\"pct\";d:0;s:6:\"status\";s:4:\"open\";}s:10:\"2026-08-02\";a:4:{s:5:\"slots\";i:100;s:6:\"booked\";i:0;s:3:\"pct\";d:0;s:6:\"status\";s:4:\"open\";}s:10:\"2026-08-03\";a:4:{s:5:\"slots\";i:100;s:6:\"booked\";i:0;s:3:\"pct\";d:0;s:6:\"status\";s:4:\"open\";}s:10:\"2026-08-04\";a:4:{s:5:\"slots\";i:100;s:6:\"booked\";i:0;s:3:\"pct\";d:0;s:6:\"status\";s:4:\"open\";}s:10:\"2026-08-05\";a:4:{s:5:\"slots\";i:100;s:6:\"booked\";i:0;s:3:\"pct\";d:0;s:6:\"status\";s:4:\"open\";}s:10:\"2026-08-06\";a:4:{s:5:\"slots\";i:100;s:6:\"booked\";i:0;s:3:\"pct\";d:0;s:6:\"status\";s:4:\"open\";}s:10:\"2026-08-07\";a:4:{s:5:\"slots\";i:100;s:6:\"booked\";i:0;s:3:\"pct\";d:0;s:6:\"status\";s:4:\"open\";}s:10:\"2026-08-08\";a:4:{s:5:\"slots\";i:100;s:6:\"booked\";i:0;s:3:\"pct\";d:0;s:6:\"status\";s:4:\"open\";}s:10:\"2026-08-09\";a:4:{s:5:\"slots\";i:100;s:6:\"booked\";i:0;s:3:\"pct\";d:0;s:6:\"status\";s:4:\"open\";}s:10:\"2026-08-10\";a:4:{s:5:\"slots\";i:100;s:6:\"booked\";i:0;s:3:\"pct\";d:0;s:6:\"status\";s:4:\"open\";}s:10:\"2026-08-11\";a:4:{s:5:\"slots\";i:98;s:6:\"booked\";i:2;s:3:\"pct\";d:2;s:6:\"status\";s:4:\"open\";}s:10:\"2026-08-12\";a:4:{s:5:\"slots\";i:100;s:6:\"booked\";i:0;s:3:\"pct\";d:0;s:6:\"status\";s:4:\"open\";}s:10:\"2026-08-13\";a:4:{s:5:\"slots\";i:100;s:6:\"booked\";i:0;s:3:\"pct\";d:0;s:6:\"status\";s:4:\"open\";}s:10:\"2026-08-14\";a:4:{s:5:\"slots\";i:100;s:6:\"booked\";i:0;s:3:\"pct\";d:0;s:6:\"status\";s:4:\"open\";}s:10:\"2026-08-15\";a:4:{s:5:\"slots\";i:100;s:6:\"booked\";i:0;s:3:\"pct\";d:0;s:6:\"status\";s:4:\"open\";}s:10:\"2026-08-16\";a:4:{s:5:\"slots\";i:100;s:6:\"booked\";i:0;s:3:\"pct\";d:0;s:6:\"status\";s:4:\"open\";}s:10:\"2026-08-17\";a:4:{s:5:\"slots\";i:100;s:6:\"booked\";i:0;s:3:\"pct\";d:0;s:6:\"status\";s:4:\"open\";}s:10:\"2026-08-18\";a:4:{s:5:\"slots\";i:100;s:6:\"booked\";i:0;s:3:\"pct\";d:0;s:6:\"status\";s:4:\"open\";}s:10:\"2026-08-19\";a:4:{s:5:\"slots\";i:100;s:6:\"booked\";i:0;s:3:\"pct\";d:0;s:6:\"status\";s:4:\"open\";}s:10:\"2026-08-20\";a:4:{s:5:\"slots\";i:100;s:6:\"booked\";i:0;s:3:\"pct\";d:0;s:6:\"status\";s:4:\"open\";}s:10:\"2026-08-21\";a:4:{s:5:\"slots\";i:100;s:6:\"booked\";i:0;s:3:\"pct\";d:0;s:6:\"status\";s:4:\"open\";}s:10:\"2026-08-22\";a:4:{s:5:\"slots\";i:100;s:6:\"booked\";i:0;s:3:\"pct\";d:0;s:6:\"status\";s:4:\"open\";}s:10:\"2026-08-23\";a:4:{s:5:\"slots\";i:100;s:6:\"booked\";i:0;s:3:\"pct\";d:0;s:6:\"status\";s:4:\"open\";}s:10:\"2026-08-24\";a:4:{s:5:\"slots\";i:100;s:6:\"booked\";i:0;s:3:\"pct\";d:0;s:6:\"status\";s:4:\"open\";}s:10:\"2026-08-25\";a:4:{s:5:\"slots\";i:100;s:6:\"booked\";i:0;s:3:\"pct\";d:0;s:6:\"status\";s:4:\"open\";}s:10:\"2026-08-26\";a:4:{s:5:\"slots\";i:100;s:6:\"booked\";i:0;s:3:\"pct\";d:0;s:6:\"status\";s:4:\"open\";}s:10:\"2026-08-27\";a:4:{s:5:\"slots\";i:100;s:6:\"booked\";i:0;s:3:\"pct\";d:0;s:6:\"status\";s:4:\"open\";}s:10:\"2026-08-28\";a:4:{s:5:\"slots\";i:100;s:6:\"booked\";i:0;s:3:\"pct\";d:0;s:6:\"status\";s:4:\"open\";}s:10:\"2026-08-29\";a:4:{s:5:\"slots\";i:100;s:6:\"booked\";i:0;s:3:\"pct\";d:0;s:6:\"status\";s:4:\"open\";}s:10:\"2026-08-30\";a:4:{s:5:\"slots\";i:100;s:6:\"booked\";i:0;s:3:\"pct\";d:0;s:6:\"status\";s:4:\"open\";}s:10:\"2026-08-31\";a:4:{s:5:\"slots\";i:100;s:6:\"booked\";i:0;s:3:\"pct\";d:0;s:6:\"status\";s:4:\"open\";}}', 1786902962),
+('e-turismo-cache-dest_month_avail_5_2026-09', 'a:30:{s:10:\"2026-09-01\";a:4:{s:5:\"slots\";i:100;s:6:\"booked\";i:0;s:3:\"pct\";d:0;s:6:\"status\";s:4:\"open\";}s:10:\"2026-09-02\";a:4:{s:5:\"slots\";i:100;s:6:\"booked\";i:0;s:3:\"pct\";d:0;s:6:\"status\";s:4:\"open\";}s:10:\"2026-09-03\";a:4:{s:5:\"slots\";i:100;s:6:\"booked\";i:0;s:3:\"pct\";d:0;s:6:\"status\";s:4:\"open\";}s:10:\"2026-09-04\";a:4:{s:5:\"slots\";i:100;s:6:\"booked\";i:0;s:3:\"pct\";d:0;s:6:\"status\";s:4:\"open\";}s:10:\"2026-09-05\";a:4:{s:5:\"slots\";i:100;s:6:\"booked\";i:0;s:3:\"pct\";d:0;s:6:\"status\";s:4:\"open\";}s:10:\"2026-09-06\";a:4:{s:5:\"slots\";i:100;s:6:\"booked\";i:0;s:3:\"pct\";d:0;s:6:\"status\";s:4:\"open\";}s:10:\"2026-09-07\";a:4:{s:5:\"slots\";i:100;s:6:\"booked\";i:0;s:3:\"pct\";d:0;s:6:\"status\";s:4:\"open\";}s:10:\"2026-09-08\";a:4:{s:5:\"slots\";i:100;s:6:\"booked\";i:0;s:3:\"pct\";d:0;s:6:\"status\";s:4:\"open\";}s:10:\"2026-09-09\";a:4:{s:5:\"slots\";i:100;s:6:\"booked\";i:0;s:3:\"pct\";d:0;s:6:\"status\";s:4:\"open\";}s:10:\"2026-09-10\";a:4:{s:5:\"slots\";i:100;s:6:\"booked\";i:0;s:3:\"pct\";d:0;s:6:\"status\";s:4:\"open\";}s:10:\"2026-09-11\";a:4:{s:5:\"slots\";i:100;s:6:\"booked\";i:0;s:3:\"pct\";d:0;s:6:\"status\";s:4:\"open\";}s:10:\"2026-09-12\";a:4:{s:5:\"slots\";i:100;s:6:\"booked\";i:0;s:3:\"pct\";d:0;s:6:\"status\";s:4:\"open\";}s:10:\"2026-09-13\";a:4:{s:5:\"slots\";i:100;s:6:\"booked\";i:0;s:3:\"pct\";d:0;s:6:\"status\";s:4:\"open\";}s:10:\"2026-09-14\";a:4:{s:5:\"slots\";i:100;s:6:\"booked\";i:0;s:3:\"pct\";d:0;s:6:\"status\";s:4:\"open\";}s:10:\"2026-09-15\";a:4:{s:5:\"slots\";i:100;s:6:\"booked\";i:0;s:3:\"pct\";d:0;s:6:\"status\";s:4:\"open\";}s:10:\"2026-09-16\";a:4:{s:5:\"slots\";i:100;s:6:\"booked\";i:0;s:3:\"pct\";d:0;s:6:\"status\";s:4:\"open\";}s:10:\"2026-09-17\";a:4:{s:5:\"slots\";i:100;s:6:\"booked\";i:0;s:3:\"pct\";d:0;s:6:\"status\";s:4:\"open\";}s:10:\"2026-09-18\";a:4:{s:5:\"slots\";i:100;s:6:\"booked\";i:0;s:3:\"pct\";d:0;s:6:\"status\";s:4:\"open\";}s:10:\"2026-09-19\";a:4:{s:5:\"slots\";i:100;s:6:\"booked\";i:0;s:3:\"pct\";d:0;s:6:\"status\";s:4:\"open\";}s:10:\"2026-09-20\";a:4:{s:5:\"slots\";i:100;s:6:\"booked\";i:0;s:3:\"pct\";d:0;s:6:\"status\";s:4:\"open\";}s:10:\"2026-09-21\";a:4:{s:5:\"slots\";i:100;s:6:\"booked\";i:0;s:3:\"pct\";d:0;s:6:\"status\";s:4:\"open\";}s:10:\"2026-09-22\";a:4:{s:5:\"slots\";i:100;s:6:\"booked\";i:0;s:3:\"pct\";d:0;s:6:\"status\";s:4:\"open\";}s:10:\"2026-09-23\";a:4:{s:5:\"slots\";i:100;s:6:\"booked\";i:0;s:3:\"pct\";d:0;s:6:\"status\";s:4:\"open\";}s:10:\"2026-09-24\";a:4:{s:5:\"slots\";i:100;s:6:\"booked\";i:0;s:3:\"pct\";d:0;s:6:\"status\";s:4:\"open\";}s:10:\"2026-09-25\";a:4:{s:5:\"slots\";i:100;s:6:\"booked\";i:0;s:3:\"pct\";d:0;s:6:\"status\";s:4:\"open\";}s:10:\"2026-09-26\";a:4:{s:5:\"slots\";i:100;s:6:\"booked\";i:0;s:3:\"pct\";d:0;s:6:\"status\";s:4:\"open\";}s:10:\"2026-09-27\";a:4:{s:5:\"slots\";i:100;s:6:\"booked\";i:0;s:3:\"pct\";d:0;s:6:\"status\";s:4:\"open\";}s:10:\"2026-09-28\";a:4:{s:5:\"slots\";i:100;s:6:\"booked\";i:0;s:3:\"pct\";d:0;s:6:\"status\";s:4:\"open\";}s:10:\"2026-09-29\";a:4:{s:5:\"slots\";i:100;s:6:\"booked\";i:0;s:3:\"pct\";d:0;s:6:\"status\";s:4:\"open\";}s:10:\"2026-09-30\";a:4:{s:5:\"slots\";i:100;s:6:\"booked\";i:0;s:3:\"pct\";d:0;s:6:\"status\";s:4:\"open\";}}', 1786902962),
+('e-turismo-cache-dest_month_avail_5_2026-10', 'a:31:{s:10:\"2026-10-01\";a:4:{s:5:\"slots\";i:100;s:6:\"booked\";i:0;s:3:\"pct\";d:0;s:6:\"status\";s:4:\"open\";}s:10:\"2026-10-02\";a:4:{s:5:\"slots\";i:100;s:6:\"booked\";i:0;s:3:\"pct\";d:0;s:6:\"status\";s:4:\"open\";}s:10:\"2026-10-03\";a:4:{s:5:\"slots\";i:100;s:6:\"booked\";i:0;s:3:\"pct\";d:0;s:6:\"status\";s:4:\"open\";}s:10:\"2026-10-04\";a:4:{s:5:\"slots\";i:100;s:6:\"booked\";i:0;s:3:\"pct\";d:0;s:6:\"status\";s:4:\"open\";}s:10:\"2026-10-05\";a:4:{s:5:\"slots\";i:100;s:6:\"booked\";i:0;s:3:\"pct\";d:0;s:6:\"status\";s:4:\"open\";}s:10:\"2026-10-06\";a:4:{s:5:\"slots\";i:100;s:6:\"booked\";i:0;s:3:\"pct\";d:0;s:6:\"status\";s:4:\"open\";}s:10:\"2026-10-07\";a:4:{s:5:\"slots\";i:100;s:6:\"booked\";i:0;s:3:\"pct\";d:0;s:6:\"status\";s:4:\"open\";}s:10:\"2026-10-08\";a:4:{s:5:\"slots\";i:100;s:6:\"booked\";i:0;s:3:\"pct\";d:0;s:6:\"status\";s:4:\"open\";}s:10:\"2026-10-09\";a:4:{s:5:\"slots\";i:100;s:6:\"booked\";i:0;s:3:\"pct\";d:0;s:6:\"status\";s:4:\"open\";}s:10:\"2026-10-10\";a:4:{s:5:\"slots\";i:100;s:6:\"booked\";i:0;s:3:\"pct\";d:0;s:6:\"status\";s:4:\"open\";}s:10:\"2026-10-11\";a:4:{s:5:\"slots\";i:100;s:6:\"booked\";i:0;s:3:\"pct\";d:0;s:6:\"status\";s:4:\"open\";}s:10:\"2026-10-12\";a:4:{s:5:\"slots\";i:100;s:6:\"booked\";i:0;s:3:\"pct\";d:0;s:6:\"status\";s:4:\"open\";}s:10:\"2026-10-13\";a:4:{s:5:\"slots\";i:100;s:6:\"booked\";i:0;s:3:\"pct\";d:0;s:6:\"status\";s:4:\"open\";}s:10:\"2026-10-14\";a:4:{s:5:\"slots\";i:100;s:6:\"booked\";i:0;s:3:\"pct\";d:0;s:6:\"status\";s:4:\"open\";}s:10:\"2026-10-15\";a:4:{s:5:\"slots\";i:100;s:6:\"booked\";i:0;s:3:\"pct\";d:0;s:6:\"status\";s:4:\"open\";}s:10:\"2026-10-16\";a:4:{s:5:\"slots\";i:100;s:6:\"booked\";i:0;s:3:\"pct\";d:0;s:6:\"status\";s:4:\"open\";}s:10:\"2026-10-17\";a:4:{s:5:\"slots\";i:100;s:6:\"booked\";i:0;s:3:\"pct\";d:0;s:6:\"status\";s:4:\"open\";}s:10:\"2026-10-18\";a:4:{s:5:\"slots\";i:100;s:6:\"booked\";i:0;s:3:\"pct\";d:0;s:6:\"status\";s:4:\"open\";}s:10:\"2026-10-19\";a:4:{s:5:\"slots\";i:100;s:6:\"booked\";i:0;s:3:\"pct\";d:0;s:6:\"status\";s:4:\"open\";}s:10:\"2026-10-20\";a:4:{s:5:\"slots\";i:100;s:6:\"booked\";i:0;s:3:\"pct\";d:0;s:6:\"status\";s:4:\"open\";}s:10:\"2026-10-21\";a:4:{s:5:\"slots\";i:100;s:6:\"booked\";i:0;s:3:\"pct\";d:0;s:6:\"status\";s:4:\"open\";}s:10:\"2026-10-22\";a:4:{s:5:\"slots\";i:100;s:6:\"booked\";i:0;s:3:\"pct\";d:0;s:6:\"status\";s:4:\"open\";}s:10:\"2026-10-23\";a:4:{s:5:\"slots\";i:100;s:6:\"booked\";i:0;s:3:\"pct\";d:0;s:6:\"status\";s:4:\"open\";}s:10:\"2026-10-24\";a:4:{s:5:\"slots\";i:100;s:6:\"booked\";i:0;s:3:\"pct\";d:0;s:6:\"status\";s:4:\"open\";}s:10:\"2026-10-25\";a:4:{s:5:\"slots\";i:100;s:6:\"booked\";i:0;s:3:\"pct\";d:0;s:6:\"status\";s:4:\"open\";}s:10:\"2026-10-26\";a:4:{s:5:\"slots\";i:100;s:6:\"booked\";i:0;s:3:\"pct\";d:0;s:6:\"status\";s:4:\"open\";}s:10:\"2026-10-27\";a:4:{s:5:\"slots\";i:100;s:6:\"booked\";i:0;s:3:\"pct\";d:0;s:6:\"status\";s:4:\"open\";}s:10:\"2026-10-28\";a:4:{s:5:\"slots\";i:100;s:6:\"booked\";i:0;s:3:\"pct\";d:0;s:6:\"status\";s:4:\"open\";}s:10:\"2026-10-29\";a:4:{s:5:\"slots\";i:100;s:6:\"booked\";i:0;s:3:\"pct\";d:0;s:6:\"status\";s:4:\"open\";}s:10:\"2026-10-30\";a:4:{s:5:\"slots\";i:100;s:6:\"booked\";i:0;s:3:\"pct\";d:0;s:6:\"status\";s:4:\"open\";}s:10:\"2026-10-31\";a:4:{s:5:\"slots\";i:100;s:6:\"booked\";i:0;s:3:\"pct\";d:0;s:6:\"status\";s:4:\"open\";}}', 1786895657),
+('e-turismo-cache-dest_month_avail_5_2026-11', 'a:30:{s:10:\"2026-11-01\";a:4:{s:5:\"slots\";i:100;s:6:\"booked\";i:0;s:3:\"pct\";d:0;s:6:\"status\";s:4:\"open\";}s:10:\"2026-11-02\";a:4:{s:5:\"slots\";i:100;s:6:\"booked\";i:0;s:3:\"pct\";d:0;s:6:\"status\";s:4:\"open\";}s:10:\"2026-11-03\";a:4:{s:5:\"slots\";i:100;s:6:\"booked\";i:0;s:3:\"pct\";d:0;s:6:\"status\";s:4:\"open\";}s:10:\"2026-11-04\";a:4:{s:5:\"slots\";i:100;s:6:\"booked\";i:0;s:3:\"pct\";d:0;s:6:\"status\";s:4:\"open\";}s:10:\"2026-11-05\";a:4:{s:5:\"slots\";i:100;s:6:\"booked\";i:0;s:3:\"pct\";d:0;s:6:\"status\";s:4:\"open\";}s:10:\"2026-11-06\";a:4:{s:5:\"slots\";i:100;s:6:\"booked\";i:0;s:3:\"pct\";d:0;s:6:\"status\";s:4:\"open\";}s:10:\"2026-11-07\";a:4:{s:5:\"slots\";i:100;s:6:\"booked\";i:0;s:3:\"pct\";d:0;s:6:\"status\";s:4:\"open\";}s:10:\"2026-11-08\";a:4:{s:5:\"slots\";i:100;s:6:\"booked\";i:0;s:3:\"pct\";d:0;s:6:\"status\";s:4:\"open\";}s:10:\"2026-11-09\";a:4:{s:5:\"slots\";i:100;s:6:\"booked\";i:0;s:3:\"pct\";d:0;s:6:\"status\";s:4:\"open\";}s:10:\"2026-11-10\";a:4:{s:5:\"slots\";i:100;s:6:\"booked\";i:0;s:3:\"pct\";d:0;s:6:\"status\";s:4:\"open\";}s:10:\"2026-11-11\";a:4:{s:5:\"slots\";i:100;s:6:\"booked\";i:0;s:3:\"pct\";d:0;s:6:\"status\";s:4:\"open\";}s:10:\"2026-11-12\";a:4:{s:5:\"slots\";i:100;s:6:\"booked\";i:0;s:3:\"pct\";d:0;s:6:\"status\";s:4:\"open\";}s:10:\"2026-11-13\";a:4:{s:5:\"slots\";i:100;s:6:\"booked\";i:0;s:3:\"pct\";d:0;s:6:\"status\";s:4:\"open\";}s:10:\"2026-11-14\";a:4:{s:5:\"slots\";i:100;s:6:\"booked\";i:0;s:3:\"pct\";d:0;s:6:\"status\";s:4:\"open\";}s:10:\"2026-11-15\";a:4:{s:5:\"slots\";i:100;s:6:\"booked\";i:0;s:3:\"pct\";d:0;s:6:\"status\";s:4:\"open\";}s:10:\"2026-11-16\";a:4:{s:5:\"slots\";i:100;s:6:\"booked\";i:0;s:3:\"pct\";d:0;s:6:\"status\";s:4:\"open\";}s:10:\"2026-11-17\";a:4:{s:5:\"slots\";i:100;s:6:\"booked\";i:0;s:3:\"pct\";d:0;s:6:\"status\";s:4:\"open\";}s:10:\"2026-11-18\";a:4:{s:5:\"slots\";i:100;s:6:\"booked\";i:0;s:3:\"pct\";d:0;s:6:\"status\";s:4:\"open\";}s:10:\"2026-11-19\";a:4:{s:5:\"slots\";i:100;s:6:\"booked\";i:0;s:3:\"pct\";d:0;s:6:\"status\";s:4:\"open\";}s:10:\"2026-11-20\";a:4:{s:5:\"slots\";i:100;s:6:\"booked\";i:0;s:3:\"pct\";d:0;s:6:\"status\";s:4:\"open\";}s:10:\"2026-11-21\";a:4:{s:5:\"slots\";i:100;s:6:\"booked\";i:0;s:3:\"pct\";d:0;s:6:\"status\";s:4:\"open\";}s:10:\"2026-11-22\";a:4:{s:5:\"slots\";i:100;s:6:\"booked\";i:0;s:3:\"pct\";d:0;s:6:\"status\";s:4:\"open\";}s:10:\"2026-11-23\";a:4:{s:5:\"slots\";i:100;s:6:\"booked\";i:0;s:3:\"pct\";d:0;s:6:\"status\";s:4:\"open\";}s:10:\"2026-11-24\";a:4:{s:5:\"slots\";i:100;s:6:\"booked\";i:0;s:3:\"pct\";d:0;s:6:\"status\";s:4:\"open\";}s:10:\"2026-11-25\";a:4:{s:5:\"slots\";i:100;s:6:\"booked\";i:0;s:3:\"pct\";d:0;s:6:\"status\";s:4:\"open\";}s:10:\"2026-11-26\";a:4:{s:5:\"slots\";i:100;s:6:\"booked\";i:0;s:3:\"pct\";d:0;s:6:\"status\";s:4:\"open\";}s:10:\"2026-11-27\";a:4:{s:5:\"slots\";i:100;s:6:\"booked\";i:0;s:3:\"pct\";d:0;s:6:\"status\";s:4:\"open\";}s:10:\"2026-11-28\";a:4:{s:5:\"slots\";i:100;s:6:\"booked\";i:0;s:3:\"pct\";d:0;s:6:\"status\";s:4:\"open\";}s:10:\"2026-11-29\";a:4:{s:5:\"slots\";i:100;s:6:\"booked\";i:0;s:3:\"pct\";d:0;s:6:\"status\";s:4:\"open\";}s:10:\"2026-11-30\";a:4:{s:5:\"slots\";i:100;s:6:\"booked\";i:0;s:3:\"pct\";d:0;s:6:\"status\";s:4:\"open\";}}', 1786895658),
+('e-turismo-cache-dest_month_avail_6_2026-08', 'a:31:{s:10:\"2026-08-01\";a:4:{s:5:\"slots\";i:100;s:6:\"booked\";i:0;s:3:\"pct\";d:0;s:6:\"status\";s:4:\"open\";}s:10:\"2026-08-02\";a:4:{s:5:\"slots\";i:100;s:6:\"booked\";i:0;s:3:\"pct\";d:0;s:6:\"status\";s:4:\"open\";}s:10:\"2026-08-03\";a:4:{s:5:\"slots\";i:100;s:6:\"booked\";i:0;s:3:\"pct\";d:0;s:6:\"status\";s:4:\"open\";}s:10:\"2026-08-04\";a:4:{s:5:\"slots\";i:100;s:6:\"booked\";i:0;s:3:\"pct\";d:0;s:6:\"status\";s:4:\"open\";}s:10:\"2026-08-05\";a:4:{s:5:\"slots\";i:100;s:6:\"booked\";i:0;s:3:\"pct\";d:0;s:6:\"status\";s:4:\"open\";}s:10:\"2026-08-06\";a:4:{s:5:\"slots\";i:100;s:6:\"booked\";i:0;s:3:\"pct\";d:0;s:6:\"status\";s:4:\"open\";}s:10:\"2026-08-07\";a:4:{s:5:\"slots\";i:100;s:6:\"booked\";i:0;s:3:\"pct\";d:0;s:6:\"status\";s:4:\"open\";}s:10:\"2026-08-08\";a:4:{s:5:\"slots\";i:100;s:6:\"booked\";i:0;s:3:\"pct\";d:0;s:6:\"status\";s:4:\"open\";}s:10:\"2026-08-09\";a:4:{s:5:\"slots\";i:100;s:6:\"booked\";i:0;s:3:\"pct\";d:0;s:6:\"status\";s:4:\"open\";}s:10:\"2026-08-10\";a:4:{s:5:\"slots\";i:100;s:6:\"booked\";i:0;s:3:\"pct\";d:0;s:6:\"status\";s:4:\"open\";}s:10:\"2026-08-11\";a:4:{s:5:\"slots\";i:100;s:6:\"booked\";i:0;s:3:\"pct\";d:0;s:6:\"status\";s:4:\"open\";}s:10:\"2026-08-12\";a:4:{s:5:\"slots\";i:100;s:6:\"booked\";i:0;s:3:\"pct\";d:0;s:6:\"status\";s:4:\"open\";}s:10:\"2026-08-13\";a:4:{s:5:\"slots\";i:100;s:6:\"booked\";i:0;s:3:\"pct\";d:0;s:6:\"status\";s:4:\"open\";}s:10:\"2026-08-14\";a:4:{s:5:\"slots\";i:100;s:6:\"booked\";i:0;s:3:\"pct\";d:0;s:6:\"status\";s:4:\"open\";}s:10:\"2026-08-15\";a:4:{s:5:\"slots\";i:100;s:6:\"booked\";i:0;s:3:\"pct\";d:0;s:6:\"status\";s:4:\"open\";}s:10:\"2026-08-16\";a:4:{s:5:\"slots\";i:100;s:6:\"booked\";i:0;s:3:\"pct\";d:0;s:6:\"status\";s:4:\"open\";}s:10:\"2026-08-17\";a:4:{s:5:\"slots\";i:100;s:6:\"booked\";i:0;s:3:\"pct\";d:0;s:6:\"status\";s:4:\"open\";}s:10:\"2026-08-18\";a:4:{s:5:\"slots\";i:100;s:6:\"booked\";i:0;s:3:\"pct\";d:0;s:6:\"status\";s:4:\"open\";}s:10:\"2026-08-19\";a:4:{s:5:\"slots\";i:100;s:6:\"booked\";i:0;s:3:\"pct\";d:0;s:6:\"status\";s:4:\"open\";}s:10:\"2026-08-20\";a:4:{s:5:\"slots\";i:100;s:6:\"booked\";i:0;s:3:\"pct\";d:0;s:6:\"status\";s:4:\"open\";}s:10:\"2026-08-21\";a:4:{s:5:\"slots\";i:100;s:6:\"booked\";i:0;s:3:\"pct\";d:0;s:6:\"status\";s:4:\"open\";}s:10:\"2026-08-22\";a:4:{s:5:\"slots\";i:100;s:6:\"booked\";i:0;s:3:\"pct\";d:0;s:6:\"status\";s:4:\"open\";}s:10:\"2026-08-23\";a:4:{s:5:\"slots\";i:100;s:6:\"booked\";i:0;s:3:\"pct\";d:0;s:6:\"status\";s:4:\"open\";}s:10:\"2026-08-24\";a:4:{s:5:\"slots\";i:100;s:6:\"booked\";i:0;s:3:\"pct\";d:0;s:6:\"status\";s:4:\"open\";}s:10:\"2026-08-25\";a:4:{s:5:\"slots\";i:100;s:6:\"booked\";i:0;s:3:\"pct\";d:0;s:6:\"status\";s:4:\"open\";}s:10:\"2026-08-26\";a:4:{s:5:\"slots\";i:100;s:6:\"booked\";i:0;s:3:\"pct\";d:0;s:6:\"status\";s:4:\"open\";}s:10:\"2026-08-27\";a:4:{s:5:\"slots\";i:100;s:6:\"booked\";i:0;s:3:\"pct\";d:0;s:6:\"status\";s:4:\"open\";}s:10:\"2026-08-28\";a:4:{s:5:\"slots\";i:100;s:6:\"booked\";i:0;s:3:\"pct\";d:0;s:6:\"status\";s:4:\"open\";}s:10:\"2026-08-29\";a:4:{s:5:\"slots\";i:100;s:6:\"booked\";i:0;s:3:\"pct\";d:0;s:6:\"status\";s:4:\"open\";}s:10:\"2026-08-30\";a:4:{s:5:\"slots\";i:100;s:6:\"booked\";i:0;s:3:\"pct\";d:0;s:6:\"status\";s:4:\"open\";}s:10:\"2026-08-31\";a:4:{s:5:\"slots\";i:100;s:6:\"booked\";i:0;s:3:\"pct\";d:0;s:6:\"status\";s:4:\"open\";}}', 1786896583),
+('e-turismo-cache-dest_month_avail_6_2026-09', 'a:30:{s:10:\"2026-09-01\";a:4:{s:5:\"slots\";i:100;s:6:\"booked\";i:0;s:3:\"pct\";d:0;s:6:\"status\";s:4:\"open\";}s:10:\"2026-09-02\";a:4:{s:5:\"slots\";i:100;s:6:\"booked\";i:0;s:3:\"pct\";d:0;s:6:\"status\";s:4:\"open\";}s:10:\"2026-09-03\";a:4:{s:5:\"slots\";i:100;s:6:\"booked\";i:0;s:3:\"pct\";d:0;s:6:\"status\";s:4:\"open\";}s:10:\"2026-09-04\";a:4:{s:5:\"slots\";i:100;s:6:\"booked\";i:0;s:3:\"pct\";d:0;s:6:\"status\";s:4:\"open\";}s:10:\"2026-09-05\";a:4:{s:5:\"slots\";i:100;s:6:\"booked\";i:0;s:3:\"pct\";d:0;s:6:\"status\";s:4:\"open\";}s:10:\"2026-09-06\";a:4:{s:5:\"slots\";i:100;s:6:\"booked\";i:0;s:3:\"pct\";d:0;s:6:\"status\";s:4:\"open\";}s:10:\"2026-09-07\";a:4:{s:5:\"slots\";i:100;s:6:\"booked\";i:0;s:3:\"pct\";d:0;s:6:\"status\";s:4:\"open\";}s:10:\"2026-09-08\";a:4:{s:5:\"slots\";i:100;s:6:\"booked\";i:0;s:3:\"pct\";d:0;s:6:\"status\";s:4:\"open\";}s:10:\"2026-09-09\";a:4:{s:5:\"slots\";i:100;s:6:\"booked\";i:0;s:3:\"pct\";d:0;s:6:\"status\";s:4:\"open\";}s:10:\"2026-09-10\";a:4:{s:5:\"slots\";i:100;s:6:\"booked\";i:0;s:3:\"pct\";d:0;s:6:\"status\";s:4:\"open\";}s:10:\"2026-09-11\";a:4:{s:5:\"slots\";i:100;s:6:\"booked\";i:0;s:3:\"pct\";d:0;s:6:\"status\";s:4:\"open\";}s:10:\"2026-09-12\";a:4:{s:5:\"slots\";i:100;s:6:\"booked\";i:0;s:3:\"pct\";d:0;s:6:\"status\";s:4:\"open\";}s:10:\"2026-09-13\";a:4:{s:5:\"slots\";i:100;s:6:\"booked\";i:0;s:3:\"pct\";d:0;s:6:\"status\";s:4:\"open\";}s:10:\"2026-09-14\";a:4:{s:5:\"slots\";i:100;s:6:\"booked\";i:0;s:3:\"pct\";d:0;s:6:\"status\";s:4:\"open\";}s:10:\"2026-09-15\";a:4:{s:5:\"slots\";i:100;s:6:\"booked\";i:0;s:3:\"pct\";d:0;s:6:\"status\";s:4:\"open\";}s:10:\"2026-09-16\";a:4:{s:5:\"slots\";i:100;s:6:\"booked\";i:0;s:3:\"pct\";d:0;s:6:\"status\";s:4:\"open\";}s:10:\"2026-09-17\";a:4:{s:5:\"slots\";i:100;s:6:\"booked\";i:0;s:3:\"pct\";d:0;s:6:\"status\";s:4:\"open\";}s:10:\"2026-09-18\";a:4:{s:5:\"slots\";i:100;s:6:\"booked\";i:0;s:3:\"pct\";d:0;s:6:\"status\";s:4:\"open\";}s:10:\"2026-09-19\";a:4:{s:5:\"slots\";i:100;s:6:\"booked\";i:0;s:3:\"pct\";d:0;s:6:\"status\";s:4:\"open\";}s:10:\"2026-09-20\";a:4:{s:5:\"slots\";i:100;s:6:\"booked\";i:0;s:3:\"pct\";d:0;s:6:\"status\";s:4:\"open\";}s:10:\"2026-09-21\";a:4:{s:5:\"slots\";i:100;s:6:\"booked\";i:0;s:3:\"pct\";d:0;s:6:\"status\";s:4:\"open\";}s:10:\"2026-09-22\";a:4:{s:5:\"slots\";i:100;s:6:\"booked\";i:0;s:3:\"pct\";d:0;s:6:\"status\";s:4:\"open\";}s:10:\"2026-09-23\";a:4:{s:5:\"slots\";i:100;s:6:\"booked\";i:0;s:3:\"pct\";d:0;s:6:\"status\";s:4:\"open\";}s:10:\"2026-09-24\";a:4:{s:5:\"slots\";i:100;s:6:\"booked\";i:0;s:3:\"pct\";d:0;s:6:\"status\";s:4:\"open\";}s:10:\"2026-09-25\";a:4:{s:5:\"slots\";i:100;s:6:\"booked\";i:0;s:3:\"pct\";d:0;s:6:\"status\";s:4:\"open\";}s:10:\"2026-09-26\";a:4:{s:5:\"slots\";i:100;s:6:\"booked\";i:0;s:3:\"pct\";d:0;s:6:\"status\";s:4:\"open\";}s:10:\"2026-09-27\";a:4:{s:5:\"slots\";i:100;s:6:\"booked\";i:0;s:3:\"pct\";d:0;s:6:\"status\";s:4:\"open\";}s:10:\"2026-09-28\";a:4:{s:5:\"slots\";i:100;s:6:\"booked\";i:0;s:3:\"pct\";d:0;s:6:\"status\";s:4:\"open\";}s:10:\"2026-09-29\";a:4:{s:5:\"slots\";i:100;s:6:\"booked\";i:0;s:3:\"pct\";d:0;s:6:\"status\";s:4:\"open\";}s:10:\"2026-09-30\";a:4:{s:5:\"slots\";i:100;s:6:\"booked\";i:0;s:3:\"pct\";d:0;s:6:\"status\";s:4:\"open\";}}', 1786896583);
 
 -- --------------------------------------------------------
 
@@ -154,8 +167,8 @@ CREATE TABLE `destinations` (
 --
 
 INSERT INTO `destinations` (`id`, `name`, `initials`, `location`, `capacity`, `description`, `photos`, `availability_status`, `checkin_latitude`, `checkin_longitude`, `checkin_radius`, `last_updated_by`, `created_at`, `updated_at`) VALUES
-(5, 'Lake Maragang', 'LM', '7043, Limas, Tigbao, Zamboanga del Sur, Philippines', 100, NULL, NULL, 'Available', 7.819258, 123.288880, 100, 'STAFF', '2026-07-06 00:18:42', '2026-07-19 02:24:22'),
-(6, 'Timberland', 'TIM', 'TBD', 100, NULL, NULL, 'Available', NULL, NULL, 100, NULL, '2026-07-23 01:32:00', '2026-07-23 01:32:00');
+(5, 'Lake Maragang', 'LM', '7043, Limas, Tigbao, Zamboanga del Sur, Philippines', 100, NULL, 'destination_photos/P75VQmPME54tYdtOieHm5OeJM0cG3jprVUa5hMla.jpg', 'Available', 7.819258, 123.288880, 100, 'STAFF', '2026-07-06 00:18:42', '2026-07-26 10:46:25'),
+(6, 'Timberland', 'TIM', 'Purok 4, Poblacion, Timolan, Zamboanga del Sur', 100, NULL, 'destination_photos/YAW4q7rNZkVciczsa8w0Mjo7jQQbBBmlBf1sIzF7.jpg', 'Available', 7.813524, 123.238931, 100, 'TM', '2026-07-23 01:32:00', '2026-07-26 10:39:57');
 
 -- --------------------------------------------------------
 
@@ -171,6 +184,14 @@ CREATE TABLE `destination_images` (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `destination_images`
+--
+
+INSERT INTO `destination_images` (`id`, `destination_id`, `path`, `is_primary`, `created_at`, `updated_at`) VALUES
+(7, 6, 'destination_photos/YAW4q7rNZkVciczsa8w0Mjo7jQQbBBmlBf1sIzF7.jpg', 1, '2026-07-26 10:39:57', '2026-07-26 10:39:57'),
+(8, 5, 'destination_photos/P75VQmPME54tYdtOieHm5OeJM0cG3jprVUa5hMla.jpg', 1, '2026-07-26 10:46:25', '2026-07-26 10:46:25');
 
 -- --------------------------------------------------------
 
@@ -203,6 +224,13 @@ CREATE TABLE `jobs` (
   `available_at` int(10) UNSIGNED NOT NULL,
   `created_at` int(10) UNSIGNED NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `jobs`
+--
+
+INSERT INTO `jobs` (`id`, `queue`, `payload`, `attempts`, `reserved_at`, `available_at`, `created_at`) VALUES
+(12, 'default', '{\"uuid\":\"6a6c52a9-9324-47a2-9df0-94173a414d40\",\"displayName\":\"App\\\\Jobs\\\\SendBookingNotificationJob\",\"job\":\"Illuminate\\\\Queue\\\\CallQueuedHandler@call\",\"maxTries\":null,\"maxExceptions\":null,\"failOnTimeout\":false,\"backoff\":null,\"timeout\":null,\"retryUntil\":null,\"data\":{\"commandName\":\"App\\\\Jobs\\\\SendBookingNotificationJob\",\"command\":\"O:35:\\\"App\\\\Jobs\\\\SendBookingNotificationJob\\\":5:{s:12:\\\"recipientIds\\\";a:1:{i:0;i:2;}s:13:\\\"recipientType\\\";s:7:\\\"tourist\\\";s:4:\\\"type\\\";s:13:\\\"booking_alert\\\";s:7:\\\"message\\\";s:98:\\\"Your booking for Lake Maragang on 2026-08-17 has been CONFIRMED! Your QR ticket code is: LMXVF8HZ.\\\";s:16:\\\"relatedBookingId\\\";i:3;}\",\"batchId\":null},\"createdAt\":1786633366,\"delay\":null}', 0, NULL, 1786633366, 1786633366);
 
 -- --------------------------------------------------------
 
@@ -266,7 +294,10 @@ INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
 (24, '2026_07_15_000005_add_performance_indexes_to_tables', 16),
 (25, '2026_07_15_173441_create_sessions_table', 17),
 (26, '2026_07_16_062016_repair_failed_jobs_table', 18),
-(27, '2026_07_19_154513_add_gender_to_users_and_walk_ins', 19);
+(27, '2026_07_19_154513_add_gender_to_users_and_walk_ins', 19),
+(28, '2026_07_25_000001_update_id_verification_status_enum', 20),
+(29, '2026_07_25_021450_add_duration_days_to_bookings_table', 20),
+(30, '2026_07_27_000001_create_booking_companions_table', 20);
 
 -- --------------------------------------------------------
 
@@ -295,11 +326,33 @@ INSERT INTO `notifications` (`id`, `recipient_id`, `recipient_type`, `type`, `me
 (2, 7, 'staff', 'booking_alert', 'New booking request from JYLSAM for Lake Maragang on 2026-07-21.', 91, 1, '2026-07-14 08:16:24', '2026-07-15 06:35:11'),
 (3, 2, 'tourist', 'booking_alert', 'Your booking for Lake Maragang on 2026-07-21 has been CONFIRMED! Your QR ticket code is: LM666744.', 91, 1, '2026-07-14 08:17:32', '2026-07-15 10:53:05'),
 (4, 7, 'tourist', 'booking_alert', 'Your booking for Lake Maragang on 2026-07-25 has been CONFIRMED! Your QR ticket code is: LM781432.', 67, 1, '2026-07-14 08:34:19', '2026-07-15 06:35:09'),
-(5, 2, 'tourist', 'booking_alert', 'Your booking for Lake Maragang on 2026-07-18 has been DECLINED. Reason: ', 62, 0, '2026-07-16 00:01:43', '2026-07-16 00:01:43'),
+(5, 2, 'tourist', 'booking_alert', 'Your booking for Lake Maragang on 2026-07-18 has been DECLINED. Reason: ', 62, 1, '2026-07-16 00:01:43', '2026-07-26 11:36:09'),
 (6, 7, 'staff', 'booking_alert', 'New booking request from ARNEL L. GABATO for Lake Maragang on 2026-07-18.', 92, 1, '2026-07-16 01:11:55', '2026-07-17 23:49:49'),
 (7, 7, 'staff', 'booking_alert', 'New booking request from ARNEL L. GABATO for Lake Maragang on 2026-07-19.', 93, 1, '2026-07-16 01:14:40', '2026-07-17 23:49:47'),
 (8, 10, 'tourist', 'booking_alert', 'Your booking for Lake Maragang on 2026-07-19 has been CONFIRMED! Your QR ticket code is: LMPRROV7.', 93, 0, '2026-07-23 01:02:21', '2026-07-23 01:02:21'),
-(9, 10, 'tourist', 'booking_alert', 'Your booking for Lake Maragang on 2026-07-18 has been CONFIRMED! Your QR ticket code is: LMIFB5R2.', 92, 0, '2026-07-23 01:12:03', '2026-07-23 01:12:03');
+(9, 10, 'tourist', 'booking_alert', 'Your booking for Lake Maragang on 2026-07-18 has been CONFIRMED! Your QR ticket code is: LMIFB5R2.', 92, 0, '2026-07-23 01:12:03', '2026-07-23 01:12:03'),
+(10, 7, 'staff', 'booking_alert', 'New booking request from JYLSAM (group of 2) for Lake Maragang on 2026-08-11.', 2, 1, '2026-08-09 23:29:08', '2026-08-12 04:52:44'),
+(11, 7, 'staff', 'booking_alert', 'New booking request from JYLSAM (group of 2) for Lake Maragang on 2026-08-11.', 1, 1, '2026-08-09 23:29:08', '2026-08-12 04:52:46'),
+(12, 2, 'tourist', 'booking_alert', 'Your booking for Lake Maragang on 2026-08-11 has been CONFIRMED! Your QR ticket code is: LMAYN5HH.', 2, 1, '2026-08-09 23:35:35', '2026-08-12 06:31:46'),
+(13, 2, 'tourist', 'booking_alert', 'Your booking for Lake Maragang on 2026-08-11 has been CONFIRMED! Your QR ticket code is: LMAHMCCK.', 1, 1, '2026-08-12 04:30:42', '2026-08-12 06:31:46'),
+(14, 2, 'App\\Models\\User', 'broadcast_alert', '[CRITICAL] Severe Weather Warning: Heavy rainfall and high winds expected. Please avoid mountain trails and coastal areas.', NULL, 1, '2026-08-13 07:21:10', '2026-08-14 07:26:48'),
+(15, 9, 'App\\Models\\User', 'broadcast_alert', '[CRITICAL] Severe Weather Warning: Heavy rainfall and high winds expected. Please avoid mountain trails and coastal areas.', NULL, 0, '2026-08-13 07:21:10', '2026-08-13 07:21:10'),
+(16, 10, 'App\\Models\\User', 'broadcast_alert', '[CRITICAL] Severe Weather Warning: Heavy rainfall and high winds expected. Please avoid mountain trails and coastal areas.', NULL, 0, '2026-08-13 07:21:10', '2026-08-13 07:21:10'),
+(17, 2, 'App\\Models\\User', 'broadcast_alert', '[WARNING] Facility Maintenance Notice: The destination spot is temporarily closed today for scheduled facility maintenance.', NULL, 1, '2026-08-14 08:07:29', '2026-08-16 04:13:30'),
+(18, 9, 'App\\Models\\User', 'broadcast_alert', '[WARNING] Facility Maintenance Notice: The destination spot is temporarily closed today for scheduled facility maintenance.', NULL, 0, '2026-08-14 08:07:29', '2026-08-14 08:07:29'),
+(19, 10, 'App\\Models\\User', 'broadcast_alert', '[WARNING] Facility Maintenance Notice: The destination spot is temporarily closed today for scheduled facility maintenance.', NULL, 0, '2026-08-14 08:07:29', '2026-08-14 08:07:29'),
+(20, 7, 'staff', 'booking_alert', 'New booking request from JYLSAM (group of 3) for Lake Maragang on 2026-08-17.', 3, 1, '2026-08-14 08:45:10', '2026-08-14 08:57:07'),
+(21, 7, 'staff', 'booking_alert', 'New booking request from JYLSAM (group of 2) for Lake Maragang on 2026-08-24.', 4, 0, '2026-08-16 07:05:33', '2026-08-16 07:05:33'),
+(22, 7, 'staff', 'booking_alert', 'Booking #4 for Lake Maragang on 2026-08-24 has been cancelled by tourist JYLSAM.', 4, 0, '2026-08-16 07:23:18', '2026-08-16 07:23:18'),
+(23, 2, 'tourist', 'booking_alert', 'Your booking #4 for Lake Maragang on 2026-08-24 has been cancelled.', 4, 1, '2026-08-16 07:23:18', '2026-08-16 08:06:03'),
+(24, 7, 'staff', 'booking_alert', 'Booking #3 for Lake Maragang on 2026-08-17 has been cancelled by tourist JYLSAM.', 3, 0, '2026-08-16 07:47:58', '2026-08-16 07:47:58'),
+(25, 2, 'tourist', 'booking_alert', 'Your booking #3 for Lake Maragang on 2026-08-17 has been cancelled.', 3, 1, '2026-08-16 07:47:58', '2026-08-16 08:06:02'),
+(26, 7, 'staff', 'booking_alert', 'New booking request from JYLSAM (group of 2) for Lake Maragang on 2026-08-19.', 5, 0, '2026-08-16 08:04:53', '2026-08-16 08:04:53'),
+(27, 2, 'tourist', 'booking_alert', 'Booking request #5 submitted for Lake Maragang on 2026-08-19. Pending payment required: Please send your GCash payment and submit the reference number to confirm your slot.', 5, 1, '2026-08-16 08:04:53', '2026-08-16 08:05:59'),
+(28, 7, 'staff', 'booking_alert', 'Booking #5 for Lake Maragang on 2026-08-19 has been cancelled by tourist JYLSAM.', 5, 0, '2026-08-16 08:09:27', '2026-08-16 08:09:27'),
+(29, 2, 'tourist', 'booking_alert', 'Your booking #5 for Lake Maragang on 2026-08-19 has been cancelled.', 5, 1, '2026-08-16 08:09:27', '2026-08-16 08:36:46'),
+(30, 7, 'staff', 'booking_alert', 'New booking request from JYLSAM (group of 2) for Lake Maragang on 2026-08-25.', 6, 0, '2026-08-16 08:10:27', '2026-08-16 08:10:27'),
+(31, 2, 'tourist', 'booking_alert', 'Booking request #6 submitted for Lake Maragang on 2026-08-25. Pending payment required: Please send your GCash payment and submit the reference number to confirm your slot.', 6, 1, '2026-08-16 08:10:27', '2026-08-16 08:36:46');
 
 -- --------------------------------------------------------
 
@@ -371,10 +424,7 @@ CREATE TABLE `sessions` (
 --
 
 INSERT INTO `sessions` (`id`, `user_id`, `ip_address`, `user_agent`, `payload`, `last_activity`) VALUES
-('64NDXiSjZbqcE7caNGFXSykHUvOcajq7Q2uNUNCW', 1, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36 Edg/150.0.0.0', 'YTo0OntzOjY6Il90b2tlbiI7czo0MDoiNjlsOTlUcHNaZHBRYllBZFRxVUxnTmxMM2NBWFlNSGFiRVNGUDA2MCI7czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6NjA6Imh0dHA6Ly9sb2NhbGhvc3QvZS10dXJpc21vL3B1YmxpYy9ub3RpZmljYXRpb25zL2xhdGVzdC1hbGVydCI7czo1OiJyb3V0ZSI7czoyNjoibm90aWZpY2F0aW9ucy5sYXRlc3QtYWxlcnQiO31zOjY6Il9mbGFzaCI7YToyOntzOjM6Im9sZCI7YTowOnt9czozOiJuZXciO2E6MDp7fX1zOjUwOiJsb2dpbl93ZWJfNTliYTM2YWRkYzJiMmY5NDAxNTgwZjAxNGM3ZjU4ZWE0ZTMwOTg5ZCI7aToxO30=', 1784869950),
-('GVCyGBxxDmVGMY4v3QZDmfCKCqz2eRZHpIPtahhT', NULL, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36 Edg/150.0.0.0', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiYXpwSWlpcTN6dVI4eGI2YmFDTnVzQ09rdkoyRzNGTHdZdVl3U1prZyI7czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6MzM6Imh0dHA6Ly9sb2NhbGhvc3QvZS10dXJpc21vL3B1YmxpYyI7czo1OiJyb3V0ZSI7czo0OiJob21lIjt9czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319fQ==', 1784869799),
-('pP4hfJyTK3C3eJ00paDZuNduD32g0g46eAMlw0ty', 1, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36 Edg/150.0.0.0', 'YTo0OntzOjY6Il90b2tlbiI7czo0MDoicG42S1BFM3pIZG5Ca2JrS0x4bzB5ZFZsSE03WTZCR2x3VEhzV0hyUyI7czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6NjA6Imh0dHA6Ly9sb2NhbGhvc3QvZS10dXJpc21vL3B1YmxpYy9ub3RpZmljYXRpb25zL2xhdGVzdC1hbGVydCI7czo1OiJyb3V0ZSI7czoyNjoibm90aWZpY2F0aW9ucy5sYXRlc3QtYWxlcnQiO31zOjUwOiJsb2dpbl93ZWJfNTliYTM2YWRkYzJiMmY5NDAxNTgwZjAxNGM3ZjU4ZWE0ZTMwOTg5ZCI7aToxO30=', 1784811571),
-('WV76bp3D9zF4S2NtUcwivqHVMfkcLUjEQ4A2Bxle', NULL, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36 Edg/150.0.0.0', 'YTo0OntzOjY6Il90b2tlbiI7czo0MDoiRVZwdWdxdTZzOTdyTmh4TldQWURzZ0FTYm5hbkRzMHU3MjZqbEdBdSI7czozOiJ1cmwiO2E6MTp7czo4OiJpbnRlbmRlZCI7czo2MToiaHR0cDovL2xvY2FsaG9zdC9lLXR1cmlzbW8vcHVibGljL2FkbWluL3ZlcmlmaWNhdGlvbnMvcmV2aWV3cyI7fXM6OToiX3ByZXZpb3VzIjthOjI6e3M6MzoidXJsIjtzOjYxOiJodHRwOi8vbG9jYWxob3N0L2UtdHVyaXNtby9wdWJsaWMvYWRtaW4vdmVyaWZpY2F0aW9ucy9yZXZpZXdzIjtzOjU6InJvdXRlIjtzOjIwOiJ2ZXJpZmljYXRpb24ucmV2aWV3cyI7fXM6NjoiX2ZsYXNoIjthOjI6e3M6Mzoib2xkIjthOjA6e31zOjM6Im5ldyI7YTowOnt9fX0=', 1784803720);
+('BXLbRkOgg3k0lhKs7jmJAq0Fhbh5dYtdl5XSBUk3', 2, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36 Edg/151.0.0.0', 'YTo0OntzOjY6Il90b2tlbiI7czo0MDoid1ZQaXRzZm11NnV5b3pjRHd6ZG9kb0hacHFPZGY3UzUzTzkxYTd3ciI7czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6NjM6Imh0dHA6Ly9sb2NhbGhvc3QvZS10dXJpc21vL3B1YmxpYy9ub3RpZmljYXRpb25zL3JlYWx0aW1lLXN0cmVhbSI7czo1OiJyb3V0ZSI7czoyMjoibm90aWZpY2F0aW9ucy5yZWFsdGltZSI7fXM6NTA6ImxvZ2luX3dlYl81OWJhMzZhZGRjMmIyZjk0MDE1ODBmMDE0YzdmNThlYTRlMzA5ODlkIjtpOjI7fQ==', 1786903044);
 
 -- --------------------------------------------------------
 
@@ -400,7 +450,9 @@ INSERT INTO `tickets` (`id`, `booking_id`, `qr_code`, `scanned_at`, `created_at`
 (2, 91, 'LM666744', NULL, '2026-07-14 08:17:32', '2026-07-14 08:17:32'),
 (3, 67, 'LM781432', NULL, '2026-07-14 08:34:19', '2026-07-14 08:34:19'),
 (4, 93, 'LMPRROV7', NULL, '2026-07-23 01:02:15', '2026-07-23 01:02:15'),
-(5, 92, 'LMIFB5R2', NULL, '2026-07-23 01:12:02', '2026-07-23 01:12:02');
+(5, 92, 'LMIFB5R2', NULL, '2026-07-23 01:12:02', '2026-07-23 01:12:02'),
+(6, 2, 'LMAYN5HH', NULL, '2026-08-09 23:35:35', '2026-08-09 23:35:35'),
+(7, 1, 'LMAHMCCK', NULL, '2026-08-12 04:30:42', '2026-08-12 04:30:42');
 
 -- --------------------------------------------------------
 
@@ -426,7 +478,7 @@ CREATE TABLE `users` (
   `id_number` varchar(255) DEFAULT NULL,
   `id_photo` varchar(255) DEFAULT NULL,
   `is_manually_verified` tinyint(1) NOT NULL DEFAULT 0,
-  `id_verification_status` varchar(20) NOT NULL DEFAULT 'unverified',
+  `id_verification_status` enum('pending','verified') NOT NULL DEFAULT 'pending',
   `ready_to_complete_requirements` tinyint(1) NOT NULL DEFAULT 0,
   `id_verification_score` decimal(5,2) DEFAULT NULL,
   `id_verification_notes` text DEFAULT NULL,
@@ -442,9 +494,9 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `name`, `last_name`, `suffix`, `gender`, `middle_initial`, `dob`, `email`, `email_verified_at`, `password`, `role`, `contact`, `classification`, `id_type`, `id_number`, `id_photo`, `is_manually_verified`, `id_verification_status`, `ready_to_complete_requirements`, `id_verification_score`, `id_verification_notes`, `id_verified_at`, `assigned_destination_id`, `remember_token`, `created_at`, `updated_at`) VALUES
-(1, 'TOURISM', 'PERSONNEL', NULL, NULL, NULL, '2026-07-01', 'admin@eturismo.com', '2026-07-05 01:50:56', '$2y$12$CHN284cR51/Uujjqi21FH.kVn0Doli2ellYVxicNhKyMYRcWOeK0.', 'admin', NULL, 'Local', NULL, NULL, NULL, 0, 'verified', 0, NULL, NULL, '2026-07-05 01:53:24', NULL, 'opxAs6HUGl0RLLWx0gua1UbaWO99QzFC69LCTsVMghlJnMUEwvhNgqu417Ci', '2026-07-05 01:49:29', '2026-07-05 01:53:24'),
-(2, 'JYLSAM', 'QUIROG', NULL, NULL, 'M.', '2004-12-10', 'jylsam123@gmail.com', '2026-07-05 04:50:47', '$2y$12$p5WPmZI4RMZr4WeTXZFYzuN96UkvHlv91P8IVFPcHSVoRfA91KfVq', 'tourist', NULL, 'Local', 'School ID', '2022-041633', 'id_photos/1783245704_2d6ed43b-f01e-47ce-b616-8910397fa53c.jpg', 0, 'verified', 1, 100.00, 'Name match: 100% (found) | ID Number: 100% (found) | DOB: Skipped — this ID type does not print a date of birth', '2026-07-05 05:23:04', NULL, 'piGnVauXVQESkqL2aOjSplYmnj4cKZ4eRopxftzWJqeVl9eX3TCNCBsWLlyz', '2026-07-05 02:01:46', '2026-07-15 22:25:01'),
-(7, 'LM', 'Staff', NULL, NULL, NULL, '2026-07-01', 'teststaff@gmail.com', '2026-07-09 18:44:01', '$2y$12$uFeKOW4ZUwyjtFcQPx7bWeJg3hFeWRVfKUtc6DwO.KkjAFywlaZ0y', 'staff', '1234567890', NULL, NULL, NULL, NULL, 1, 'verified', 0, 100.00, 'Status manually updated by Admin.', '2026-07-09 10:39:55', 5, 'WxOzKwNhr28JLUle373Ugx5vG9hA8j3zMAiX0ZdFv7AB7aRbBASJl49OIAX5', '2026-07-09 10:38:11', '2026-07-23 02:27:35'),
+(1, 'TOURISM', 'PERSONNEL', NULL, NULL, NULL, '2026-07-01', 'admin@eturismo.com', '2026-07-05 01:50:56', '$2y$10$JHIE7.ce.QQBYdMtrjTlEO4n2FzPWQRjkp4aCqJmh.Ne.1bMhhbLi', 'admin', NULL, 'Local', NULL, NULL, NULL, 0, 'verified', 0, NULL, NULL, '2026-07-05 01:53:24', NULL, 'wxw5qnAqTz13YE8jBETEoAK4TXLhLU3NkI7oSzR16W3Lx4l6aOHBTn8kc5Xp', '2026-07-05 01:49:29', '2026-08-13 06:52:12'),
+(2, 'JYLSAM', 'QUIROG', NULL, 'Male', 'M.', '2004-12-10', 'jylsam123@gmail.com', '2026-07-05 04:50:47', '$2y$10$qCr3YUUeNRsVPmTYHocVjOwTJfC53cKplARxSSlAZ93dzA8E7lgdK', 'tourist', '09723462733', 'Local', 'School ID', '2022-041633', 'id_photos/1783245704_2d6ed43b-f01e-47ce-b616-8910397fa53c.jpg', 0, 'verified', 1, 100.00, 'Name match: 100% (found) | ID Number: 100% (found) | DOB: Skipped — this ID type does not print a date of birth', '2026-07-05 05:23:04', NULL, 'CC0BlDQcwzRVnY9CkilDuOqgdFtq27ndbxxTmroj5Qac71GnUCFg76cuoXFL', '2026-07-05 02:01:46', '2026-08-16 08:07:48'),
+(7, 'LM', 'Staff', NULL, NULL, NULL, '2026-07-01', 'staff@eturismo.com', '2026-07-09 18:44:01', '$2y$10$IbCyBRigpMsqnF4yWqmU7OIRxtLhux2Iu8bXATxf7Bu2q5RDhjmpu', 'staff', '1234567890', NULL, NULL, NULL, NULL, 1, 'verified', 0, 100.00, 'Status manually updated by Admin.', '2026-07-09 10:39:55', 5, 'QAAYwua8jQ84QBhlCdak2tmi7Efw0KkVAMmblvMJy6m1Jt1h2xqK9nUYPBVD', '2026-07-09 10:38:11', '2026-08-12 05:53:27'),
 (9, 'DANRYL JAMES B. B. USA', 'USA', NULL, NULL, 'B.', '2005-01-02', 'danrylboncales@gmail.com', '2026-07-15 23:45:40', '$2y$12$czH4QQK1HpST4kGLRjj6kekYx26Etcw1m.ZcE1oDVhsAzkLv9GlDS', 'tourist', NULL, 'Local', 'School ID', '2022-044712', 'id_photos/1784188211_captured_id_1784188206570.jpg', 1, 'verified', 1, 31.17, 'Status manually updated by Admin.', '2026-07-16 00:59:14', NULL, NULL, '2026-07-15 23:45:40', '2026-07-16 00:59:14'),
 (10, 'ARNEL L. GABATO', 'GABATO', NULL, NULL, 'L.', '1978-04-15', 'tigbaotourismoffice@gmail.com', '2026-07-16 01:00:49', '$2y$12$83RWCjm6h1HJkkxV2wMllOv4.pd6HmAykWHvMAl5KgGb/9xLOY0om', 'tourist', NULL, 'Local', 'Company ID', '097344000-000-0559', 'id_photos/1784192449_id_composite_1784192412378.jpg', 1, 'verified', 1, 79.75, 'Status manually updated by Admin.', '2026-07-16 01:01:27', NULL, NULL, '2026-07-16 01:00:50', '2026-07-16 01:01:27'),
 (12, 'TM', 'Staff', NULL, NULL, NULL, NULL, 'cevibill@gmail.com', '2026-07-23 01:39:08', '$2y$12$19QuFBeDnHzaUYr.s/.1Dekjs4xVKTXCEiE3pwC1nmePguIFInB6m', 'staff', '09386616553', NULL, NULL, NULL, NULL, 0, 'verified', 0, 100.00, NULL, '2026-07-23 01:39:08', 6, NULL, '2026-07-23 01:39:08', '2026-07-23 02:27:23');
@@ -475,7 +527,9 @@ CREATE TABLE `walk_ins` (
 --
 
 INSERT INTO `walk_ins` (`id`, `destination_id`, `name`, `age`, `contact_number`, `email`, `classification`, `gender`, `duration_days`, `registered_by_staff_id`, `created_at`, `updated_at`) VALUES
-(1, 5, 'kent', 15, NULL, NULL, 'Local', NULL, 1, 7, '2026-07-14 23:36:18', '2026-07-14 23:36:18');
+(1, 5, 'kent', 15, NULL, NULL, 'Local', NULL, 1, 7, '2026-07-14 23:36:18', '2026-07-14 23:36:18'),
+(2, 5, 'Hahhas', 12, NULL, NULL, 'Local', 'Male', 1, 7, '2026-08-13 07:15:43', '2026-08-13 07:15:43'),
+(3, 5, 'Jssjsjs', 23, NULL, NULL, 'Local', 'Male', 1, 7, '2026-08-13 07:17:31', '2026-08-13 07:17:31');
 
 --
 -- Indexes for dumped tables
@@ -495,6 +549,13 @@ ALTER TABLE `bookings`
   ADD KEY `bookings_destination_visit_status_index` (`destination_id`,`visit_date`,`status`),
   ADD KEY `bookings_status_visit_created_index` (`status`,`visit_date`,`created_at`),
   ADD KEY `bookings_tourist_status_index` (`tourist_id`,`status`);
+
+--
+-- Indexes for table `booking_companions`
+--
+ALTER TABLE `booking_companions`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `booking_companions_booking_id_foreign` (`booking_id`);
 
 --
 -- Indexes for table `cache`
@@ -614,7 +675,13 @@ ALTER TABLE `walk_ins`
 -- AUTO_INCREMENT for table `bookings`
 --
 ALTER TABLE `bookings`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=94;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+
+--
+-- AUTO_INCREMENT for table `booking_companions`
+--
+ALTER TABLE `booking_companions`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT for table `check_ins`
@@ -632,7 +699,7 @@ ALTER TABLE `destinations`
 -- AUTO_INCREMENT for table `destination_images`
 --
 ALTER TABLE `destination_images`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT for table `failed_jobs`
@@ -644,19 +711,19 @@ ALTER TABLE `failed_jobs`
 -- AUTO_INCREMENT for table `jobs`
 --
 ALTER TABLE `jobs`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- AUTO_INCREMENT for table `migrations`
 --
 ALTER TABLE `migrations`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=28;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
 
 --
 -- AUTO_INCREMENT for table `notifications`
 --
 ALTER TABLE `notifications`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=32;
 
 --
 -- AUTO_INCREMENT for table `reports`
@@ -668,7 +735,7 @@ ALTER TABLE `reports`
 -- AUTO_INCREMENT for table `tickets`
 --
 ALTER TABLE `tickets`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT for table `users`
@@ -680,21 +747,17 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `walk_ins`
 --
 ALTER TABLE `walk_ins`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- Constraints for dumped tables
 --
 
 --
--- Constraints for table `bookings`
+-- Constraints for table `booking_companions`
 --
-ALTER TABLE `bookings`
-  ADD CONSTRAINT `bookings_checked_in_by_foreign` FOREIGN KEY (`checked_in_by`) REFERENCES `users` (`id`) ON DELETE SET NULL,
-  ADD CONSTRAINT `bookings_destination_fk` FOREIGN KEY (`destination_id`) REFERENCES `destinations` (`id`) ON DELETE CASCADE,
-  ADD CONSTRAINT `bookings_reviewed_by_foreign` FOREIGN KEY (`reviewed_by`) REFERENCES `users` (`id`) ON DELETE SET NULL,
-  ADD CONSTRAINT `bookings_staff_fk` FOREIGN KEY (`decided_by_staff_id`) REFERENCES `users` (`id`) ON DELETE SET NULL,
-  ADD CONSTRAINT `bookings_tourist_fk` FOREIGN KEY (`tourist_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
+ALTER TABLE `booking_companions`
+  ADD CONSTRAINT `booking_companions_booking_id_foreign` FOREIGN KEY (`booking_id`) REFERENCES `bookings` (`id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `check_ins`
@@ -702,45 +765,6 @@ ALTER TABLE `bookings`
 ALTER TABLE `check_ins`
   ADD CONSTRAINT `checkins_booking_fk` FOREIGN KEY (`booking_id`) REFERENCES `bookings` (`id`) ON DELETE CASCADE,
   ADD CONSTRAINT `checkins_staff_fk` FOREIGN KEY (`verified_by_staff_id`) REFERENCES `users` (`id`) ON DELETE SET NULL;
-
---
--- Constraints for table `destination_images`
---
-ALTER TABLE `destination_images`
-  ADD CONSTRAINT `destination_images_destination_id_foreign` FOREIGN KEY (`destination_id`) REFERENCES `destinations` (`id`) ON DELETE CASCADE;
-
---
--- Constraints for table `notifications`
---
-ALTER TABLE `notifications`
-  ADD CONSTRAINT `notifications_booking_fk` FOREIGN KEY (`related_booking_id`) REFERENCES `bookings` (`id`) ON DELETE SET NULL,
-  ADD CONSTRAINT `notifications_recipient_fk` FOREIGN KEY (`recipient_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
-
---
--- Constraints for table `reports`
---
-ALTER TABLE `reports`
-  ADD CONSTRAINT `reports_admin_fk` FOREIGN KEY (`generated_by_admin_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
-  ADD CONSTRAINT `reports_destination_fk` FOREIGN KEY (`destination_id`) REFERENCES `destinations` (`id`) ON DELETE SET NULL;
-
---
--- Constraints for table `tickets`
---
-ALTER TABLE `tickets`
-  ADD CONSTRAINT `tickets_booking_fk` FOREIGN KEY (`booking_id`) REFERENCES `bookings` (`id`) ON DELETE CASCADE;
-
---
--- Constraints for table `users`
---
-ALTER TABLE `users`
-  ADD CONSTRAINT `users_destination_fk` FOREIGN KEY (`assigned_destination_id`) REFERENCES `destinations` (`id`) ON DELETE SET NULL;
-
---
--- Constraints for table `walk_ins`
---
-ALTER TABLE `walk_ins`
-  ADD CONSTRAINT `walk_ins_destination_id_foreign` FOREIGN KEY (`destination_id`) REFERENCES `destinations` (`id`) ON DELETE CASCADE,
-  ADD CONSTRAINT `walk_ins_registered_by_staff_id_foreign` FOREIGN KEY (`registered_by_staff_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

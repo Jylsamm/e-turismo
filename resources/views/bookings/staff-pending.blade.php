@@ -22,16 +22,19 @@
             color: #6b7280;
             transition: all 0.2s ease;
         }
+
         .period-btn:hover {
             border-color: #2d7a4a;
             color: #2d7a4a;
             background: #f0fdf4;
         }
+
         .period-btn.active {
             background: #2d7a4a;
             color: #fff;
             border-color: #2d7a4a;
         }
+
         .tab-btn {
             padding: 10px 20px;
             font-size: 14px;
@@ -41,13 +44,16 @@
             cursor: pointer;
             transition: all 0.15s;
         }
+
         .tab-btn:hover {
             color: #2d7a4a;
         }
+
         .tab-btn.active {
             color: #2d7a4a;
             border-bottom-color: #2d7a4a;
         }
+
         .action-btn {
             display: inline-flex;
             align-items: center;
@@ -61,14 +67,43 @@
             transition: all 0.15s;
             text-decoration: none;
         }
-        .action-btn-view    { background: #eff6ff; color: #3b82f6; }
-        .action-btn-view:hover { background: #dbeafe; }
-        .action-btn-confirm { background: #f0fdf4; color: #16a34a; }
-        .action-btn-confirm:hover { background: #dcfce7; }
-        .action-btn-decline { background: #fef2f2; color: #dc2626; }
-        .action-btn-decline:hover { background: #fee2e2; }
-        .action-btn-cancel  { background: #f3f4f6; color: #4b5563; }
-        .action-btn-cancel:hover { background: #e5e7eb; }
+
+        .action-btn-view {
+            background: #eff6ff;
+            color: #3b82f6;
+        }
+
+        .action-btn-view:hover {
+            background: #dbeafe;
+        }
+
+        .action-btn-confirm {
+            background: #f0fdf4;
+            color: #16a34a;
+        }
+
+        .action-btn-confirm:hover {
+            background: #dcfce7;
+        }
+
+        .action-btn-decline {
+            background: #fef2f2;
+            color: #dc2626;
+        }
+
+        .action-btn-decline:hover {
+            background: #fee2e2;
+        }
+
+        .action-btn-cancel {
+            background: #f3f4f6;
+            color: #4b5563;
+        }
+
+        .action-btn-cancel:hover {
+            background: #e5e7eb;
+        }
+
         .spinner {
             display: none;
             width: 16px;
@@ -78,7 +113,12 @@
             border-radius: 50%;
             animation: spin 0.6s linear infinite;
         }
-        @keyframes spin { to { transform: rotate(360deg); } }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
     </style>
 
     <div class="pb-8 pt-0 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6" x-data="bookingManager()">
@@ -147,58 +187,77 @@
                 <table class="w-full text-sm text-left">
                     <thead>
                         <tr class="bg-gray-50 border-b border-gray-100">
-                            <th class="px-5 py-3 text-xs font-semibold text-gray-400 uppercase tracking-wide">Booking ID</th>
-                            <th class="px-5 py-3 text-left text-xs font-semibold text-gray-400 uppercase tracking-wide">Visitor Name</th>
-                            <th class="px-5 py-3 text-left text-xs font-semibold text-gray-400 uppercase tracking-wide">Tourist Spot</th>
-                            <th class="px-5 py-3 text-left text-xs font-semibold text-gray-400 uppercase tracking-wide">Visit Date</th>
-                            <th class="px-5 py-3 text-center text-xs font-semibold text-gray-400 uppercase tracking-wide">Guests</th>
-                            <th class="px-5 py-3 text-left text-xs font-semibold text-gray-400 uppercase tracking-wide">Payment</th>
-                            <th class="px-5 py-3 text-left text-xs font-semibold text-gray-400 uppercase tracking-wide">Booking Status</th>
-                            <th class="px-5 py-3 text-center text-xs font-semibold text-gray-400 uppercase tracking-wide">Actions</th>
+                            <th class="px-5 py-3 text-xs font-semibold text-gray-400 uppercase tracking-wide">Booking ID
+                            </th>
+                            <th class="px-5 py-3 text-left text-xs font-semibold text-gray-400 uppercase tracking-wide">
+                                Visitor Name</th>
+                            <th class="px-5 py-3 text-left text-xs font-semibold text-gray-400 uppercase tracking-wide">
+                                Tourist Spot</th>
+                            <th class="px-5 py-3 text-left text-xs font-semibold text-gray-400 uppercase tracking-wide">
+                                Visit Date</th>
+                            <th
+                                class="px-5 py-3 text-center text-xs font-semibold text-gray-400 uppercase tracking-wide">
+                                Guests</th>
+                            <th class="px-5 py-3 text-left text-xs font-semibold text-gray-400 uppercase tracking-wide">
+                                Payment</th>
+                            <th class="px-5 py-3 text-left text-xs font-semibold text-gray-400 uppercase tracking-wide">
+                                Booking Status</th>
+                            <th
+                                class="px-5 py-3 text-center text-xs font-semibold text-gray-400 uppercase tracking-wide">
+                                Actions</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-50">
                         <template x-for="b in getActiveList()" :key="b.id">
                             <tr class="hover:bg-gray-50">
                                 <td class="px-5 py-3 font-semibold text-gray-700">#<span x-text="b.id"></span></td>
-                                <td class="px-5 py-3 font-medium text-gray-900" x-text="b.tourist ? b.tourist.name : 'Unknown'"></td>
-                                <td class="px-5 py-3 text-gray-600" x-text="b.destination ? b.destination.name : '—'"></td>
+                                <td class="px-5 py-3 font-medium text-gray-900"
+                                    x-text="b.tourist ? b.tourist.name : 'Unknown'"></td>
+                                <td class="px-5 py-3 text-gray-600" x-text="b.destination ? b.destination.name : '—'">
+                                </td>
                                 <td class="px-5 py-3 text-gray-500" x-text="formatDate(b.visit_date)"></td>
-                                <td class="px-5 py-3 text-center text-gray-700">1</td>
+                                <td class="px-5 py-3 text-center text-gray-700" x-text="1 + (b.companions ? b.companions.length : 0)">1</td>
                                 <td class="px-5 py-3">
-                                    <span class="inline-flex items-center gap-1 text-xs font-semibold px-2 py-0.5 rounded-full"
-                                          :class="b.payment_status === 'approved' ? 'text-green-700 bg-green-50' : (b.payment_status === 'pending_verification' ? 'text-amber-700 bg-amber-50' : 'text-red-700 bg-red-50')">
-                                        <i class="ti" :class="b.payment_status === 'approved' ? 'ti-circle-check-filled' : 'ti-clock'"></i>
-                                        <span x-text="b.payment_status ? b.payment_status.replace('_', ' ') : 'unpaid'"></span>
+                                    <span
+                                        class="inline-flex items-center gap-1 text-xs font-semibold px-2 py-0.5 rounded-full"
+                                        :class="b.payment_status === 'approved' ? 'text-green-700 bg-green-50' : (b.payment_status === 'pending_verification' ? 'text-amber-700 bg-amber-50' : (b.payment_status === 'refund_pending' ? 'text-blue-700 bg-blue-50' : (b.payment_status === 'not_charged' ? 'text-gray-700 bg-gray-50' : 'text-red-700 bg-red-50')))">
+                                        <i class="ti"
+                                            :class="b.payment_status === 'approved' ? 'ti-circle-check-filled' : (b.payment_status === 'pending_verification' ? 'ti-clock' : (b.payment_status === 'refund_pending' ? 'ti-arrow-back-up' : 'ti-info-circle'))"></i>
+                                        <span
+                                            x-text="b.payment_status ? b.payment_status.replace('_', ' ') : 'unpaid'"></span>
                                     </span>
                                 </td>
                                 <td class="px-5 py-3">
-                                    <span class="inline-flex items-center gap-1 text-xs font-semibold px-2 py-0.5 rounded-full"
-                                          :class="b.status === 'completed' || b.status === 'confirmed' ? 'text-green-700 bg-green-50' : (b.status === 'pending' ? 'text-amber-700 bg-amber-50' : 'text-red-700 bg-red-50')">
-                                        <i class="ti" :class="b.status === 'completed' || b.status === 'confirmed' ? 'ti-circle-check-filled' : 'ti-clock'"></i>
+                                    <span
+                                        class="inline-flex items-center gap-1 text-xs font-semibold px-2 py-0.5 rounded-full"
+                                        :class="b.status === 'completed' || b.status === 'confirmed' ? 'text-green-700 bg-green-50' : (b.status === 'pending' ? 'text-amber-700 bg-amber-50' : 'text-red-700 bg-red-50')">
+                                        <i class="ti"
+                                            :class="b.status === 'completed' || b.status === 'confirmed' ? 'ti-circle-check-filled' : 'ti-clock'"></i>
                                         <span x-text="b.status"></span>
                                     </span>
                                 </td>
                                 <td class="px-5 py-3">
                                     <div class="flex items-center justify-center gap-1.5">
-                                        <button class="action-btn action-btn-view" title="View Details" @click="viewDetails(b.id)">
+                                        <button class="action-btn action-btn-view" title="View Details"
+                                            @click="viewDetails(b.id)">
                                             <i class="ti ti-eye"></i>
                                         </button>
                                         <template x-if="b.status === 'pending'">
                                             <div class="flex gap-1.5">
-                                                <form :action="confirmUrl(b.id)" method="POST" class="inline">
-                                                    <input type="hidden" name="_token" value="{{ csrf_token() }}">
-                                                    <button type="submit" class="action-btn action-btn-confirm" title="Approve">
-                                                        <i class="ti ti-check"></i>
-                                                    </button>
-                                                </form>
-                                                <button class="action-btn action-btn-decline" title="Reject" @click="rejectBooking(b.id)">
+                                                <button type="button"
+                                                    @click="triggerApprove(b.id, b.tourist ? b.tourist.name : 'Tourist')"
+                                                    class="action-btn action-btn-confirm" title="Approve">
+                                                    <i class="ti ti-check"></i>
+                                                </button>
+                                                <button class="action-btn action-btn-decline" title="Reject"
+                                                    @click="rejectBooking(b.id)">
                                                     <i class="ti ti-x"></i>
                                                 </button>
                                             </div>
                                         </template>
-                                        <template x-if="b.status === 'confirmed'">
-                                            <button class="action-btn action-btn-cancel" title="Cancel" @click="cancelBooking(b.id)">
+                                        <template x-if="b.status === 'confirmed' && !isPastVisit(b.visit_date)">
+                                            <button class="action-btn action-btn-cancel" title="Cancel"
+                                                @click="cancelBooking(b.id)">
                                                 <i class="ti ti-ban"></i>
                                             </button>
                                         </template>
@@ -221,15 +280,14 @@
 
         {{-- Booking Details Modal --}}
         <div class="fixed inset-0 bg-gray-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4"
-             x-show="showModal"
-             x-transition
-             style="display: none;">
+            x-show="showModal" x-transition style="display: none;">
             <div class="bg-white border border-gray-200 rounded-2xl max-w-4xl w-[90vw] max-h-[90vh] flex flex-col shadow-xl"
-                 @click.away="showModal = false">
+                @click.away="showModal = false">
                 {{-- Modal Header --}}
                 <div class="px-6 py-4 border-b border-gray-150 flex items-center justify-between shrink-0">
                     <h3 class="font-bold text-gray-800 text-lg flex items-center gap-2">
-                        <i class="ti ti-file-invoice text-green-700"></i> Booking Details #<span x-text="details.id"></span>
+                        <i class="ti ti-file-invoice text-green-700"></i> Booking Details #<span
+                            x-text="details.id"></span>
                     </h3>
                     <button class="text-gray-400 hover:text-gray-600 transition" @click="showModal = false">
                         <i class="ti ti-x" style="font-size:20px;"></i>
@@ -237,22 +295,27 @@
                 </div>
 
                 {{-- Modal Body (Scrollable container with visual scrollbar indicator) --}}
-                <div class="p-6 space-y-6 text-sm overflow-y-auto flex-1 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
+                <div
+                    class="p-6 space-y-6 text-sm overflow-y-auto flex-1 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
                     {{-- Visitor Info --}}
                     <div class="space-y-2">
                         <h4 class="font-semibold text-gray-500 uppercase tracking-wide text-xs">Visitor Information</h4>
-                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 bg-gray-50 p-4 rounded-xl border border-gray-150">
+                        <div
+                            class="grid grid-cols-1 sm:grid-cols-3 gap-4 bg-gray-50 p-4 rounded-xl border border-gray-150">
                             <div>
                                 <span class="text-gray-400 text-xs block">Full Name</span>
-                                <span class="font-medium text-gray-800" x-text="details.tourist ? details.tourist.name : 'Unknown'"></span>
+                                <span class="font-medium text-gray-800"
+                                    x-text="details.tourist ? details.tourist.name : 'Unknown'"></span>
                             </div>
                             <div>
                                 <span class="text-gray-400 text-xs block">Email Address</span>
-                                <span class="font-medium text-gray-800" x-text="details.tourist ? details.tourist.email : 'N/A'"></span>
+                                <span class="font-medium text-gray-800"
+                                    x-text="details.tourist ? details.tourist.email : 'N/A'"></span>
                             </div>
                             <div>
                                 <span class="text-gray-400 text-xs block">Phone Number</span>
-                                <span class="font-medium text-gray-800" x-text="details.tourist ? details.tourist.phone : 'N/A'"></span>
+                                <span class="font-medium text-gray-800"
+                                    x-text="details.tourist ? details.tourist.phone : 'N/A'"></span>
                             </div>
                         </div>
                     </div>
@@ -260,7 +323,8 @@
                     {{-- Booking Info --}}
                     <div class="space-y-2">
                         <h4 class="font-semibold text-gray-500 uppercase tracking-wide text-xs">Booking Information</h4>
-                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 bg-gray-50 p-4 rounded-xl border border-gray-150">
+                        <div
+                            class="grid grid-cols-1 sm:grid-cols-3 gap-4 bg-gray-50 p-4 rounded-xl border border-gray-150">
                             <div>
                                 <span class="text-gray-400 text-xs block">Tourist Spot</span>
                                 <span class="font-medium text-gray-800" x-text="details.spot"></span>
@@ -268,6 +332,16 @@
                             <div>
                                 <span class="text-gray-400 text-xs block">Scheduled Visit Date</span>
                                 <span class="font-medium text-gray-800" x-text="details.visit_date"></span>
+                            </div>
+                            <div>
+                                <span class="text-gray-400 text-xs block">Number of Days</span>
+                                <span class="font-medium text-gray-800"
+                                    x-text="details.duration_days + (details.duration_days == 1 ? ' Day' : ' Days')"></span>
+                            </div>
+                            <div>
+                                <span class="text-gray-400 text-xs block">GCash Reference No</span>
+                                <span class="font-medium text-gray-800 font-mono"
+                                    x-text="details.gcash_reference_number || '—'"></span>
                             </div>
                             <div>
                                 <span class="text-gray-400 text-xs block">Number of Guests</span>
@@ -280,16 +354,21 @@
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
                         {{-- Receipt --}}
                         <div class="space-y-2">
-                            <h4 class="font-semibold text-gray-500 uppercase tracking-wide text-xs flex items-center gap-1">
+                            <h4
+                                class="font-semibold text-gray-500 uppercase tracking-wide text-xs flex items-center gap-1">
                                 <i class="ti ti-file-invoice"></i> Payment Receipt
                             </h4>
-                            <div class="border border-gray-200 rounded-xl p-3 flex flex-col items-center justify-center bg-gray-50 h-56 overflow-hidden">
+                            <div
+                                class="border border-gray-200 rounded-xl p-3 flex flex-col items-center justify-center bg-gray-50 h-56 overflow-hidden">
                                 <template x-if="details.payment_receipt">
                                     <div class="w-full h-full flex flex-col justify-between items-center">
-                                        <a :href="details.payment_receipt" target="_blank" class="block w-full h-40 overflow-hidden">
-                                            <img :src="details.payment_receipt" class="w-full h-full object-contain hover:scale-105 transition duration-300">
+                                        <a :href="details.payment_receipt" target="_blank"
+                                            class="block w-full h-40 overflow-hidden">
+                                            <img :src="details.payment_receipt"
+                                                class="w-full h-full object-contain hover:scale-105 transition duration-300">
                                         </a>
-                                        <a :href="details.payment_receipt" download class="mt-2 text-xs font-semibold text-green-700 hover:text-green-800 flex items-center gap-1">
+                                        <a :href="details.payment_receipt" download
+                                            class="mt-2 text-xs font-semibold text-green-700 hover:text-green-800 flex items-center gap-1">
                                             <i class="ti ti-download"></i> Download Receipt
                                         </a>
                                     </div>
@@ -305,16 +384,21 @@
 
                         {{-- QR Ticket --}}
                         <div class="space-y-2">
-                            <h4 class="font-semibold text-gray-500 uppercase tracking-wide text-xs flex items-center gap-1">
+                            <h4
+                                class="font-semibold text-gray-500 uppercase tracking-wide text-xs flex items-center gap-1">
                                 <i class="ti ti-qrcode"></i> QR Ticket
                             </h4>
-                            <div class="border border-gray-200 rounded-xl p-3 flex flex-col items-center justify-center bg-gray-50 h-56 overflow-hidden">
+                            <div
+                                class="border border-gray-200 rounded-xl p-3 flex flex-col items-center justify-center bg-gray-50 h-56 overflow-hidden">
                                 <template x-if="details.qr_ticket">
                                     <div class="w-full h-full flex flex-col justify-between items-center">
-                                        <a :href="details.qr_ticket" target="_blank" class="block w-full h-40 overflow-hidden flex justify-center">
-                                            <img :src="details.qr_ticket" class="h-full object-contain">
+                                        <a :href="details.qr_ticket" target="_blank"
+                                            class="block w-full h-40 overflow-hidden flex justify-center items-center">
+                                            <img :src="details.qr_ticket" class="max-h-full max-w-full object-contain"
+                                                style="display: block;">
                                         </a>
-                                        <a :href="details.qr_ticket" download class="mt-2 text-xs font-semibold text-green-700 hover:text-green-800 flex items-center gap-1">
+                                        <a :href="details.qr_ticket" download
+                                            class="mt-2 text-xs font-semibold text-green-700 hover:text-green-800 flex items-center gap-1">
                                             <i class="ti ti-download"></i> Download QR
                                         </a>
                                     </div>
@@ -331,14 +415,33 @@
 
                     {{-- Notes --}}
                     <div class="space-y-1">
-                        <label class="font-semibold text-gray-500 uppercase tracking-wide text-xs block">Operational Notes</label>
-                        <textarea class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-2.5 outline-none resize-none" rows="2" readonly x-text="details.notes"></textarea>
+                        <label class="font-semibold text-gray-500 uppercase tracking-wide text-xs block">Operational
+                            Notes</label>
+                        <textarea
+                            class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-2.5 outline-none resize-none"
+                            rows="2" readonly x-text="details.notes"></textarea>
                     </div>
                 </div>
 
                 {{-- Modal Footer --}}
-                <div class="px-6 py-4 border-t border-gray-150 bg-gray-50 flex justify-end shrink-0">
-                    <button class="bg-gray-250 hover:bg-gray-300 text-gray-700 font-semibold rounded-xl px-5 py-2.5 transition text-sm" @click="showModal = false">
+                <div class="px-6 py-4 border-t border-gray-150 bg-gray-50 flex justify-end gap-2 shrink-0">
+                    <template x-if="details.status === 'pending'">
+                        <div class="flex gap-2">
+                            <button type="button"
+                                class="bg-green-700 hover:bg-green-800 text-white font-bold rounded-xl px-4 py-2 transition text-xs shadow-sm"
+                                @click="showModal = false; triggerApprove(details.id, details.tourist ? details.tourist.name : 'Tourist')">
+                                <i class="ti ti-check"></i> Approve Booking
+                            </button>
+                            <button
+                                class="bg-red-600 hover:bg-red-700 text-white font-bold rounded-xl px-4 py-2 transition text-xs shadow-sm"
+                                @click="showModal = false; rejectBooking(details.id)">
+                                <i class="ti ti-x"></i> Reject Booking
+                            </button>
+                        </div>
+                    </template>
+                    <button
+                        class="bg-gray-250 hover:bg-gray-300 text-gray-700 font-semibold rounded-xl px-5 py-2 transition text-xs"
+                        @click="showModal = false">
                         Close
                     </button>
                 </div>
@@ -346,18 +449,21 @@
         </div>
 
         {{-- Decline Action Dialog Modal --}}
-        <div class="fixed inset-0 bg-gray-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4" x-show="declineModal" x-transition style="display: none;">
-            <div class="bg-white border border-gray-200 rounded-2xl max-w-lg w-full shadow-xl p-6" @click.away="declineModal = false" x-data="{ reasonCategory: 'Spot at capacity' }">
+        <div class="fixed inset-0 bg-gray-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+            x-show="declineModal" x-transition style="display: none;">
+            <div class="bg-white border border-gray-200 rounded-2xl max-w-lg w-full shadow-xl p-6"
+                @click.away="declineModal = false" x-data="{ reasonCategory: 'Spot at capacity' }">
                 <h3 class="font-bold text-gray-800 text-lg mb-3">Reject Booking Request</h3>
                 <form :action="declineUrl(rejectId)" method="POST" class="space-y-4">
                     <input type="hidden" name="_token" value="{{ csrf_token() }}">
-                    
+
                     {{-- Predefined Rejection Reasons --}}
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1 flex items-center gap-1">
                             <i class="ti ti-alert-circle text-red-500"></i> Select Rejection Reason
                         </label>
-                        <select name="reason_category" x-model="reasonCategory" class="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-green-400 outline-none">
+                        <select name="reason_category" x-model="reasonCategory"
+                            class="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-green-400 outline-none">
                             <option value="Spot at capacity">Spot at capacity</option>
                             <option value="Invalid visitor information">Invalid visitor information</option>
                             <option value="Payment issue">Payment issue</option>
@@ -372,12 +478,18 @@
                         <label class="block text-sm font-medium text-gray-700 mb-1">
                             Additional Details <span x-show="reasonCategory === 'Other'" class="text-red-500">*</span>
                         </label>
-                        <textarea name="decline_reason" :required="reasonCategory === 'Other'" placeholder="Add specific notes..." class="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm focus:ring-2 focus:ring-green-400 outline-none h-[120px]" style="min-height: 120px;"></textarea>
+                        <textarea name="decline_reason" :required="reasonCategory === 'Other'"
+                            placeholder="Add specific notes..."
+                            class="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm focus:ring-2 focus:ring-green-400 outline-none h-[120px]"
+                            style="min-height: 120px;"></textarea>
                     </div>
 
                     <div class="flex justify-end gap-3 pt-2">
-                        <button type="button" class="bg-gray-100 hover:bg-gray-200 text-gray-600 font-semibold rounded-xl px-5 py-2.5 text-sm transition" @click="declineModal = false">Cancel</button>
-                        <button type="submit" class="bg-red-600 hover:bg-red-700 text-white font-semibold rounded-xl px-5 py-2.5 text-sm transition flex items-center gap-1.5 shadow-sm">
+                        <button type="button"
+                            class="bg-gray-100 hover:bg-gray-200 text-gray-600 font-semibold rounded-xl px-5 py-2.5 text-sm transition"
+                            @click="declineModal = false">Cancel</button>
+                        <button type="submit"
+                            class="bg-red-600 hover:bg-red-700 text-white font-semibold rounded-xl px-5 py-2.5 text-sm transition flex items-center gap-1.5 shadow-sm">
                             <i class="ti ti-x"></i> Reject Booking
                         </button>
                     </div>
@@ -395,6 +507,9 @@
                     period: '{{ $period }}',
                     showModal: false,
                     declineModal: false,
+                    confirmApproveModal: false,
+                    confirmApproveName: '',
+                    confirmApproveId: null,
                     rejectId: null,
                     details: {},
                     CONFIRM_BASE: '{{ url('/bookings') }}',
@@ -425,7 +540,7 @@
 
                     setPeriod(period) {
                         this.period = period;
-                        
+
                         // Update URL parameter
                         const url = new URL(window.location);
                         url.searchParams.set('period', period);
@@ -437,16 +552,16 @@
                         fetch(`{{ route('staff.bookings.index') }}?period=${period}`, {
                             headers: { 'Accept': 'application/json' }
                         })
-                        .then(r => r.json())
-                        .then(data => {
-                            this.lists.pending = data.pending;
-                            this.lists.confirmed = data.confirmed;
-                            this.lists.completed = data.completed;
-                            this.lists.cancelled = data.cancelled;
-                        })
-                        .finally(() => {
-                            spinner.style.display = 'none';
-                        });
+                            .then(r => r.json())
+                            .then(data => {
+                                this.lists.pending = data.pending;
+                                this.lists.confirmed = data.confirmed;
+                                this.lists.completed = data.completed;
+                                this.lists.cancelled = data.cancelled;
+                            })
+                            .finally(() => {
+                                spinner.style.display = 'none';
+                            });
                     },
 
                     confirmUrl(id) { return `${this.CONFIRM_BASE}/${id}/confirm`; },
@@ -456,11 +571,11 @@
                         fetch(`${this.SHOW_BASE}/${id}`, {
                             headers: { 'Accept': 'application/json' }
                         })
-                        .then(r => r.json())
-                        .then(data => {
-                            this.details = data;
-                            this.showModal = true;
-                        });
+                            .then(r => r.json())
+                            .then(data => {
+                                this.details = data;
+                                this.showModal = true;
+                            });
                     },
 
                     rejectBooking(id) {
@@ -471,6 +586,27 @@
                     cancelBooking(id) {
                         this.rejectId = id;
                         this.declineModal = true;
+                    },
+
+                    triggerApprove(id) {
+                        const form = document.createElement('form');
+                        form.method = 'POST';
+                        form.action = this.confirmUrl(id);
+                        const tokenInput = document.createElement('input');
+                        tokenInput.type = 'hidden';
+                        tokenInput.name = '_token';
+                        tokenInput.value = '{{ csrf_token() }}';
+                        form.appendChild(tokenInput);
+                        document.body.appendChild(form);
+                        form.submit();
+                    },
+
+                    isPastVisit(visitDateStr) {
+                        if (!visitDateStr) return false;
+                        const visitDate = new Date(visitDateStr + 'T00:00:00');
+                        const today = new Date();
+                        today.setHours(0, 0, 0, 0);
+                        return today > visitDate;
                     },
 
                     formatDate(dateStr) {

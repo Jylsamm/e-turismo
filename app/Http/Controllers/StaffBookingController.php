@@ -11,12 +11,14 @@ class StaffBookingController extends Controller
     {
         $user = auth()->user();
         if (!$user->isStaff()) {
-            abort(403, 'Unauthorized action.');
+            return redirect()->route('dashboard')
+                ->with('warning', 'Access Restricted: Only assigned destination staff can manage tourist bookings.')
+                ->with('warning_title', 'Access Restricted (Staff Only)');
         }
 
         $destinationId = $user->assigned_destination_id;
-        $period = request('period', 'today');
-        $query = Booking::with(['tourist', 'destination', 'ticket'])
+        $period = request('period', 'all');
+        $query = Booking::with(['tourist', 'destination', 'ticket', 'companions'])
             ->where('destination_id', $destinationId);
 
         if ($period !== 'all') {
@@ -59,10 +61,23 @@ class StaffBookingController extends Controller
     {
         $user = auth()->user();
         if (!$user->isStaff() || $user->assigned_destination_id !== $booking->destination_id) {
-            abort(403, 'Unauthorized action.');
+            $assignedSpot = optional($user->assignedDestination)->name ?? 'your assigned spot';
+            $bookingSpot = optional($booking->destination)->name ?? 'this destination';
+            return redirect()->route('staff.bookings.pending')
+                ->with('warning', "Access Restricted: You are assigned to {$assignedSpot}. Viewing bookings for {$bookingSpot} is unauthorized under the 1-Staff-1-Spot policy.")
+                ->with('warning_title', 'Access Restricted (1 Staff = 1 Spot Policy)');
         }
 
         $booking->load(['tourist', 'destination', 'ticket']);
+
+        if ($booking->qr_token && $booking->status !== 'declined' && $booking->payment_status !== 'rejected') {
+            $qrPath = 'qr-tickets/' . $booking->id . '.svg';
+            if (!\Illuminate\Support\Facades\Storage::disk('public')->exists($qrPath)) {
+                \Illuminate\Support\Facades\Storage::disk('public')->makeDirectory('qr-tickets');
+                $qrCodeImage = \SimpleSoftwareIO\QrCode\Facades\QrCode::format('svg')->size(250)->margin(1)->generate($booking->qr_token);
+                \Illuminate\Support\Facades\Storage::disk('public')->put($qrPath, $qrCodeImage);
+            }
+        }
 
         return response()->json([
             'id' => $booking->id,
@@ -73,7 +88,9 @@ class StaffBookingController extends Controller
             ],
             'spot' => $booking->destination?->name ?? 'Unknown',
             'visit_date' => \Carbon\Carbon::parse($booking->visit_date)->format('M j, Y'),
-            'guest_count' => 1,
+            'guest_count' => 1 + $booking->companions->count(),
+            'duration_days' => $booking->duration_days ?? 1,
+            'gcash_reference_number' => $booking->gcash_reference_number,
             'payment_status' => $booking->payment_status ?? 'unpaid',
             'payment_receipt' => $booking->payment_screenshot_path ? asset('storage/' . $booking->payment_screenshot_path) : null,
             'qr_ticket' => $booking->qr_token ? asset('storage/qr-tickets/' . $booking->id . '.svg') : null,

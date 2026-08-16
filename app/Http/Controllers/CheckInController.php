@@ -18,7 +18,9 @@ class CheckInController extends Controller
     {
         $user = auth()->user();
         if ($user->isAdmin()) {
-            abort(403, 'Admins cannot access the check-in screen.');
+            return redirect()->route('dashboard')
+                ->with('warning', 'Access Restricted: Administrator accounts cannot access the ticket check-in scanner.')
+                ->with('warning_title', 'Administrative Restriction');
         }
 
         $destination = \App\Models\Destination::find($user->assigned_destination_id);
@@ -70,19 +72,22 @@ class CheckInController extends Controller
             ->count();
 
         // Pending list for queue panel (max 20 for perf)
-        $pendingList = Booking::with('tourist')
+        $pendingList = Booking::with(['tourist', 'ticket'])
             ->where('destination_id', $destination->id)
             ->where('status', 'confirmed')
             ->whereDate('visit_date', today())
             ->whereNull('checked_in_at')
-            ->whereNotNull('qr_token')
-            ->orderBy('created_at')
+            ->where(function ($q) {
+                $q->whereNotNull('qr_token')
+                  ->orWhereHas('ticket', fn($t) => $t->whereNotNull('qr_code'));
+            })
+            ->orderBy('created_at', 'asc')
             ->limit(20)
             ->get()
             ->map(fn($b) => [
                 'id'           => $b->id,
                 'tourist_name' => $b->tourist?->name ?? 'Unknown',
-                'qr_token'     => $b->qr_token,
+                'qr_token'     => $b->qr_token ?? $b->ticket?->qr_code ?? '',
             ])
             ->values()
             ->toArray();
@@ -112,20 +117,25 @@ class CheckInController extends Controller
 
         // Admin is not permitted to perform check-ins (blocked at route level; this is defense-in-depth)
         if ($user->isAdmin()) {
-            abort(403, 'Admins cannot perform check-ins.');
+            return back()->with('warning', 'Access Restricted: Administrator accounts cannot perform tourist check-in scans.')
+                         ->with('warning_title', 'Administrative Restriction');
         }
 
         $ticket = Ticket::where('qr_code', $request->qr_code)->first();
 
         if (!$ticket) {
-            return back()->with('error', 'Invalid QR code. Ticket not found.');
+            return back()->with('error', 'Invalid QR code. Ticket not found.')
+                         ->with('error_title', 'Ticket Not Found');
         }
 
         $booking = $ticket->booking;
 
         // Staff can only check in tourists at their assigned destination
         if ($user->isStaff() && $user->assigned_destination_id !== $booking->destination_id) {
-            abort(403, 'You can only check in tourists at your assigned destination.');
+            $assignedSpot = optional($user->assignedDestination)->name ?? 'your assigned spot';
+            $ticketSpot = optional($booking->destination)->name ?? 'this destination';
+            return back()->with('warning', "Access Restricted: You are assigned to {$assignedSpot}. Checking in tourists for {$ticketSpot} is unauthorized under the 1-Staff-1-Spot policy.")
+                         ->with('warning_title', 'Access Restricted (1 Staff = 1 Spot Policy)');
         }
 
         if ($booking->status !== 'confirmed') {
@@ -153,8 +163,12 @@ class CheckInController extends Controller
         // Mark ticket as scanned
         $ticket->update(['scanned_at' => now()]);
 
-        // Mark booking as completed
-        $booking->update(['status' => 'completed']);
+        // Mark booking as completed with checked-in timestamp
+        $booking->update([
+            'status' => 'completed',
+            'checked_in_at' => now(),
+            'checked_in_by' => auth()->id(),
+        ]);
 
         $destination = $booking->destination;
 

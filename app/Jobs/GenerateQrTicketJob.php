@@ -31,9 +31,17 @@ class GenerateQrTicketJob implements ShouldQueue
      */
     public function handle(): void
     {
+        $booking = \App\Models\Booking::find($this->bookingId);
+
+        // Strict Check: Bypass QR generation if booking is declined or payment rejected
+        if (!$booking || $booking->status === 'declined' || $booking->payment_status === 'rejected') {
+            Storage::disk('public')->delete('qr-tickets/' . $this->bookingId . '.svg');
+            return;
+        }
+
         Storage::disk('public')->makeDirectory('qr-tickets');
         $qrPath = 'qr-tickets/' . $this->bookingId . '.svg';
-        $qrCodeImage = QrCode::size(250)->margin(1)->generate($this->qrCode);
+        $qrCodeImage = QrCode::format('svg')->size(250)->margin(1)->generate($this->qrCode);
         Storage::disk('public')->put($qrPath, $qrCodeImage);
     }
 }

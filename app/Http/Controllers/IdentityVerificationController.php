@@ -39,8 +39,8 @@ class IdentityVerificationController extends Controller
         }
         RateLimiter::hit('id-verify:' . $user->id, 86400);
 
-        if (!in_array($user->id_verification_status, ['unverified', 'rejected'])) {
-            return back()->with('error', 'Your identity is already verified or under review.');
+        if ($user->id_verification_status === 'verified') {
+            return back()->with('error', 'Your identity is already verified.');
         }
 
         // Delete old photo if exists
@@ -53,29 +53,29 @@ class IdentityVerificationController extends Controller
 
         $user->update([
             'id_photo'                => $path,
-            'id_verification_status'  => 'unverified',
+            'id_verification_status'  => 'pending',
             'id_verification_score'   => null,
-            'id_verification_notes'   => null,
+            'id_verification_notes'   => 'New ID photo uploaded, awaiting review.',
             'id_verified_at'          => null,
             'ready_to_complete_requirements' => true,
             'is_manually_verified'    => false, // reset manual flag on new upload
         ]);
 
-        // Run verification immediately
+        // Run verification pipeline if available
         $result = $this->verifier->verify($user->fresh());
         $user->update([
-            'id_verification_status' => $result['status'],
+            'id_verification_status' => $result['status'] === 'verified' ? 'verified' : 'pending',
             'id_verification_score'  => $result['score'],
             'id_verification_notes'  => $result['notes'],
             'id_verified_at'         => $result['status'] === 'verified' ? now() : null,
         ]);
 
         return redirect(route('profile.edit') . '#verification')
-            ->with('success', 'ID photo resubmitted. Verification result: ' . strtoupper($result['status']) . '.');
+            ->with('success', 'ID photo submitted for verification.');
     }
 
     /**
-     * Tourist updates their registration details (Name, ID Info, DOB) after a mismatch rejection.
+     * Tourist updates their registration details (Name, ID Info, DOB) after a mismatch.
      */
     public function updateDetails(Request $request)
     {
@@ -91,8 +91,8 @@ class IdentityVerificationController extends Controller
 
         $user = auth()->user();
 
-        if (!in_array($user->id_verification_status, ['unverified', 'rejected'])) {
-            return back()->with('error', 'Your identity is already verified or under review.');
+        if ($user->id_verification_status === 'verified') {
+            return back()->with('error', 'Your identity is already verified.');
         }
 
         // Compose full name
@@ -113,21 +113,21 @@ class IdentityVerificationController extends Controller
             'id_type'        => $request->id_type,
             'id_number'      => $request->id_number,
             'dob'            => $request->dob,
-            'id_verification_status' => 'unverified',
+            'id_verification_status' => 'pending',
         ]);
 
         // Re-run verification on existing photo
         if ($user->id_photo) {
             $result = $this->verifier->verify($user->fresh());
             $user->update([
-                'id_verification_status' => $result['status'],
+                'id_verification_status' => $result['status'] === 'verified' ? 'verified' : 'pending',
                 'id_verification_score'  => $result['score'],
                 'id_verification_notes'  => $result['notes'],
                 'id_verified_at'         => $result['status'] === 'verified' ? now() : null,
             ]);
             
             return redirect(route('profile.edit') . '#verification')
-                ->with('success', 'Details updated. Verification result: ' . strtoupper($result['status']) . '.');
+                ->with('success', 'Details updated for verification.');
         }
 
         return redirect(route('profile.edit') . '#verification')->with('success', 'Identity details updated successfully.');
@@ -146,15 +146,11 @@ class IdentityVerificationController extends Controller
                         ->where('id_verification_status', 'pending')
                         ->latest()->get();
 
-        $rejected = User::where('role', 'tourist')
-                        ->where('id_verification_status', 'rejected')
-                        ->latest()->take(20)->get();
-
         $verified = User::where('role', 'tourist')
                         ->where('id_verification_status', 'verified')
-                        ->latest()->take(20)->get();
+                        ->latest()->take(30)->get();
 
-        return view('verification.admin_reviews', compact('pending', 'rejected', 'verified'));
+        return view('verification.admin_reviews', compact('pending', 'verified'));
     }
 
     /**
@@ -164,7 +160,7 @@ class IdentityVerificationController extends Controller
     {
         $this->authorize('admin-only');
 
-        $allUsers = User::where('role', '!=', 'staff')->latest()->get();
+        $allUsers = User::where('role', 'tourist')->latest()->get();
 
         return view('verification.admin_accounts', compact('allUsers'));
     }
@@ -190,25 +186,25 @@ class IdentityVerificationController extends Controller
     }
 
     /**
-     * Admin: manually approve or reject a tourist.
+     * Admin: manually approve or set pending for a tourist.
      */
     public function adminDecide(Request $request, User $user)
     {
         $this->authorize('admin-only');
 
         $request->validate([
-            'decision' => 'required|in:verified,rejected',
+            'decision' => 'required|in:verified,pending',
             'notes'    => 'nullable|string|max:500',
         ]);
 
         $user->update([
             'id_verification_status' => $request->decision,
-            'is_manually_verified'   => true, // Mark manually verified/decided by admin
-            'id_verification_notes'  => $request->notes ?? ($user->id_verification_notes . ' | Admin decision: ' . $request->decision),
+            'is_manually_verified'   => $request->decision === 'verified',
+            'id_verification_notes'  => $request->notes ?? ('Admin decision: ' . $request->decision),
             'id_verified_at'         => $request->decision === 'verified' ? now() : null,
         ]);
 
-        return back()->with('success', "Tourist {$user->name} has been marked as {$request->decision}.");
+        return back()->with('success', "Tourist {$user->name} status set to " . strtoupper($request->decision) . ".");
     }
 
     /**
@@ -224,7 +220,7 @@ class IdentityVerificationController extends Controller
         }
 
         $rules = [
-            'email'                     => 'required|string|email|max:255|unique:users|regex:/^[a-zA-Z0-9._%+-]+@gmail\.com$/i',
+            'email'                     => 'required|string|email|max:255|unique:users|regex:/^[a-zA-Z0-9._%\+\-]+@gmail\.com$/i',
             'contact'                   => 'required|string|max:50',
             'password'                  => ['required', 'confirmed', Rules\Password::defaults()],
             'assigned_destination_name' => [
@@ -382,9 +378,24 @@ class IdentityVerificationController extends Controller
             return back()->withErrors('You cannot delete your own account.');
         }
 
+        // Cascade delete the assigned destination if the staff has one
+        if ($user->assigned_destination_id) {
+            $destination = \App\Models\Destination::find($user->assigned_destination_id);
+            if ($destination) {
+                if ($destination->photos) {
+                    \Illuminate\Support\Facades\Storage::disk('public')->delete($destination->photos);
+                }
+                // Also clean up any associated gallery images in storage
+                foreach ($destination->images as $image) {
+                    \Illuminate\Support\Facades\Storage::disk('public')->delete($image->path);
+                }
+                $destination->delete();
+            }
+        }
+
         $user->delete();
 
-        return back()->with('success', "Staff account {$user->name} deleted successfully.");
+        return back()->with('success', "Staff account {$user->name} and their assigned destination were deleted successfully.");
     }
 
     /**
@@ -400,7 +411,7 @@ class IdentityVerificationController extends Controller
         $rules = [
             'name'      => 'required|string|max:100',
             'last_name' => 'required|string|max:100',
-            'email'     => 'required|string|email|max:255|unique:users,email,' . $user->id . '|regex:/^[a-zA-Z0-9._%+-]+@gmail\.com$/i',
+            'email'     => 'required|string|email|max:255|unique:users,email,' . $user->id . '|regex:/^[a-zA-Z0-9._%\+\-]+@gmail\.com$/i',
             'contact'   => 'required|string|max:50',
             'password'  => 'nullable|string|min:8|confirmed',
         ];

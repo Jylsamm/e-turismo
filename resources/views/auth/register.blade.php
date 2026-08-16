@@ -1,10 +1,4 @@
 <style>
-  /* ── Hide Edge's native password reveal eye to prevent duplication with custom toggle ── */
-  input[type="password"]::-ms-reveal,
-  input[type="password"]::-ms-clear {
-    display: none;
-  }
-
   /* ── Date picker icon ── */
   input[type="date"]::-webkit-calendar-picker-indicator {
     cursor: pointer;
@@ -240,7 +234,8 @@
     position: relative;
     text-align: center;
     transition: all 0.3s ease;
-    min-height: 68px; /* ensures label has clear space below the circle */
+    min-height: 68px;
+    /* ensures label has clear space below the circle */
   }
 
   .step-circle {
@@ -248,7 +243,8 @@
     border-style: solid;
     transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     position: relative;
-    z-index: 2; /* keep circle above label/lock badge stacking issues */
+    z-index: 2;
+    /* keep circle above label/lock badge stacking issues */
   }
 
   .step-circle.active {
@@ -274,7 +270,8 @@
 
   .step-label {
     position: absolute;
-    top: 48px; /* was fine in markup, but reinforce here so it can't be overridden/collapsed */
+    top: 48px;
+    /* was fine in markup, but reinforce here so it can't be overridden/collapsed */
     left: 50%;
     transform: translateX(-50%);
     width: max-content;
@@ -283,7 +280,8 @@
   }
 
   .step-lock-badge {
-    z-index: 3; /* sit above the circle, not clipped or overlapping label text */
+    z-index: 3;
+    /* sit above the circle, not clipped or overlapping label text */
   }
 
   #reg-form .step-label.active {
@@ -313,6 +311,7 @@
     0% {
       background-position: 200% 0;
     }
+
     100% {
       background-position: -200% 0;
     }
@@ -796,8 +795,10 @@
     padding: 0 !important;
     margin-bottom: 0 !important;
   }
+
   .section-block::after {
-    display: none !important; /* disable locked overlay */
+    display: none !important;
+    /* disable locked overlay */
   }
 
   .section-block.active-step {
@@ -835,6 +836,7 @@
       transition: opacity 0.15s ease-in-out !important;
       transform: none !important;
     }
+
     #stepper-active-glow {
       transition: none !important;
       animation: none !important;
@@ -858,16 +860,36 @@
   }
 
   @keyframes active-pulse {
-    0%, 100% { transform: translateY(-50%) scale(1); box-shadow: 0 0 12px rgba(16, 185, 129, 0.4); }
-    50% { transform: translateY(-50%) scale(1.1); box-shadow: 0 0 20px rgba(16, 185, 129, 0.7); }
+
+    0%,
+    100% {
+      transform: translateY(-50%) scale(1);
+      box-shadow: 0 0 12px rgba(16, 185, 129, 0.4);
+    }
+
+    50% {
+      transform: translateY(-50%) scale(1.1);
+      box-shadow: 0 0 20px rgba(16, 185, 129, 0.7);
+    }
   }
 
   /* ── Checkmark Scale-In ── */
   @keyframes check-scale-in {
-    0% { transform: scale(0.3); opacity: 0; }
-    50% { transform: scale(1.3); }
-    100% { transform: scale(1); opacity: 1; }
+    0% {
+      transform: scale(0.3);
+      opacity: 0;
+    }
+
+    50% {
+      transform: scale(1.3);
+    }
+
+    100% {
+      transform: scale(1);
+      opacity: 1;
+    }
   }
+
   .check-icon-anim {
     animation: check-scale-in 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
   }
@@ -876,23 +898,30 @@
   #reg-form label {
     color: rgba(255, 255, 255, 0.95) !important;
   }
+
   .section-title h2 {
     color: #ffffff !important;
     font-size: 1.25rem !important;
     font-weight: 800 !important;
   }
-  .section-hint, .otp-message {
+
+  .section-hint,
+  .otp-message {
     color: rgba(255, 255, 255, 0.7) !important;
   }
+
   .otp-message.text-red-600 {
     color: #f87171 !important;
   }
+
   .otp-message.text-green-600 {
     color: #34d399 !important;
   }
 
   /* ── Smooth Input Focus States ── */
-  #reg-form input:focus, #reg-form select:focus, #reg-form textarea:focus {
+  #reg-form input:focus,
+  #reg-form select:focus,
+  #reg-form textarea:focus {
     border-color: #10b981 !important;
     box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.25) !important;
     outline: none !important;
@@ -900,64 +929,121 @@
   }
 
   /* ── Button Micro-Interactions ── */
-  .otp-button, .cam-enable-btn, .cam-retry-btn, button[type="submit"], #submit-btn, .btn-primary, x-primary-button {
+  .otp-button,
+  .cam-enable-btn,
+  .cam-retry-btn,
+  button[type="submit"],
+  #submit-btn,
+  .btn-primary,
+  x-primary-button {
     transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
   }
-  .otp-button:hover:not(:disabled), 
-  .cam-enable-btn:hover:not(:disabled), 
-  .cam-retry-btn:hover:not(:disabled), 
+
+  .otp-button:hover:not(:disabled),
+  .cam-enable-btn:hover:not(:disabled),
+  .cam-retry-btn:hover:not(:disabled),
   #submit-btn:hover:not(:disabled) {
     transform: scale(1.03);
     box-shadow: 0 0 12px rgba(16, 185, 129, 0.4);
   }
-  .otp-button:active:not(:disabled), 
-  .cam-enable-btn:active:not(:disabled), 
-  .cam-retry-btn:active:not(:disabled), 
+
+  .otp-button:active:not(:disabled),
+  .cam-enable-btn:active:not(:disabled),
+  .cam-retry-btn:active:not(:disabled),
   #submit-btn:active:not(:disabled) {
     transform: scale(0.97);
   }
 
   /* ── Photo Capture Success Green Flash ── */
   @keyframes success-green-flash {
-    0% { background-color: rgba(16, 185, 129, 0.45); }
-    100% { background-color: transparent; }
+    0% {
+      background-color: rgba(16, 185, 129, 0.45);
+    }
+
+    100% {
+      background-color: transparent;
+    }
   }
+
   .flash-success {
     animation: success-green-flash 0.8s ease-out forwards;
+  }
+
+  /* ── Submit Progress Bar ── */
+  #submit-progress-wrap {
+    display: none;
+    overflow: hidden;
+    border-radius: 9999px;
+    background: rgba(255,255,255,0.12);
+    height: 6px;
+    width: 100%;
+    margin-top: 0.75rem;
+  }
+  #submit-progress-wrap.visible {
+    display: block;
+  }
+  #submit-progress-bar {
+    height: 100%;
+    width: 0%;
+    border-radius: 9999px;
+    background: linear-gradient(90deg, #10b981 0%, #34d399 50%, #10b981 100%);
+    background-size: 200% 100%;
+    animation: submit-bar-fill 1.8s cubic-bezier(0.4,0,0.2,1) forwards, submit-bar-shimmer 1.2s linear infinite;
+    box-shadow: 0 0 8px rgba(52,211,153,0.6);
+  }
+  @keyframes submit-bar-fill {
+    0%   { width: 0%; }
+    60%  { width: 75%; }
+    90%  { width: 92%; }
+    100% { width: 100%; }
+  }
+  @keyframes submit-bar-shimmer {
+    0%   { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
   }
 </style>
 
 <x-guest-layout maxWidth="sm:max-w-2xl">
   <!-- Back Button -->
-  <div class="mb-6">
-    <a href="{{ route('home') }}"
-      class="group inline-flex items-center gap-1.5 text-sm font-medium bg-white/10 hover:bg-white/20 transition-all duration-200 px-3 py-1.5 rounded-full border border-white/10" style="color: white;">
-      <svg class="w-4 h-4 transition-transform duration-200 group-hover:-translate-x-0.5" fill="currentColor"
-        viewBox="0 0 20 20">
-        <path fill-rule="evenodd"
-          d="M9.707 14.707a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414l4-4a1 1 0 111.414 1.414L7.414 9H15a1 1 0 110 2H7.414l2.293 2.293a1 1 0 010 1.414z"
-          clip-rule="evenodd" />
-      </svg>
-      Back
-    </a>
-  </div>
+  <!-- Container holding the registration form -->
+  <div id="reg-form-container" class="auth-fade">
+    <!-- Back Button -->
+    <div class="mb-6">
+      <a href="{{ route('home') }}"
+        class="group inline-flex items-center gap-1.5 text-sm font-medium bg-white/10 hover:bg-white/20 transition-all duration-200 px-3 py-1.5 rounded-full border border-white/10"
+        style="color: white;">
+        <svg class="w-4 h-4 transition-transform duration-200 group-hover:-translate-x-0.5" fill="currentColor"
+          viewBox="0 0 20 20">
+          <path fill-rule="evenodd"
+            d="M9.707 14.707a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414l4-4a1 1 0 111.414 1.414L7.414 9H15a1 1 0 110 2H7.414l2.293 2.293a1 1 0 010 1.414z"
+            clip-rule="evenodd" />
+        </svg>
+        Back
+      </a>
+    </div>
 
-  <form method="POST" action="{{ route('register') }}" enctype="multipart/form-data" id="reg-form">
-    @csrf
+    <form method="POST" action="{{ route('register') }}" enctype="multipart/form-data" id="reg-form">
+      @csrf
+      <input type="hidden" name="id_photo_base64" id="id_photo_base64">
 
     <div class="mb-8 px-2 select-none">
       <!-- Progress Indicator Container -->
       <div class="w-full max-w-2xl mx-auto mt-4 px-4 pb-8 relative">
         <div class="relative flex items-center justify-between">
-          <!-- Background Connecting Line -->
-          <div class="absolute left-[32px] right-[32px] top-[20px] h-[3px] bg-white/10 -translate-y-1/2 z-0 rounded"></div>
-          <!-- Active Filled Progress Line -->
-          <div id="step-progress-line"
-            class="absolute left-[32px] top-[20px] h-[3px] -translate-y-1/2 z-0 rounded transition-all duration-500 ease-out"
-            style="width: 0%;"></div>
-          
+          <!-- Connecting Line Track (from Step 1 center to Step 5 center) -->
+          <div class="absolute left-[32px] right-[32px] top-[20px] -translate-y-1/2 z-0 h-[3px] pointer-events-none">
+            <!-- Background Line Track -->
+            <div class="w-full h-full bg-white/10 rounded"></div>
+            <!-- Active Filled Progress Line -->
+            <div id="step-progress-line"
+              class="absolute left-0 top-0 h-full bg-emerald-500 rounded transition-all duration-500 ease-out shadow-[0_0_8px_rgba(16,185,129,0.5)]"
+              style="width: 0%;"></div>
+          </div>
+
           <!-- Smooth Active Glow Ring -->
-          <div id="stepper-active-glow" class="absolute w-12 h-12 rounded-full border-2 border-emerald-500 bg-emerald-500/10 shadow-[0_0_15px_rgba(16,185,129,0.4)] z-0 transition-all duration-300 ease-out -translate-y-1/2 pointer-events-none" style="top: 20px; left: 0;"></div>
+          <div id="stepper-active-glow"
+            class="absolute w-12 h-12 rounded-full border-2 border-emerald-500 bg-emerald-500/10 shadow-[0_0_15px_rgba(16,185,129,0.4)] z-0 transition-all duration-300 ease-out -translate-y-1/2 pointer-events-none"
+            style="top: 20px; left: 0;"></div>
 
           <!-- Step 1 -->
           <div class="step-node flex flex-col items-center z-10 w-16 clickable" id="step-node-1"
@@ -1044,26 +1130,6 @@
               id="step-label-4">Password</span>
           </div>
 
-          <!-- Step 5 -->
-          <div class="step-node flex flex-col items-center z-10 w-16 locked-node" id="step-node-5"
-            onclick="handleStepClick('section-submit', 4)">
-            <div
-              class="step-circle w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm transition-all duration-300 border-2 border-gray-300 bg-white text-gray-500 shadow-sm"
-              id="step-circle-5">
-              <span class="step-inner-val">5</span>
-              <!-- Lock Badge -->
-              <div class="step-lock-badge absolute -top-1 -right-1 bg-slate-800 text-white rounded-full p-0.5 shadow-sm"
-                style="font-size: 8px;">
-                <svg class="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
-                    d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                </svg>
-              </div>
-            </div>
-            <span
-              class="step-label text-[9px] sm:text-[11px] font-extrabold uppercase tracking-wider text-center text-gray-400 locked"
-              id="step-label-5">Submit</span>
-          </div>
         </div>
       </div>
     </div>
@@ -1125,7 +1191,8 @@
 
       <!-- Next button for Step 1 -->
       <div class="flex justify-end items-center mt-6 pt-4 border-t border-white/10">
-        <button type="button" class="btn-next-step otp-button" id="btn-next-1" disabled onclick="navigateToStep(1)">Next →</button>
+        <button type="button" class="btn-next-step otp-button" id="btn-next-1" disabled onclick="navigateToStep(1)">Next
+          →</button>
       </div>
     </div>
 
@@ -1139,13 +1206,20 @@
         <div>
           <x-input-label for="first_name" :value="__('First Name')" />
           <x-text-input id="first_name" class="block mt-1 w-full" type="text" name="first_name"
-            :value="old('first_name')" required autofocus autocomplete="given-name" />
+            :value="old('first_name')" required autofocus autocomplete="given-name"
+            onblur="if(!this.value.trim()) document.getElementById('err-first-name').classList.remove('hidden');"
+            oninput="if(this.value.trim()) document.getElementById('err-first-name').classList.add('hidden');" />
+          <p id="err-first-name" class="mt-1 text-xs font-semibold text-red-600 hidden">Please enter your first name.
+          </p>
           <x-input-error :messages="$errors->get('first_name')" class="mt-2" />
         </div>
         <div>
           <x-input-label for="last_name" :value="__('Last Name')" />
           <x-text-input id="last_name" class="block mt-1 w-full" type="text" name="last_name" :value="old('last_name')"
-            required autocomplete="family-name" />
+            required autocomplete="family-name"
+            onblur="if(!this.value.trim()) document.getElementById('err-last-name').classList.remove('hidden');"
+            oninput="if(this.value.trim()) document.getElementById('err-last-name').classList.add('hidden');" />
+          <p id="err-last-name" class="mt-1 text-xs font-semibold text-red-600 hidden">Please enter your last name.</p>
           <x-input-error :messages="$errors->get('last_name')" class="mt-2" />
         </div>
       </div>
@@ -1220,45 +1294,49 @@
         <x-input-label for="classification" :value="__('Visitor Classification')" />
         <div class="relative mt-1">
           <!-- Dropdown Trigger Button -->
-          <button type="button" @click="showClassification = !showClassification" @click.away="showClassification = false"
+          <button type="button" @click="showClassification = !showClassification"
+            @click.away="showClassification = false"
             class="flex justify-between items-center w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-700 font-semibold hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 shadow-sm transition duration-150">
             <span x-text="
               classification === 'Local' ? 'Local (Municipal Resident)' : 
               (classification === 'Domestic' ? 'Domestic (National Resident)' : 
               (classification === 'Foreign' ? 'Foreign (International Visitor)' : 'Select Classification'))
             " class="text-gray-800"></span>
-            <svg class="h-4 w-4 text-gray-400 transform transition-transform duration-200" :class="showClassification ? 'rotate-180' : ''" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <svg class="h-4 w-4 text-gray-400 transform transition-transform duration-200"
+              :class="showClassification ? 'rotate-180' : ''" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7" />
             </svg>
           </button>
-          
+
           <input type="hidden" id="classification" name="classification" :value="classification" required />
 
           <!-- Dropdown List with transitions -->
-          <div x-show="showClassification"
-            x-transition:enter="transition ease-out duration-150"
-            x-transition:enter-start="opacity-0 scale-95"
-            x-transition:enter-end="opacity-100 scale-100"
-            x-transition:leave="transition ease-in duration-100"
-            x-transition:leave-start="opacity-100 scale-100"
+          <div x-show="showClassification" x-transition:enter="transition ease-out duration-150"
+            x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100"
+            x-transition:leave="transition ease-in duration-100" x-transition:leave-start="opacity-100 scale-100"
             x-transition:leave-end="opacity-0 scale-95"
             class="absolute left-0 mt-1.5 z-50 w-full rounded-md bg-white border border-gray-200 shadow-xl py-1 overflow-hidden"
             style="display: none;">
-            
-            <button type="button" @click="classification = 'Local'; showClassification = false; saveFormState(); updateStepProgress();"
+
+            <button type="button"
+              @click="classification = 'Local'; showClassification = false; document.getElementById('err-classification').classList.add('hidden'); saveFormState(); updateStepProgress();"
               class="w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-green-50 hover:text-green-950 transition-colors">
               Local (Municipal Resident)
             </button>
-            <button type="button" @click="classification = 'Domestic'; showClassification = false; saveFormState(); updateStepProgress();"
+            <button type="button"
+              @click="classification = 'Domestic'; showClassification = false; document.getElementById('err-classification').classList.add('hidden'); saveFormState(); updateStepProgress();"
               class="w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-green-50 hover:text-green-950 transition-colors">
-              Domestic (National Resident)
+              Domestic (Other Municipality Resident)
             </button>
-            <button type="button" @click="classification = 'Foreign'; showClassification = false; saveFormState(); updateStepProgress();"
+            <button type="button"
+              @click="classification = 'Foreign'; showClassification = false; document.getElementById('err-classification').classList.add('hidden'); saveFormState(); updateStepProgress();"
               class="w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-green-50 hover:text-green-950 transition-colors">
               Foreign (International Visitor)
             </button>
           </div>
         </div>
+        <p id="err-classification" class="mt-1 text-xs font-semibold text-red-600 hidden">Please select a visitor
+          classification.</p>
         <x-input-error :messages="$errors->get('classification')" class="mt-2" />
       </div>
 
@@ -1272,41 +1350,56 @@
           <!-- Dropdown Trigger Button -->
           <button type="button" @click="showGender = !showGender" @click.away="showGender = false"
             class="flex justify-between items-center w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-700 font-semibold hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 shadow-sm transition duration-150">
-            <span x-text="gender === 'Male' ? 'Male' : (gender === 'Female' ? 'Female' : 'Select Gender')" class="text-gray-800"></span>
-            <svg class="h-4 w-4 text-gray-400 transform transition-transform duration-200" :class="showGender ? 'rotate-180' : ''" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <span x-text="gender === 'Male' ? 'Male' : (gender === 'Female' ? 'Female' : 'Select Gender')"
+              class="text-gray-800"></span>
+            <svg class="h-4 w-4 text-gray-400 transform transition-transform duration-200"
+              :class="showGender ? 'rotate-180' : ''" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7" />
             </svg>
           </button>
-          
+
           <input type="hidden" id="gender" name="gender" :value="gender" required />
 
           <!-- Dropdown List with transitions -->
-          <div x-show="showGender"
-            x-transition:enter="transition ease-out duration-150"
-            x-transition:enter-start="opacity-0 scale-95"
-            x-transition:enter-end="opacity-100 scale-100"
-            x-transition:leave="transition ease-in duration-100"
-            x-transition:leave-start="opacity-100 scale-100"
+          <div x-show="showGender" x-transition:enter="transition ease-out duration-150"
+            x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100"
+            x-transition:leave="transition ease-in duration-100" x-transition:leave-start="opacity-100 scale-100"
             x-transition:leave-end="opacity-0 scale-95"
             class="absolute left-0 mt-1.5 z-50 w-full rounded-md bg-white border border-gray-200 shadow-xl py-1 overflow-hidden"
             style="display: none;">
-            
-            <button type="button" @click="gender = 'Male'; showGender = false; saveFormState(); updateStepProgress();"
+
+            <button type="button"
+              @click="gender = 'Male'; showGender = false; document.getElementById('err-gender').classList.add('hidden'); saveFormState(); updateStepProgress();"
               class="w-full text-left px-4 py-2.5 text-sm text-gray-750 hover:bg-green-50 hover:text-green-950 transition-colors">
               Male
             </button>
-            <button type="button" @click="gender = 'Female'; showGender = false; saveFormState(); updateStepProgress();"
+            <button type="button"
+              @click="gender = 'Female'; showGender = false; document.getElementById('err-gender').classList.add('hidden'); saveFormState(); updateStepProgress();"
               class="w-full text-left px-4 py-2.5 text-sm text-gray-755 hover:bg-green-50 hover:text-green-950 transition-colors">
               Female
             </button>
           </div>
         </div>
+        <p id="err-gender" class="mt-1 text-xs font-semibold text-red-600 hidden">Please select your gender.</p>
         <x-input-error :messages="$errors->get('gender')" class="mt-2" />
+      </div>
+
+      {{-- Phone Number --}}
+      <div class="mt-4">
+        <x-input-label for="contact" :value="__('Phone Number')" />
+        <x-text-input id="contact" class="block mt-1 w-full" type="tel" name="contact" :value="old('contact')"
+          placeholder="e.g. 09XXXXXXXXX" required autocomplete="tel"
+          oninput="this.value = this.value.replace(/[^0-9+-\s()]/g, ''); if(this.value.trim().length >= 7) document.getElementById('err-contact').classList.add('hidden');"
+          onblur="if(this.value.trim().length < 7) document.getElementById('err-contact').classList.remove('hidden');" />
+        <p id="err-contact" class="mt-1 text-xs font-semibold text-red-600 hidden">Please enter a valid phone number (at
+          least 7 digits).</p>
+        <x-input-error :messages="$errors->get('contact')" class="mt-2" />
       </div>
 
       <!-- Next button for Step 2 -->
       <div class="flex justify-end items-center mt-6 pt-4 border-t border-white/10">
-        <button type="button" class="btn-next-step otp-button" id="btn-next-2" disabled onclick="navigateToStep(2)">Next →</button>
+        <button type="button" class="btn-next-step otp-button" id="btn-next-2" onclick="handleNextStep2()">Next
+          →</button>
       </div>
     </div>
 
@@ -1319,6 +1412,7 @@
         <x-input-label for="id_type" :value="__('ID Type')" />
         <select id="id_type" name="id_type"
           class="block mt-1 w-full border-gray-300 focus:border-brand-500 focus:ring-brand-500 rounded-md shadow-sm"
+          onchange="document.getElementById('err-id-type').classList.add('hidden')"
           required>
           <option value="" disabled selected>Select ID Type</option>
           <option value="Passport" {{ old('id_type') == 'Passport' ? 'selected' : '' }}>Passport</option>
@@ -1336,6 +1430,7 @@
           <option value="Barangay ID" {{ old('id_type') == 'Barangay ID' ? 'selected' : '' }}>Barangay ID</option>
           <option value="Company ID" {{ old('id_type') == 'Company ID' ? 'selected' : '' }}>Company / Employee ID</option>
         </select>
+        <p id="err-id-type" class="mt-1 text-xs font-semibold text-red-600 hidden">Please select an ID type.</p>
         <x-input-error :messages="$errors->get('id_type')" class="mt-2" />
       </div>
 
@@ -1343,9 +1438,12 @@
       <div class="mt-4" id="id-number-group">
         <x-input-label for="id_number_input" :value="__('ID Number')" id="id-number-label" />
         <x-text-input id="id_number_input" class="block mt-1 w-full" type="text" name="id_number"
-          :value="old('id_number', old('school_name'))" required placeholder="e.g. 2242-0414-6523" />
+          :value="old('id_number', old('school_name'))" required placeholder="e.g. 2242-0414-6523"
+          onblur="if(!this.value.trim()) document.getElementById('err-id-number').classList.remove('hidden');"
+          oninput="if(this.value.trim()) document.getElementById('err-id-number').classList.add('hidden');" />
         <p id="id-number-hint" class="mt-1 text-xs text-gray-500 hidden">Enter your full school name. Do not use
           abbreviations.</p>
+        <p id="err-id-number" class="mt-1 text-xs font-semibold text-red-600 hidden">Please enter your ID number or school name.</p>
         <x-input-error :messages="$errors->get('id_number')" class="mt-2" />
         <x-input-error :messages="$errors->get('school_name')" class="mt-2" />
       </div>
@@ -1361,6 +1459,7 @@
 
           <!-- Hidden field to submit standard date format to Laravel backend -->
           <input type="hidden" id="dob" name="dob" :value="old('dob')" />
+          <p id="err-dob" class="mt-1 text-xs font-semibold text-red-600 hidden">Please select your date of birth.</p>
 
           <span class="dob-cal-icon">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -1439,7 +1538,8 @@
           {{-- STATE A: not yet asked --}}
           <div id="cam-state-pending" class="flex flex-col items-center justify-center text-center gap-4 px-6 py-10">
             <div class="relative w-16 h-16 flex items-center justify-center">
-              <div class="absolute inset-0 rounded-full animate-ping opacity-35 bg-teal-500" style="animation-duration: 2s;"></div>
+              <div class="absolute inset-0 rounded-full animate-ping opacity-35 bg-teal-500"
+                style="animation-duration: 2s;"></div>
               <div
                 style="width:3.5rem;height:3.5rem;border-radius:9999px;background:rgba(13,148,136,0.18);border:1.5px solid rgba(20,184,166,0.5);display:flex;align-items:center;justify-content:center;color:#2dd4bf;"
                 class="relative z-10">
@@ -1624,6 +1724,7 @@
 
         <input id="id_photo" name="id_photo" type="file" accept="image/jpeg" required class="sr-only" aria-hidden="true"
           tabindex="-1" />
+        <p id="err-id-photo" class="mt-2 text-xs font-semibold text-red-600 hidden">Please capture your ID photo (Front & Back).</p>
         <p id="cam-error-msg" class="mt-2 text-sm text-red-600  hidden"></p>
         <p id="cam-success-msg" class="mt-2 text-sm text-green-600 hidden"></p>
         <x-input-error :messages="$errors->get('id_photo')" class="mt-2" />
@@ -1631,7 +1732,8 @@
 
       <!-- Next button for Step 3 -->
       <div class="flex justify-end items-center mt-6 pt-4 border-t border-white/10">
-        <button type="button" class="btn-next-step otp-button" id="btn-next-3" disabled onclick="navigateToStep(3)">Next →</button>
+        <button type="button" class="btn-next-step otp-button" id="btn-next-3" onclick="handleNextStep3()">Next
+          →</button>
       </div>
     </div>
 
@@ -1645,18 +1747,21 @@
         <x-input-label for="password" :value="__('Password')" />
         <div class="relative mt-1">
           <x-text-input id="password" class="block w-full pr-12" type="password" name="password" required
-            autocomplete="new-password" />
-          <button type="button" onclick="togglePassword('password', this)"
-            class="password-toggle-btn toggled-hidden"
-            aria-label="Show password"
-            aria-pressed="false">
-            <svg class="w-5 h-5 eye-icon-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            autocomplete="new-password"
+            oninput="if(this.value.length >= 8) document.getElementById('err-password').classList.add('hidden');"
+            onblur="if(this.value.length < 8) document.getElementById('err-password').classList.remove('hidden');" />
+          <button type="button" onclick="togglePassword('password', this)" class="password-toggle-btn toggled-hidden"
+            aria-label="Show password" aria-pressed="false">
+            <svg class="w-5 h-5 eye-icon-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <path class="eye-lid" d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7z"></path>
               <circle class="eye-pupil" cx="12" cy="12" r="3"></circle>
               <line class="eye-slash" x1="4" y1="20" x2="20" y2="4"></line>
             </svg>
           </button>
         </div>
+        <p id="err-password" class="mt-1 text-xs font-semibold text-red-600 hidden">Password must be at least 8 characters long.</p>
+        <x-input-error :messages="$errors->get('password')" class="mt-2" />
       </div>
 
       {{-- 6. Confirm Password --}}
@@ -1664,42 +1769,45 @@
         <x-input-label for="password_confirmation" :value="__('Confirm Password')" />
         <div class="relative mt-1">
           <x-text-input id="password_confirmation" class="block w-full pr-12" type="password"
-            name="password_confirmation" required autocomplete="new-password" />
+            name="password_confirmation" required autocomplete="new-password"
+            oninput="if(this.value === document.getElementById('password').value) document.getElementById('err-password-confirm').classList.add('hidden');"
+            onblur="if(this.value !== document.getElementById('password').value) document.getElementById('err-password-confirm').classList.remove('hidden');" />
           <button type="button" onclick="togglePassword('password_confirmation', this)"
-            class="password-toggle-btn toggled-hidden"
-            aria-label="Show password"
-            aria-pressed="false">
-            <svg class="w-5 h-5 eye-icon-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            class="password-toggle-btn toggled-hidden" aria-label="Show password" aria-pressed="false">
+            <svg class="w-5 h-5 eye-icon-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <path class="eye-lid" d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7z"></path>
               <circle class="eye-pupil" cx="12" cy="12" r="3"></circle>
               <line class="eye-slash" x1="4" y1="20" x2="20" y2="4"></line>
             </svg>
           </button>
         </div>
+        <p id="err-password-confirm" class="mt-1 text-xs font-semibold text-red-600 hidden">Passwords do not match.</p>
         <x-input-error :messages="$errors->get('password_confirmation')" class="mt-2" />
       </div>
 
-      <!-- Next button for Step 4 -->
-      <div class="flex justify-end items-center mt-6 pt-4 border-t border-white/10">
-        <button type="button" class="btn-next-step otp-button" id="btn-next-4" disabled onclick="navigateToStep(4)">Next →</button>
-      </div>
-    </div>
-
-    <div class="section-block section-locked" id="section-submit">
-      <div class="section-title">
-        <h2>Review & Submit</h2>
-      </div>
-      <div class="flex justify-end items-center mt-6 pt-4 border-t border-white/10">
-        <div class="flex items-center gap-4">
+      <!-- Submit action for Step 4 (Password is now the final step) -->
+      <div class="mt-6 pt-4 border-t border-white/10">
+        <!-- Progress bar (visible during submission) -->
+        <div id="submit-progress-wrap">
+          <div id="submit-progress-bar"></div>
+        </div>
+        <div class="flex justify-between items-center mt-3">
           <a class="underline text-sm text-gray-400 hover:text-white rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-500"
-            href="{{ route('login') }}">
+            href="{{ route('login') }}" id="already-registered-link">
             Already registered?
           </a>
-          <x-primary-button id="submit-btn">Create Account</x-primary-button>
+          <button type="button" id="btn-create-account" class="otp-button" onclick="handleNextStep4()">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
+            </svg>
+            Create Account
+          </button>
         </div>
       </div>
-    </div>
-  </form>
+    </form>
+  </div>
 
   <script>
     const ID_TYPES_WITH_DOB = new Set(['Passport', 'National ID', "Driver's License", 'SSS ID', 'GSIS ID', 'PhilHealth ID', 'Pag-IBIG ID', 'Voter ID', 'Postal ID']);
@@ -1728,11 +1836,10 @@
     const btnVerifyCode = document.getElementById('btn-verify-code');
     const otpInput = document.getElementById('otp_code');
     const otpStatus = document.getElementById('otp-status-msg');
-    const submitBtn = document.getElementById('submit-btn');
+    const submitBtn = document.getElementById('btn-create-account');
     const sectionDetails = document.getElementById('section-details');
     const sectionIdentity = document.getElementById('section-identity');
     const sectionPassword = document.getElementById('section-password');
-    const sectionSubmit = document.getElementById('section-submit');
     // stepPills removed
     const statePending = document.getElementById('cam-state-pending');
     const stateDenied = document.getElementById('cam-state-denied');
@@ -1750,6 +1857,7 @@
     let facingMode = 'environment';
     let orientation = 'landscape';
     let captured = false;
+    let capturedFileRef = null; // Holds the captured File object for safe re-assignment on submit
     let pillTimer = null;
     let debounce = null;
     const PILLS = ['Hold steady to prevent blur', 'Align ID within the glowing frame', 'Ensure good lighting — avoid glare', 'All text must be clearly readable'];
@@ -1766,7 +1874,7 @@
       if (v === 'School ID') {
         idLabel.textContent = 'School Name'; idInput.placeholder = 'e.g. Zamboanga del Sur State University'; idInput.name = 'school_name'; idHint.classList.remove('hidden');
       } else {
-        idLabel.textContent = 'ID Number'; idInput.placeholder = 'e.g. 2022-041633'; idInput.name = 'id_number'; idHint.classList.add('hidden');
+        idLabel.textContent = 'ID Number'; idInput.placeholder = 'e.g. XXXX-XXXX-XXXX-XXXX'; idInput.name = 'id_number'; idHint.classList.add('hidden');
       }
       const needsDob = ID_TYPES_WITH_DOB.has(v);
       dobInput.required = needsDob;
@@ -1789,6 +1897,7 @@
 
     function setLockSectionInputs(sectionEl, locked) {
       sectionEl.querySelectorAll('input,select,textarea,button').forEach(el => {
+        if (el.id === 'submit-btn') return;
         if (locked) el.setAttribute('disabled', '');
         else el.removeAttribute('disabled');
       });
@@ -1803,19 +1912,20 @@
 
     const firstNameInput = document.getElementById('first_name');
     const lastNameInput = document.getElementById('last_name');
+    const contactInput = document.getElementById('contact');
     const classificationSelect = document.getElementById('classification');
     const passwordInput = document.getElementById('password');
     const confirmPasswordInput = document.getElementById('password_confirmation');
 
-    let currentStepIndex = 0; // 0: email, 1: details, 2: identity, 3: password, 4: submit
+    let currentStepIndex = 0; // 0: email, 1: details, 2: identity, 3: password
 
     function getSectionId(idx) {
-      return ['section-email', 'section-details', 'section-identity', 'section-password', 'section-submit'][idx];
+      return ['section-email', 'section-details', 'section-identity', 'section-password'][idx];
     }
 
     function navigateToStep(targetIndex) {
       if (targetIndex === currentStepIndex) return;
-      
+
       const states = getStepStates();
       if (!states[targetIndex]) return; // locked step
 
@@ -1832,7 +1942,7 @@
         currentSection.className = 'section-block';
         targetSection.className = 'section-block active-step';
         currentStepIndex = targetIndex;
-        
+
         // Focus first input
         const firstInput = targetSection.querySelector('input:not([disabled]),select:not([disabled])');
         if (firstInput) firstInput.focus();
@@ -1859,7 +1969,7 @@
         // Show new section
         targetSection.className = 'section-block active-step';
         currentStepIndex = targetIndex;
-        
+
         // Focus first input
         const firstInput = targetSection.querySelector('input:not([disabled]),select:not([disabled])');
         if (firstInput) firstInput.focus();
@@ -1897,21 +2007,30 @@
         passwordInput.value === confirmPasswordInput.value;
 
       return [
-        true, // Step 1 always unlocked
+        true,            // Step 1 always unlocked
         step1_completed, // Step 2 details unlocked if step 1 completed
         step2_completed, // Step 3 identity unlocked if step 2 completed
-        step3_completed, // Step 4 password unlocked if step 3 completed
-        step4_completed  // Step 5 submit unlocked if step 4 completed
+        step3_completed  // Step 4 password unlocked if step 3 completed
       ];
     }
 
     function updateStepProgress() {
       const step1_completed = otpVerified;
 
+      const genderEl = document.getElementById('gender');
       const step2_completed = step1_completed &&
         firstNameInput.value.trim() !== '' &&
         lastNameInput.value.trim() !== '' &&
-        classificationSelect.value !== '';
+        classificationSelect.value !== '' &&
+        (genderEl ? (genderEl.value === 'Male' || genderEl.value === 'Female') : false) &&
+        (contactInput ? contactInput.value.trim().length >= 7 : false);
+
+      // Hide inline error messages immediately when inputs have valid content
+      if (firstNameInput && firstNameInput.value.trim() !== '') { const el = document.getElementById('err-first-name'); if (el) el.classList.add('hidden'); }
+      if (lastNameInput && lastNameInput.value.trim() !== '') { const el = document.getElementById('err-last-name'); if (el) el.classList.add('hidden'); }
+      if (classificationSelect && classificationSelect.value !== '') { const el = document.getElementById('err-classification'); if (el) el.classList.add('hidden'); }
+      if (genderEl && (genderEl.value === 'Male' || genderEl.value === 'Female')) { const el = document.getElementById('err-gender'); if (el) el.value = genderEl.value; const elErr = document.getElementById('err-gender'); if (elErr) elErr.classList.add('hidden'); }
+      if (contactInput && contactInput.value.trim().length >= 7) { const el = document.getElementById('err-contact'); if (el) el.classList.add('hidden'); }
 
       const needsDob = ID_TYPES_WITH_DOB.has(idTypeSelect.value);
       const step3_completed = step2_completed &&
@@ -1919,6 +2038,14 @@
         idInput.value.trim() !== '' &&
         (!needsDob || dobInput.value !== '') &&
         captured;
+
+      if (idTypeSelect && idTypeSelect.value !== '') { const el = document.getElementById('err-id-type'); if (el) el.classList.add('hidden'); }
+      if (idInput && idInput.value.trim() !== '') { const el = document.getElementById('err-id-number'); if (el) el.classList.add('hidden'); }
+      if (dobInput && dobInput.value !== '') { const el = document.getElementById('err-dob'); if (el) el.classList.add('hidden'); }
+      if (captured) { const el = document.getElementById('err-id-photo'); if (el) el.classList.add('hidden'); }
+
+      if (passwordInput && passwordInput.value.length >= 8) { const el = document.getElementById('err-password'); if (el) el.classList.add('hidden'); }
+      if (confirmPasswordInput && confirmPasswordInput.value.length >= 8 && confirmPasswordInput.value === passwordInput.value) { const el = document.getElementById('err-password-confirm'); if (el) el.classList.add('hidden'); }
 
       const step4_completed = step3_completed &&
         passwordInput.value.length >= 8 &&
@@ -1931,24 +2058,24 @@
       const btnNext4 = document.getElementById('btn-next-4');
 
       if (btnNext1) btnNext1.disabled = !step1_completed;
-      if (btnNext2) btnNext2.disabled = !step2_completed;
-      if (btnNext3) btnNext3.disabled = !step3_completed;
-      if (btnNext4) btnNext4.disabled = !step4_completed;
+      if (btnNext2) btnNext2.disabled = false; // Always enabled so handleNextStep2 can validate & show errors on click
+      if (btnNext3) btnNext3.disabled = false; // Always enabled so handleNextStep3 can validate & show errors on click
+      if (btnNext4) btnNext4.disabled = false; // Always enabled so handleNextStep4 can validate & show errors on click
 
       const states = [
         { completed: step1_completed, active: currentStepIndex === 0, locked: currentStepIndex < 0 },
         { completed: step2_completed, active: currentStepIndex === 1, locked: currentStepIndex < 1 },
         { completed: step3_completed, active: currentStepIndex === 2, locked: currentStepIndex < 2 },
-        { completed: step4_completed, active: currentStepIndex === 3, locked: currentStepIndex < 3 },
-        { completed: false, active: currentStepIndex === 4, locked: currentStepIndex < 4 }
+        { completed: step4_completed, active: currentStepIndex === 3, locked: currentStepIndex < 3 }
       ];
 
-      // Update UI for each step node
+      // Update UI for each step node (only 4 now)
       states.forEach((state, i) => {
         const idx = i + 1;
         const circle = document.getElementById(`step-circle-${idx}`);
         const label = document.getElementById(`step-label-${idx}`);
         const node = document.getElementById(`step-node-${idx}`);
+        if (!circle || !label || !node) return;
         const innerVal = node.querySelector('.step-inner-val');
         const lockBadge = node.querySelector('.step-lock-badge');
 
@@ -1988,20 +2115,20 @@
         }
       });
 
-      // Calculate filled progress line width
+      // Calculate filled progress line width (3 gaps between 4 nodes = 33.33% each)
       let completedCount = 0;
       if (step1_completed) completedCount = 1;
       if (step2_completed) completedCount = 2;
       if (step3_completed) completedCount = 3;
-      if (step4_completed) completedCount = 4;
+      if (step4_completed) completedCount = 3; // password complete keeps bar at 100% of visible track
 
       const progressLine = document.getElementById('step-progress-line');
       if (progressLine) {
-        progressLine.style.width = `${completedCount * 25}%`;
+        progressLine.style.width = `${(completedCount / 3) * 100}%`;
       }
 
       // Lock inputs in other sections, unlock in active section
-      ['section-email', 'section-details', 'section-identity', 'section-password', 'section-submit'].forEach((id, idx) => {
+      ['section-email', 'section-details', 'section-identity', 'section-password'].forEach((id, idx) => {
         const sec = document.getElementById(id);
         if (sec) {
           const isCurrent = idx === currentStepIndex;
@@ -2020,8 +2147,141 @@
       }
     }
 
+    window.handleNextStep2 = function () {
+      const fn = firstNameInput ? firstNameInput.value.trim() : '';
+      const ln = lastNameInput ? lastNameInput.value.trim() : '';
+      const cl = classificationSelect ? classificationSelect.value : '';
+      const gEl = document.getElementById('gender');
+      const g = gEl ? gEl.value : '';
+      const ph = contactInput ? contactInput.value.trim() : '';
+
+      let isValid = true;
+      let firstInvalidEl = null;
+
+      const errFn = document.getElementById('err-first-name');
+      const errLn = document.getElementById('err-last-name');
+      const errCl = document.getElementById('err-classification');
+      const errG = document.getElementById('err-gender');
+      const errPh = document.getElementById('err-contact');
+
+      if (errFn) {
+        if (!fn) { errFn.classList.remove('hidden'); isValid = false; if (!firstInvalidEl) firstInvalidEl = firstNameInput; }
+        else { errFn.classList.add('hidden'); }
+      }
+
+      if (errLn) {
+        if (!ln) { errLn.classList.remove('hidden'); isValid = false; if (!firstInvalidEl) firstInvalidEl = lastNameInput; }
+        else { errLn.classList.add('hidden'); }
+      }
+
+      if (errCl) {
+        if (!cl) { errCl.classList.remove('hidden'); isValid = false; }
+        else { errCl.classList.add('hidden'); }
+      }
+
+      if (errG) {
+        if (g !== 'Male' && g !== 'Female') { errG.classList.remove('hidden'); isValid = false; }
+        else { errG.classList.add('hidden'); }
+      }
+
+      if (errPh) {
+        if (ph.length < 7) { errPh.classList.remove('hidden'); isValid = false; if (!firstInvalidEl) firstInvalidEl = contactInput; }
+        else { errPh.classList.add('hidden'); }
+      }
+
+      if (!isValid) {
+        if (firstInvalidEl) firstInvalidEl.focus();
+        return;
+      }
+
+      navigateToStep(2);
+    };
+
+    window.handleNextStep3 = function () {
+      const idTypeVal = idTypeSelect ? idTypeSelect.value : '';
+      const idNumVal  = idInput ? idInput.value.trim() : '';
+      const needsDob  = ID_TYPES_WITH_DOB.has(idTypeVal);
+      const dobVal    = dobInput ? dobInput.value : '';
+
+      let isValid = true;
+      let firstInvalidEl = null;
+
+      const errIdType = document.getElementById('err-id-type');
+      const errIdNum  = document.getElementById('err-id-number');
+      const errDob    = document.getElementById('err-dob');
+      const errPhoto  = document.getElementById('err-id-photo');
+
+      if (errIdType) {
+        if (!idTypeVal) { errIdType.classList.remove('hidden'); isValid = false; if (!firstInvalidEl) firstInvalidEl = idTypeSelect; }
+        else { errIdType.classList.add('hidden'); }
+      }
+
+      if (errIdNum) {
+        if (!idNumVal) { errIdNum.classList.remove('hidden'); isValid = false; if (!firstInvalidEl) firstInvalidEl = idInput; }
+        else { errIdNum.classList.add('hidden'); }
+      }
+
+      if (errDob) {
+        if (needsDob && !dobVal) { errDob.classList.remove('hidden'); isValid = false; }
+        else { errDob.classList.add('hidden'); }
+      }
+
+      if (errPhoto) {
+        if (!captured) { errPhoto.classList.remove('hidden'); isValid = false; }
+        else { errPhoto.classList.add('hidden'); }
+      }
+
+      if (!isValid) {
+        if (firstInvalidEl) firstInvalidEl.focus();
+        return;
+      }
+
+      navigateToStep(3);
+    };
+
+    window.handleNextStep4 = function () {
+      const pwd  = passwordInput ? passwordInput.value : '';
+      const pwdC = confirmPasswordInput ? confirmPasswordInput.value : '';
+
+      let isValid = true;
+      let firstInvalidEl = null;
+
+      const errPwd  = document.getElementById('err-password');
+      const errPwdC = document.getElementById('err-password-confirm');
+
+      if (errPwd) {
+        if (pwd.length < 8) { errPwd.classList.remove('hidden'); isValid = false; if (!firstInvalidEl) firstInvalidEl = passwordInput; }
+        else { errPwd.classList.add('hidden'); }
+      }
+
+      if (errPwdC) {
+        if (!pwdC || pwdC !== pwd) { errPwdC.classList.remove('hidden'); isValid = false; if (!firstInvalidEl) firstInvalidEl = confirmPasswordInput; }
+        else { errPwdC.classList.add('hidden'); }
+      }
+
+      const base64Val = document.getElementById('id_photo_base64') ? document.getElementById('id_photo_base64').value : '';
+      const fileCount = document.getElementById('id_photo') && document.getElementById('id_photo').files ? document.getElementById('id_photo').files.length : 0;
+      const hasPhoto  = captured || base64Val.length > 0 || fileCount > 0;
+
+      if (!hasPhoto) {
+        // If ID photo is missing, auto-navigate to ID Check step & highlight camera error
+        navigateToStep(2);
+        const errPhoto = document.getElementById('err-id-photo');
+        if (errPhoto) errPhoto.classList.remove('hidden');
+        return;
+      }
+
+      if (!isValid) {
+        if (firstInvalidEl) firstInvalidEl.focus();
+        return;
+      }
+
+      // ── All valid — trigger account creation ──
+      document.getElementById('reg-form').requestSubmit();
+    };
+
     // Bind listeners to trigger updateStepProgress as user types/selects
-    [firstNameInput, lastNameInput, passwordInput, confirmPasswordInput, idInput].forEach(el => {
+    [firstNameInput, lastNameInput, contactInput, passwordInput, confirmPasswordInput, idInput].forEach(el => {
       if (el) el.addEventListener('input', updateStepProgress);
     });
     [classificationSelect, idTypeSelect, dobInput, document.getElementById('gender')].forEach(el => {
@@ -2040,6 +2300,7 @@
         middle_initial: (document.getElementById('middle_initial') || {}).value || '',
         classification: (document.getElementById('classification') || {}).value || '',
         gender: (document.getElementById('gender') || {}).value || '',
+        contact: (document.getElementById('contact') || {}).value || '',
         id_type: idTypeSelect.value,
         id_number: idInput.value,
         dob: dobInput.value,
@@ -2062,6 +2323,7 @@
       if (state.suffix) { const el = document.getElementById('suffix'); if (el) el.value = state.suffix; }
       if (state.classification) { const el = document.getElementById('classification'); if (el) el.value = state.classification; }
       if (state.gender) { const el = document.getElementById('gender'); if (el) el.value = state.gender; }
+      if (state.contact) { const el = document.getElementById('contact'); if (el) el.value = state.contact; }
       if (state.id_type) { idTypeSelect.value = state.id_type; applyIdType(); }
       if (state.id_number) { idInput.value = state.id_number; }
       if (state.dob) { dobInput.value = state.dob; }
@@ -2070,6 +2332,9 @@
       if (state.password_confirmation) { confirmPasswordInput.value = state.password_confirmation; }
 
       // Restore verified email state (skip OTP re-entry)
+      @if($errors->has('email'))
+        delete state.verifiedEmail;
+      @endif
       if (state.verifiedEmail) {
         emailInput.value = state.verifiedEmail;
         otpVerified = true;
@@ -2110,22 +2375,46 @@
 
     // Keep sessionStorage intact during submit so that if backend validation
     // fails (e.g. password mismatch), the user's OTP verification isn't wiped out.
-    document.getElementById('reg-form').addEventListener('submit', function () {
-      // Intentionally not clearing SS_KEY here.
-    }, { once: true });
+    document.getElementById('reg-form').addEventListener('submit', function (e) {
+      // Re-enable all inputs (except id_photo file input — re-enabling it wipes the DataTransfer files)
+      // so browser includes all step data in the POST request
+      document.querySelectorAll('#reg-form input:not(#id_photo), #reg-form select, #reg-form textarea').forEach(el => {
+        el.removeAttribute('disabled');
+      });
+
+      // Re-apply the captured File to the file input AFTER re-enabling other fields
+      // (id_photo was never actually disabled, but we re-assign just in case)
+      if (capturedFileRef) {
+        const dt2 = new DataTransfer();
+        dt2.items.add(capturedFileRef);
+        fileInput.files = dt2.files;
+      }
+    });
 
     // ── Restore state immediately before init ──
     restoreFormState();
 
-    // Initialize active step index based on restored state
+    // Initialize active step index based on restored state and backend errors
     if (otpVerified) {
       currentStepIndex = 1;
     } else {
       currentStepIndex = 0;
     }
 
+    @if($errors->any())
+      @if($errors->has('email'))
+        currentStepIndex = 0;
+      @elseif($errors->has('first_name') || $errors->has('last_name') || $errors->has('middle_initial') || $errors->has('suffix') || $errors->has('classification') || $errors->has('gender') || $errors->has('contact'))
+        currentStepIndex = 1;
+      @elseif($errors->has('id_type') || $errors->has('id_number') || $errors->has('school_name') || $errors->has('dob') || $errors->has('id_photo'))
+        currentStepIndex = 2;
+      @elseif($errors->has('password'))
+        currentStepIndex = 3;
+      @endif
+    @endif
+
     function initStepVisibility() {
-      const sections = ['section-email', 'section-details', 'section-identity', 'section-password', 'section-submit'];
+      const sections = ['section-email', 'section-details', 'section-identity', 'section-password'];
       sections.forEach((id, idx) => {
         const sec = document.getElementById(id);
         if (sec) {
@@ -2346,6 +2635,7 @@
       if (stream) { stream.getTracks().forEach(t => t.stop()); stream = null; }
       camVideo.srcObject = null;
     }
+    window.stopStream = stopStream;
     function startPills() {
       if (pillTimer) clearInterval(pillTimer);
       pillIdx = 0; pillText.textContent = PILLS[0];
@@ -2405,13 +2695,46 @@
       const vW = camVideo.videoWidth, vH = camVideo.videoHeight;
       if (!vW || !vH) return;
 
+      const svg = document.getElementById('cam-guide-svg');
+      const outline = document.getElementById('cam-guide-outline');
+
+      let cropX = 0, cropY = 0, cropW = vW, cropH = vH;
+
+      if (svg && outline) {
+        const svgRect = svg.getBoundingClientRect();
+        const cDisplayWidth = svgRect.width;
+        const cDisplayHeight = svgRect.height;
+
+        if (cDisplayWidth > 0 && cDisplayHeight > 0) {
+          // Calculate scale factor & offsets for object-fit: cover video in container
+          const scale = Math.max(cDisplayWidth / vW, cDisplayHeight / vH);
+          const offsetX = (cDisplayWidth - vW * scale) / 2;
+          const offsetY = (cDisplayHeight - vH * scale) / 2;
+
+          // Get exact guide rectangle overlay position & dimensions (x, y, width, height) relative to container
+          const boxX = parseFloat(outline.getAttribute('x')) || 0;
+          const boxY = parseFloat(outline.getAttribute('y')) || 0;
+          const boxW = parseFloat(outline.getAttribute('width')) || cDisplayWidth;
+          const boxH = parseFloat(outline.getAttribute('height')) || cDisplayHeight;
+
+          // Map SVG overlay container coordinates to intrinsic video stream coordinates
+          const videoRenderX = boxX - offsetX;
+          const videoRenderY = boxY - offsetY;
+
+          cropX = Math.max(0, Math.round(videoRenderX / scale));
+          cropY = Math.max(0, Math.round(videoRenderY / scale));
+          cropW = Math.min(vW - cropX, Math.round(boxW / scale));
+          cropH = Math.min(vH - cropY, Math.round(boxH / scale));
+        }
+      }
+
       const canvas = document.createElement('canvas');
-      canvas.width = vW;
-      canvas.height = vH;
-      canvas.getContext('2d').drawImage(camVideo, 0, 0, vW, vH);
+      canvas.width = cropW;
+      canvas.height = cropH;
+      canvas.getContext('2d').drawImage(camVideo, cropX, cropY, cropW, cropH, 0, 0, cropW, cropH);
 
       try {
-        const url = canvas.toDataURL('image/jpeg', .95);
+        const url = canvas.toDataURL('image/jpeg', .75);
 
         if (currentStep === 1) {
           frontPhotoData = url;
@@ -2432,25 +2755,36 @@
         } else {
           backPhotoData = url;
 
-          // Combine front and back images vertically into one single high-quality composite image
-          const compositeCanvas = document.createElement('canvas');
-          compositeCanvas.width = vW;
-          compositeCanvas.height = vH * 2;
-
-          const ctx = compositeCanvas.getContext('2d');
-
-          // Load both images onto the composite canvas
+          // Load both cropped images onto the composite canvas
           const imgFront = new Image();
           imgFront.onload = function () {
-            ctx.drawImage(imgFront, 0, 0, vW, vH);
+            const fW = imgFront.width;
+            const fH = imgFront.height;
 
             const imgBack = new Image();
             imgBack.onload = function () {
-              ctx.drawImage(imgBack, 0, vH, vW, vH);
+              const bW = imgBack.width;
+              const bH = imgBack.height;
 
-              // Generate final base64 composite — quality 0.82 keeps file ~3–6 MB which OCR handles well
-              const compositeUrl = compositeCanvas.toDataURL('image/jpeg', .82);
+              const compositeW = Math.max(fW, bW);
+              const compositeH = fH + bH;
+
+              const compositeCanvas = document.createElement('canvas');
+              compositeCanvas.width = compositeW;
+              compositeCanvas.height = compositeH;
+              const ctx = compositeCanvas.getContext('2d');
+
+              ctx.fillStyle = '#0f172a';
+              ctx.fillRect(0, 0, compositeW, compositeH);
+
+              ctx.drawImage(imgFront, (compositeW - fW) / 2, 0, fW, fH);
+              ctx.drawImage(imgBack, (compositeW - bW) / 2, fH, bW, bH);
+
+              // Generate final base64 composite
+              const compositeUrl = compositeCanvas.toDataURL('image/jpeg', .75);
               camCapImg.src = compositeUrl;
+              const base64El = document.getElementById('id_photo_base64');
+              if (base64El) base64El.value = compositeUrl;
 
               // Convert composite base64 to binary File object
               const bin = atob(compositeUrl.split(',')[1]);
@@ -2459,6 +2793,7 @@
                 bytes[i] = bin.charCodeAt(i);
               }
               const f = new File([bytes], `id_composite_${Date.now()}.jpg`, { type: 'image/jpeg' });
+              capturedFileRef = f; // Save reference so submit handler can re-assign safely
               const dt = new DataTransfer();
               dt.items.add(f);
               fileInput.files = dt.files;
@@ -2472,7 +2807,7 @@
               camOkMsg.classList.remove('hidden');
               stopStream();
               showState('captured');
-              
+
               // Play green flash success animation
               stateCaptured.classList.add('flash-success');
               setTimeout(() => {
@@ -2864,53 +3199,31 @@
     })();
 
     document.getElementById('reg-form').addEventListener('submit', function (e) {
-      if (msgDiv.className.includes('text-red-600') || !captured) { e.preventDefault(); return; }
-      
-      e.preventDefault(); // Stop default submit to play transition first
-      
-      sessionStorage.setItem('just_registered', 'true');
-      
-      stopStream();
+      const isCap = typeof captured !== 'undefined' ? captured : false;
+      const base64Val = document.getElementById('id_photo_base64') ? document.getElementById('id_photo_base64').value : '';
+      const fileCount = document.getElementById('id_photo') && document.getElementById('id_photo').files ? document.getElementById('id_photo').files.length : 0;
+      const hasPhoto  = isCap || base64Val.length > 0 || fileCount > 0;
 
-      // Fade out the main form card
-      const guestCard = document.querySelector('.bg-black/60');
-      if (guestCard) {
-        guestCard.style.transition = 'all 0.6s cubic-bezier(0.25, 1, 0.5, 1)';
-        guestCard.style.opacity = '0';
-        guestCard.style.transform = 'scale(0.95)';
+      if (!hasPhoto) {
+        e.preventDefault();
+        if (typeof navigateToStep === 'function') navigateToStep(2);
+        const errPhoto = document.getElementById('err-id-photo');
+        if (errPhoto) errPhoto.classList.remove('hidden');
+        return;
       }
-      
-      // Play success checkmark scale-out animation
-      const successOverlay = document.createElement('div');
-      successOverlay.className = 'fixed inset-0 z-[9999] flex items-center justify-center backdrop-blur-md';
-      successOverlay.style.background = 'linear-gradient(135deg, #0b3d2e 0%, #061810 100%)';
-      successOverlay.style.opacity = '0';
-      successOverlay.style.transition = 'opacity 0.5s ease';
-      successOverlay.innerHTML = `
-        <style>
-          @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(15px); }
-            to { opacity: 1; transform: translateY(0); }
-          }
-        </style>
-        <div class="text-center px-4">
-          <div class="w-20 h-20 mx-auto bg-emerald-500 rounded-full flex items-center justify-center text-white text-4xl shadow-lg shadow-emerald-500/50 scale-0" style="animation: check-scale-in 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) 0.2s forwards;">
-            ✓
-          </div>
-          <h2 class="text-3xl font-black text-white mt-6 mb-2" style="animation: fadeInUp 0.8s cubic-bezier(0.25, 1, 0.5, 1) 0.5s forwards; opacity: 0; transform: translateY(15px);">Welcome to E-Turismo!</h2>
-          <p class="text-emerald-400 text-sm" style="animation: fadeInUp 0.8s cubic-bezier(0.25, 1, 0.5, 1) 0.7s forwards; opacity: 0; transform: translateY(15px);">Setting up your tourist dashboard...</p>
-        </div>
-      `;
-      document.body.appendChild(successOverlay);
 
-      // Trigger reflow
-      void successOverlay.offsetWidth;
-      successOverlay.style.opacity = '1';
+      sessionStorage.setItem('just_registered', 'true');
+      if (typeof window.stopStream === 'function') window.stopStream();
 
-      // Submit form after animation completes
-      setTimeout(() => {
-        e.target.submit();
-      }, 1900);
+      // Re-assign captured File reference to file input before form POST
+      if (typeof capturedFileRef !== 'undefined' && capturedFileRef) {
+        try {
+          const dtFinal = new DataTransfer();
+          dtFinal.items.add(capturedFileRef);
+          const fileInput = document.getElementById('id_photo');
+          if (fileInput) fileInput.files = dtFinal.files;
+        } catch(err) {}
+      }
     });
 
 

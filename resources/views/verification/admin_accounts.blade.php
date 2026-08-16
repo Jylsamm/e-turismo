@@ -1,20 +1,6 @@
 <x-app-layout>
     @push('head')
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css" />
     <style>
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(12px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        .animate-fade-in-up {
-            animation: fadeInUp 0.4s ease-out forwards;
-        }
         .admin-card-hover {
             transition: all 0.3s ease-in-out !important;
         }
@@ -29,13 +15,13 @@
     <x-slot name="header">
         <div class="flex items-center justify-between">
             <h2 class="font-semibold text-xl text-gray-800 leading-tight flex items-center gap-2">
-                <i class="ti ti-shield-check text-2xl text-green-700"></i>
-                Verify Tourists
+                <i class="ti ti-users text-2xl text-emerald-700"></i>
+                <span>Verify Tourists</span>
             </h2>
         </div>
     </x-slot>
 
-    <div class="pb-12 pt-0 animate-fade-in-up">
+    <div class="pb-12 pt-0">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
 
             {{-- Error Alerts --}}
@@ -59,20 +45,24 @@
             <!-- Sub-Navigation Tabs -->
             <div class="flex flex-wrap gap-2 border-b border-gray-200 pb-3">
                 <a href="{{ route('verification.reviews') }}" aria-label="ID Verification Reviews"
-                   class="flex items-center justify-center h-11 px-4 py-2 md:h-auto md:w-auto text-sm font-semibold rounded-xl transition-all duration-200 transform hover:-translate-y-0.5 active:translate-y-0 {{ request()->routeIs('verification.reviews') ? 'bg-green-700 text-white shadow-md shadow-green-700/15' : 'text-gray-500 hover:text-gray-800 hover:bg-gray-100 hover:shadow-sm' }}">
-                    <i class="ti ti-checklist md:mr-1 text-lg md:text-base"></i> <span class="hidden md:inline">ID Verification Reviews</span>
+                   class="inline-flex items-center justify-center h-10 px-4 text-xs sm:text-sm font-bold rounded-xl transition-colors duration-150 {{ request()->routeIs('verification.reviews') ? 'bg-emerald-700 text-white shadow-sm' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100' }}">
+                    <i class="ti ti-checklist text-base shrink-0 mr-1.5"></i>
+                    <span>ID Verification Reviews</span>
                 </a>
                 <a href="{{ route('verification.accounts') }}" aria-label="Verify Tourists"
-                   class="flex items-center justify-center h-11 px-4 py-2 md:h-auto md:w-auto text-sm font-semibold rounded-xl transition-all duration-200 transform hover:-translate-y-0.5 active:translate-y-0 {{ request()->routeIs('verification.accounts') ? 'bg-green-700 text-white shadow-md shadow-green-700/15' : 'text-gray-500 hover:text-gray-800 hover:bg-gray-100 hover:shadow-sm' }}">
-                    <i class="ti ti-users md:mr-1 text-lg md:text-base"></i> <span class="hidden md:inline">Verify Tourists</span>
+                   class="inline-flex items-center justify-center h-10 px-4 text-xs sm:text-sm font-bold rounded-xl transition-colors duration-150 {{ request()->routeIs('verification.accounts') ? 'bg-emerald-700 text-white shadow-sm' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100' }}">
+                    <i class="ti ti-users text-base shrink-0 mr-1.5"></i>
+                    <span>Verify Tourists</span>
                 </a>
                 <a href="{{ route('verification.staff') }}" aria-label="Manage Staff"
-                   class="flex items-center justify-center h-11 px-4 py-2 md:h-auto md:w-auto text-sm font-semibold rounded-xl transition-all duration-200 transform hover:-translate-y-0.5 active:translate-y-0 {{ request()->routeIs('verification.staff') ? 'bg-green-700 text-white shadow-md shadow-green-700/15' : 'text-gray-500 hover:text-gray-800 hover:bg-gray-100 hover:shadow-sm' }}">
-                    <i class="ti ti-user-cog md:mr-1 text-lg md:text-base"></i> <span class="hidden md:inline">Manage Staff</span>
+                   class="inline-flex items-center justify-center h-10 px-4 text-xs sm:text-sm font-bold rounded-xl transition-colors duration-150 {{ request()->routeIs('verification.staff') ? 'bg-emerald-700 text-white shadow-sm' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100' }}">
+                    <i class="ti ti-user-cog text-base shrink-0 mr-1.5"></i>
+                    <span>Manage Staff</span>
                 </a>
                 <a href="{{ route('verification.add_account') }}" aria-label="Add Account"
-                   class="flex items-center justify-center h-11 px-4 py-2 md:h-auto md:w-auto text-sm font-semibold rounded-xl transition-all duration-200 transform hover:-translate-y-0.5 active:translate-y-0 {{ request()->routeIs('verification.add_account') ? 'bg-green-700 text-white shadow-md shadow-green-700/15' : 'text-gray-500 hover:text-gray-800 hover:bg-gray-100 hover:shadow-sm' }}">
-                    <i class="ti ti-user-plus md:mr-1 text-lg md:text-base"></i> <span class="hidden md:inline">Add Account</span>
+                   class="inline-flex items-center justify-center h-10 px-4 text-xs sm:text-sm font-bold rounded-xl transition-colors duration-150 {{ request()->routeIs('verification.add_account') ? 'bg-emerald-700 text-white shadow-sm' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100' }}">
+                    <i class="ti ti-user-plus text-base shrink-0 mr-1.5"></i>
+                    <span>Add Account</span>
                 </a>
             </div>
 
@@ -95,36 +85,36 @@
 
                         <!-- Status Filter Pill Buttons -->
                         <div class="flex items-center gap-2 flex-wrap justify-end">
-                            <span class="text-xs font-semibold text-gray-400 mr-0.5">Filter:</span>
+                            <span class="text-xs font-bold text-gray-400 mr-0.5 tracking-wider uppercase">Filter:</span>
 
                             <button type="button" @click="statusFilter = 'all'"
-                                :class="statusFilter === 'all' ? 'bg-gray-700 text-white shadow-sm' : 'bg-white text-gray-600 border border-gray-200 hover:bg-gray-50'"
-                                class="inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-semibold transition-all duration-150">
-                                <i class="ti ti-list text-xs"></i> All
+                                :class="statusFilter === 'all' 
+                                    ? 'bg-gray-800 text-white shadow-md scale-105' 
+                                    : 'bg-white text-gray-700 border border-gray-200 hover:bg-gray-100 hover:text-gray-900 hover:shadow-sm'"
+                                :style="statusFilter === 'all' ? 'background-color: #1f2937 !important; color: #ffffff !important;' : ''"
+                                class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-bold transition-all duration-200 ease-out transform hover:-translate-y-0.5 active:scale-95 cursor-pointer group">
+                                <i class="ti ti-list text-xs transition-transform duration-200 group-hover:scale-110"></i>
+                                <span>All</span>
                             </button>
 
                             <button type="button" @click="statusFilter = 'verified'"
-                                :class="statusFilter === 'verified' ? 'bg-green-600 text-white shadow-sm' : 'bg-white text-green-700 border border-green-200 hover:bg-green-50'"
-                                class="inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-semibold transition-all duration-150">
-                                <i class="ti ti-discount-check text-xs"></i> Verified
+                                :class="statusFilter === 'verified' 
+                                    ? 'bg-green-600 text-white shadow-md scale-105' 
+                                    : 'bg-white text-green-700 border border-green-200 hover:bg-green-50 hover:text-green-800 hover:shadow-sm'"
+                                :style="statusFilter === 'verified' ? 'background-color: #16a34a !important; color: #ffffff !important;' : ''"
+                                class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-bold transition-all duration-200 ease-out transform hover:-translate-y-0.5 active:scale-95 cursor-pointer group">
+                                <i class="ti ti-discount-check text-xs transition-transform duration-200 group-hover:rotate-12 group-hover:scale-110"></i>
+                                <span>Verified</span>
                             </button>
 
                             <button type="button" @click="statusFilter = 'pending'"
-                                :class="statusFilter === 'pending' ? 'bg-amber-500 text-white shadow-sm' : 'bg-white text-amber-600 border border-amber-200 hover:bg-amber-50'"
-                                class="inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-semibold transition-all duration-150">
-                                <i class="ti ti-clock-hour-4 text-xs"></i> Pending
-                            </button>
-
-                            <button type="button" @click="statusFilter = 'rejected'"
-                                :class="statusFilter === 'rejected' ? 'bg-red-600 text-white shadow-sm' : 'bg-white text-red-600 border border-red-200 hover:bg-red-50'"
-                                class="inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-semibold transition-all duration-150">
-                                <i class="ti ti-circle-x text-xs"></i> Rejected
-                            </button>
-
-                            <button type="button" @click="statusFilter = 'unverified'"
-                                :class="statusFilter === 'unverified' ? 'bg-gray-500 text-white shadow-sm' : 'bg-white text-gray-500 border border-gray-200 hover:bg-gray-50'"
-                                class="inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-semibold transition-all duration-150">
-                                <i class="ti ti-help text-xs"></i> Unverified
+                                :class="statusFilter === 'pending' 
+                                    ? 'bg-amber-500 text-white shadow-md scale-105' 
+                                    : 'bg-white text-amber-700 border border-amber-200 hover:bg-amber-50 hover:text-amber-800 hover:shadow-sm'"
+                                :style="statusFilter === 'pending' ? 'background-color: #f59e0b !important; color: #ffffff !important;' : ''"
+                                class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-bold transition-all duration-200 ease-out transform hover:-translate-y-0.5 active:scale-95 cursor-pointer group">
+                                <i class="ti ti-clock-hour-4 text-xs transition-transform duration-200 group-hover:scale-110"></i>
+                                <span>Pending</span>
                             </button>
                         </div>
                     </div>
@@ -253,13 +243,7 @@
                                                         Verify
                                                     </button>
                                                     <button type="button" @click="activeStatus = 'pending'; showStatusDropdown = false" class="w-full text-left px-3 py-1.5 text-xs hover:bg-green-50/40 hover:text-green-950 transition-colors">
-                                                        Pending
-                                                    </button>
-                                                    <button type="button" @click="activeStatus = 'rejected'; showStatusDropdown = false" class="w-full text-left px-3 py-1.5 text-xs hover:bg-green-50/40 hover:text-green-950 transition-colors">
-                                                        Reject
-                                                    </button>
-                                                    <button type="button" @click="activeStatus = 'unverified'; showStatusDropdown = false" class="w-full text-left px-3 py-1.5 text-xs hover:bg-green-50/40 hover:text-green-950 transition-colors">
-                                                        Unverify
+                                                        Set Pending
                                                     </button>
                                                 </div>
 

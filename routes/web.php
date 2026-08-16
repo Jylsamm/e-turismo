@@ -20,6 +20,9 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
+    if (auth()->check()) {
+        return redirect()->route('dashboard');
+    }
     return view('welcome');
 })->name('home');
 
@@ -49,6 +52,13 @@ Route::post('/register/send-code', [RegistrationOtpController::class, 'sendCode'
 Route::post('/register/verify-code', [RegistrationOtpController::class, 'verifyCode'])
     ->name('register.verify_code');
 
+// Publicly browse destinations
+Route::get('/destinations', [DestinationController::class, 'index'])->name('destinations.index');
+Route::get('/destinations/{destination}', [DestinationController::class, 'show'])->name('destinations.show');
+Route::get('/destinations/{destination}/availability', [DestinationController::class, 'checkAvailability'])->name('destinations.availability');
+Route::get('/destinations/{destination}/availability/month', [DestinationController::class, 'checkMonthAvailability'])->name('destinations.availability.month');
+Route::get('/destinations/{destination}/availability/range', [DestinationController::class, 'checkRangeAvailability'])->name('destinations.availability.range');
+
 /*
 |--------------------------------------------------------------------------
 | Authenticated Routes
@@ -70,10 +80,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Profile
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::post('/profile/id-photo', [ProfileController::class, 'uploadIdPhoto'])->name('profile.upload-id-photo');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     // Notifications
     Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
+    Route::get('/notifications/realtime-stream', [NotificationController::class, 'streamRealtimeUpdates'])->name('notifications.realtime');
     Route::get('/notifications/latest-alert', [NotificationController::class, 'getLatestAlert'])->name('notifications.latest-alert');
     Route::post('/notifications/{notification}/dismiss', [NotificationController::class, 'dismissAlert'])->name('notifications.dismiss-alert');
     Route::patch('/notifications/{notification}/read', [NotificationController::class, 'markRead'])->name('notifications.read');
@@ -88,12 +100,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
     |----------------------------------------------------------------------
     */
 
-    // Browse destinations
-    Route::get('/destinations', [DestinationController::class, 'index'])->name('destinations.index');
-    Route::get('/destinations/{destination}', [DestinationController::class, 'show'])->name('destinations.show');
-    Route::get('/destinations/{destination}/availability', [DestinationController::class, 'checkAvailability'])->name('destinations.availability');
-    Route::get('/destinations/{destination}/availability/range', [DestinationController::class, 'checkRangeAvailability'])->name('destinations.availability.range');
-
     // Bookings — Tourist books, Staff manages; Admin is excluded
     // Tourist: book a destination
     Route::get('/destinations/{destination}/book', [BookingController::class, 'create'])->name('bookings.create');
@@ -104,6 +110,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/bookings', [BookingController::class, 'index'])->name('bookings.index');
         Route::get('/bookings/{booking}', [BookingController::class, 'show'])->name('bookings.show');
         Route::post('/bookings/{booking}/submit-payment', [BookingController::class, 'submitPayment'])->name('bookings.submit-payment');
+        Route::post('/bookings/{booking}/cancel', [BookingController::class, 'cancel'])->name('bookings.cancel');
         Route::get('/my-tickets', [BookingController::class, 'myTickets'])->name('bookings.my-tickets');
     });
 
@@ -136,13 +143,18 @@ Route::middleware(['auth', 'verified'])->group(function () {
         // Walk-in Registration Routes
         Route::get('/staff/walkins/create', [\App\Http\Controllers\WalkInController::class, 'create'])->name('staff.walkins.create');
         Route::post('/staff/walkins', [\App\Http\Controllers\WalkInController::class, 'store'])->name('staff.walkins.store');
+        Route::get('/staff/walkins', function () {
+            return redirect()->route('staff.walkins.create');
+        });
 
         // Spots routes — spots.index auto-redirects to the correct spot
         Route::get('/spots', [\App\Http\Controllers\SpotController::class, 'redirect'])->name('spots.index');
         Route::get('/spots/{destination}', [\App\Http\Controllers\SpotController::class, 'dashboard'])->name('spots.dashboard');
         Route::get('/spots/{destination}/status',  [\App\Http\Controllers\SpotController::class, 'status'])->name('spots.status');
         Route::get('/spots/{destination}/edit',    [\App\Http\Controllers\SpotController::class, 'edit'])->name('spots.edit');
-        Route::get('/spots/{destination}/gallery', [\App\Http\Controllers\SpotController::class, 'gallery'])->name('spots.gallery');
+        Route::get('/spots/{destination}/gallery', function (\App\Models\Destination $destination) {
+            return redirect()->route('spots.edit', $destination);
+        })->name('spots.gallery');
         Route::patch('/spots/{destination}', [\App\Http\Controllers\SpotController::class, 'update'])->name('spots.update');
         Route::post('/spots/{destination}/images', [\App\Http\Controllers\SpotController::class, 'uploadImage'])->name('spots.images.upload');
         Route::delete('/spots/images/{image}', [\App\Http\Controllers\SpotController::class, 'deleteImage'])->name('spots.images.delete');

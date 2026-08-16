@@ -1,6 +1,9 @@
 <x-app-layout>
+    @push('title')
+        Edit Spot: {{ $spot->name }} — E-Turismo
+    @endpush
+
     @push('head')
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css" />
         <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     @endpush
 
@@ -14,7 +17,7 @@
         }
         .field-input {
             width: 100%;
-            border: 1px solid #e5e7eb;
+            border: 1px solid #d1d5db;
             border-radius: 10px;
             padding: 10px 14px;
             font-size: 14px;
@@ -39,7 +42,7 @@
             padding: 12px 4px;
             font-size: 14px;
             font-weight: 500;
-            color: #9ca3af;
+            color: #4b5563;
             border-bottom: 2px solid transparent;
             text-decoration: none;
         }
@@ -58,7 +61,7 @@
             height: 360px;
             width: 100%;
             border-radius: 12px;
-            border: 1px solid #e5e7eb;
+            border: 1px solid #d1d5db;
             overflow: hidden;
         }
         .coord-pill {
@@ -116,7 +119,7 @@
         .spinner {
             width: 36px;
             height: 36px;
-            border: 4px solid #e5e7eb;
+            border: 4px solid #d1d5db;
             border-top: 4px solid #15803d;
             border-radius: 50%;
             animation: spin 0.8s linear infinite;
@@ -171,30 +174,54 @@
             pointer-events: none;
             user-select: none;
         }
+        .gallery-card {
+            background: #fff;
+            border: 1px solid #e5e7eb;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .gallery-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.08);
+        }
     </style>
 
-    <div class="pb-8 pt-0 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div x-data="{ deleteUrl: '' }" class="pb-8 pt-0 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
-        <!-- Sub-Navigation Tabs -->
+        <!-- Sub-Navigation Tabs (Unified for 1-Staff-1-Spot & Admin Spot Selector) -->
         <div class="flex flex-wrap gap-2 border-b border-gray-200 pb-3 mb-6">
-            <a href="{{ route('spots.index') }}"
-                class="px-4 py-2 text-sm font-semibold rounded-xl transition-all duration-200 transform hover:-translate-y-0.5 active:translate-y-0 {{ request()->routeIs('spots.index') || request()->routeIs('spots.dashboard') ? 'bg-green-700 text-white shadow-md shadow-green-700/15' : 'text-gray-500 hover:text-gray-800 hover:bg-gray-100 hover:shadow-sm' }}">
+            <a href="{{ route('spots.dashboard', $spot) }}"
+                class="px-4 py-2 text-sm font-semibold rounded-xl transition-all duration-200 transform hover:-translate-y-0.5 active:translate-y-0 {{ request()->routeIs('spots.index') || request()->routeIs('spots.dashboard') ? 'bg-green-700 text-white shadow-md shadow-green-700/15' : 'text-gray-600 hover:text-gray-800 hover:bg-gray-100 hover:shadow-sm' }}">
                 <i class="ti ti-chart-bar md:mr-1 text-lg"></i> <span class="hidden md:inline">Spot Status</span>
             </a>
-            @php
-                $activeDestinationId = Auth::check() ? Auth::user()->assigned_destination_id : null;
-            @endphp
-            @if($activeDestinationId)
-                <a href="{{ route('spots.edit', $activeDestinationId) }}"
-                    class="px-4 py-2 text-sm font-semibold rounded-xl transition-all duration-200 transform hover:-translate-y-0.5 active:translate-y-0 {{ request()->routeIs('spots.edit') ? 'bg-green-700 text-white shadow-md shadow-green-700/15' : 'text-gray-500 hover:text-gray-800 hover:bg-gray-100 hover:shadow-sm' }}">
-                    <i class="ti ti-edit md:mr-1 text-lg"></i> <span class="hidden md:inline">Edit Details</span>
-                </a>
-                <a href="{{ route('spots.gallery', $activeDestinationId) }}"
-                    class="px-4 py-2 text-sm font-semibold rounded-xl transition-all duration-200 transform hover:-translate-y-0.5 active:translate-y-0 {{ request()->routeIs('spots.gallery') ? 'bg-green-700 text-white shadow-md shadow-green-700/15' : 'text-gray-500 hover:text-gray-800 hover:bg-gray-100 hover:shadow-sm' }}">
-                    <i class="ti ti-photo md:mr-1 text-lg"></i> <span class="hidden md:inline">Image Gallery</span>
-                </a>
-            @endif
+            <a href="{{ route('spots.edit', $spot) }}"
+                class="px-4 py-2 text-sm font-semibold rounded-xl transition-all duration-200 transform hover:-translate-y-0.5 active:translate-y-0 {{ request()->routeIs('spots.edit') ? 'bg-green-700 text-white shadow-md shadow-green-700/15' : 'text-gray-600 hover:text-gray-800 hover:bg-gray-100 hover:shadow-sm' }}">
+                <i class="ti ti-edit md:mr-1 text-lg"></i> <span class="hidden md:inline">Edit Details</span>
+            </a>
         </div>
+
+        <!-- Semantic Heading Landmark -->
+        <div class="mb-6">
+            <h1 class="text-2xl font-bold text-gray-900 flex items-center gap-2">
+                <i class="ti ti-edit text-green-700"></i> Edit Spot: {{ $spot->name }}
+            </h1>
+            <p class="text-sm text-gray-600 mt-0.5">Manage spot specifications, geofenced check-in radius, and visitor photo gallery.</p>
+        </div>
+
+        @if(session('success'))
+            <div class="bg-green-50 border border-green-300 text-green-800 px-4 py-3 rounded-lg flex items-center gap-2 mb-6">
+                <i class="ti ti-circle-check" style="font-size:18px;"></i>
+                {{ session('success') }}
+            </div>
+        @endif
+        @if(session('error'))
+            <div class="bg-red-50 border border-red-300 text-red-800 px-4 py-3 rounded-lg flex items-center gap-2 mb-6">
+                <i class="ti ti-alert-circle" style="font-size:18px;"></i>
+                {{ session('error') }}
+            </div>
+        @endif
 
         <form id="spot-edit-form" class="interactive-card p-6 space-y-8">
             @csrf
@@ -205,24 +232,24 @@
                 <h2 class="font-bold text-gray-800 text-lg mb-4">Spot Information</h2>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
                     <div>
-                        <label class="field-label flex items-center gap-1">Spot Name <span class="text-red-500">*</span></label>
-                        <input type="text" name="name" id="name" class="field-input" value="{{ old('name', $spot->name) }}">
+                        <label for="name" class="field-label flex items-center gap-1">Spot Name <span class="text-red-500">*</span></label>
+                        <input type="text" name="name" id="name" class="field-input" value="{{ old('name', $spot->name) }}" required>
                         <span class="text-xs text-red-500 mt-1 hidden" id="error-name"></span>
                     </div>
                     <div>
-                        <label class="field-label flex items-center gap-1">Location (display address) <span class="text-red-500">*</span></label>
+                        <label for="location-text" class="field-label flex items-center gap-1">Location (display address) <span class="text-red-500">*</span></label>
                         <input type="text" name="location" id="location-text" class="field-input"
                                value="{{ old('location', $spot->location) }}"
-                               placeholder="e.g. Limas, Tigbao, Zamboanga del Sur">
+                               placeholder="e.g. Limas, Tigbao, Zamboanga del Sur" required>
                         <span class="text-xs text-red-500 mt-1 hidden" id="error-location"></span>
                     </div>
                     <div>
-                        <label class="field-label flex items-center gap-1">Daily Capacity <span class="text-red-500">*</span></label>
-                        <input type="number" name="capacity" id="capacity" class="field-input" min="1" value="{{ old('capacity', $spot->capacity) }}">
+                        <label for="capacity" class="field-label flex items-center gap-1">Daily Capacity <span class="text-red-500">*</span></label>
+                        <input type="number" name="capacity" id="capacity" class="field-input" min="1" value="{{ old('capacity', $spot->capacity) }}" required>
                         <span class="text-xs text-red-500 mt-1 hidden" id="error-capacity"></span>
                     </div>
                     <div>
-                        <label class="field-label">Availability Status</label>
+                        <label for="availability_status" class="field-label">Availability Status</label>
                         <select name="availability_status" id="availability_status" class="field-input">
                             <option value="available" @selected($spot->availability_status === 'Available' || $spot->availability_status === 'available')>Available</option>
                             <option value="limited"   @selected($spot->availability_status === 'Limited' || $spot->availability_status === 'limited')>Limited</option>
@@ -231,7 +258,7 @@
                         <span class="text-xs text-red-500 mt-1 hidden" id="error-availability_status"></span>
                     </div>
                     <div class="md:col-span-2">
-                        <label class="field-label">Description</label>
+                        <label for="description" class="field-label">Description</label>
                         <textarea name="description" id="description" rows="3" class="field-input">{{ old('description', $spot->description) }}</textarea>
                         <span class="text-xs text-red-500 mt-1 hidden" id="error-description"></span>
                     </div>
@@ -256,89 +283,171 @@
                     </div>
                     
                     {{-- Reset marker button --}}
-                    <button type="button" id="reset-map-btn" class="inline-flex items-center gap-1.5 bg-gray-50 hover:bg-gray-100 text-gray-700 font-semibold border border-gray-200 rounded-xl px-3 py-1.5 text-xs transition">
+                    <button type="button" id="reset-map-btn" class="inline-flex items-center gap-1.5 bg-gray-50 hover:bg-gray-100 text-gray-700 font-semibold border border-gray-300 rounded-xl px-3 py-1.5 text-xs transition">
                         <i class="ti ti-rotate-clockwise"></i> Reset to Saved
                     </button>
                 </div>
 
                 {{-- Last Updated Info --}}
                 @if($spot->updated_at)
-                    <div class="text-xs text-gray-400 mb-4 flex items-center gap-1.5">
+                    <div class="text-xs text-gray-600 mb-4 flex items-center gap-1.5">
                         <i class="ti ti-info-circle"></i>
-                        <span>Last updated @if($spot->last_updated_by) by <strong class="text-gray-600 font-semibold">{{ $spot->last_updated_by }}</strong> @endif on {{ $spot->updated_at->format('M j, Y \a\t g:i A') }}</span>
+                        <span>Last updated @if($spot->last_updated_by) by <strong class="text-gray-700 font-semibold">{{ $spot->last_updated_by }}</strong> @endif on {{ $spot->updated_at->format('M j, Y \a\t g:i A') }}</span>
                     </div>
                 @endif
 
-                <p class="text-sm text-gray-500 mb-4">
-                    Set precise check-in coordinates by entering values directly or using the interactive map pin below.
+                <p id="map-instructions" class="text-sm text-gray-600 mb-4">
+                    Set precise check-in coordinates by entering values directly or dragging the map pin.
                 </p>
 
                 {{-- Coordinate inputs & Radius --}}
                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4 editor-only-ui">
                     <div>
-                        <label class="field-label flex items-center gap-0.5">Latitude <span class="text-red-500">*</span></label>
-                        <input type="number" step="any" name="checkin_latitude" id="checkin_latitude" class="field-input" value="{{ $spot->checkin_latitude ?? '' }}" placeholder="e.g. 7.7961">
+                        <label for="checkin_latitude" class="field-label flex items-center gap-0.5">Latitude <span class="text-red-500">*</span></label>
+                        <input type="number" step="any" name="checkin_latitude" id="checkin_latitude" class="field-input" value="{{ $spot->checkin_latitude ?? '' }}" placeholder="e.g. 7.7961" required>
                         <span class="text-xs text-red-500 mt-1 hidden" id="error-checkin_latitude"></span>
                     </div>
                     <div>
-                        <label class="field-label flex items-center gap-0.5">Longitude <span class="text-red-500">*</span></label>
-                        <input type="number" step="any" name="checkin_longitude" id="checkin_longitude" class="field-input" value="{{ $spot->checkin_longitude ?? '' }}" placeholder="e.g. 123.4359">
+                        <label for="checkin_longitude" class="field-label flex items-center gap-0.5">Longitude <span class="text-red-500">*</span></label>
+                        <input type="number" step="any" name="checkin_longitude" id="checkin_longitude" class="field-input" value="{{ $spot->checkin_longitude ?? '' }}" placeholder="e.g. 123.4359" required>
                         <span class="text-xs text-red-500 mt-1 hidden" id="error-checkin_longitude"></span>
                     </div>
                     <div>
-                        <label class="field-label flex items-center gap-0.5">Check-In Radius (meters) <span class="text-red-500">*</span></label>
-                        <input type="number" name="checkin_radius" id="checkin_radius" class="field-input" value="{{ $spot->checkin_radius ?? 100 }}" min="5" max="5000">
+                        <label for="checkin_radius" class="field-label flex items-center gap-0.5">Check-In Radius (meters) <span class="text-red-500">*</span></label>
+                        <input type="number" name="checkin_radius" id="checkin_radius" class="field-input" value="{{ $spot->checkin_radius ?? 100 }}" min="5" max="5000" required>
                         <span class="text-xs text-red-500 mt-1 hidden" id="error-checkin_radius"></span>
                     </div>
                 </div>
 
-                {{-- Control Bar --}}
-                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-3">
+                {{-- Control Bar (Responsive at 375px) --}}
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-3">
                     {{-- Map search UI --}}
-                    <div class="flex gap-2 flex-1 max-w-lg editor-only-ui">
-                        <input type="text" id="map-search" class="field-input" placeholder="Search a place to jump the map...">
-                        <button type="button" id="map-search-btn" class="inline-flex items-center gap-1.5 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold rounded-xl px-4 text-sm transition whitespace-nowrap">
+                    <div class="flex flex-wrap sm:flex-nowrap gap-2 flex-1 max-w-lg editor-only-ui">
+                        <input type="text" id="map-search" name="map_search" class="field-input min-w-0 flex-1" placeholder="Search a place to jump the map...">
+                        <button type="button" id="map-search-btn" class="inline-flex items-center justify-center gap-1.5 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold rounded-xl px-4 py-2 text-sm transition whitespace-nowrap">
                             <i class="ti ti-search"></i> Search
                         </button>
-                        <button type="button" id="use-my-location" class="inline-flex items-center gap-1.5 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold rounded-xl px-4 text-sm transition whitespace-nowrap">
+                        <button type="button" id="use-my-location" class="inline-flex items-center justify-center gap-1.5 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold rounded-xl px-4 py-2 text-sm transition whitespace-nowrap">
                             <i class="ti ti-current-location"></i> My Location
                         </button>
                     </div>
 
                     {{-- Preview toggle switch --}}
-                    <div class="flex justify-end items-center ml-auto">
+                    <div class="flex justify-end items-center sm:ml-auto">
                         <label class="toggle-switch">
-                            <input type="checkbox" id="visitor-preview-toggle" class="toggle-input">
+                            <input type="checkbox" id="visitor-preview-toggle" name="visitor_preview_toggle" class="toggle-input">
                             <div class="toggle-slider"></div>
-                            <span class="text-xs font-semibold text-gray-600">Preview as visitor</span>
+                            <span class="text-xs font-semibold text-gray-700">Preview as visitor</span>
                         </label>
                     </div>
                 </div>
 
-                {{-- Map Container with skeleton loader --}}
+                {{-- Map Container with skeleton loader and accessibility landmark --}}
                 <div class="map-wrapper" id="map-container-wrapper">
                     <div class="map-loader" id="map-loader">
                         <div class="spinner"></div>
-                        <span class="text-sm font-semibold text-gray-600">Loading interactive map...</span>
+                        <span class="text-sm font-semibold text-gray-700">Loading interactive map...</span>
                     </div>
-                    <div id="checkin-map"></div>
+                    <div id="checkin-map" role="region" aria-label="Interactive map for selecting {{ $spot->name }} check-in coordinates" aria-describedby="map-instructions"></div>
                 </div>
             </div>
 
             {{-- Actions --}}
             <div class="flex justify-end gap-3 border-t border-gray-100 pt-6">
-                <button type="button" onclick="history.back()" class="inline-flex items-center gap-1.5 bg-white border border-gray-200 hover:bg-gray-50 text-gray-600 font-semibold rounded-xl px-4 py-2.5 text-sm transition">
+                <a href="{{ route('spots.dashboard', $spot) }}" class="inline-flex items-center gap-1.5 bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 font-semibold rounded-xl px-4 py-2.5 text-sm transition">
                     Cancel
-                </button>
+                </a>
                 <button type="submit" id="save-btn" class="inline-flex items-center gap-1.5 bg-green-700 hover:bg-green-800 text-white font-semibold rounded-xl px-5 py-2.5 text-sm transition">
                     <i class="ti ti-device-floppy"></i> <span id="save-btn-label">Save Changes</span>
                 </button>
             </div>
         </form>
+
+        {{-- Image Gallery Section --}}
+        <div class="mt-12 border-t border-gray-200 pt-8">
+            <div class="flex items-center justify-between mb-6">
+                <div>
+                    <h2 class="font-bold text-gray-800 text-xl">Image Gallery</h2>
+                    <p class="text-sm text-gray-600 mt-1">Manage public photos displayed to visitors for this spot.</p>
+                </div>
+            </div>
+
+            {{-- Upload Area --}}
+            <div class="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm mb-6">
+                <form action="{{ route('spots.images.upload', $spot) }}" method="POST" enctype="multipart/form-data" class="space-y-4">
+                    @csrf
+                    <label class="block text-sm font-semibold text-gray-700">Upload New Photo</label>
+                    <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+                        <input type="file" name="image" accept="image/*" 
+                               class="w-full text-sm text-gray-600 file:mr-4 file:py-2.5 file:px-4 file:rounded-xl file:border-0 file:text-sm file:font-semibold file:bg-green-50 file:text-green-700 hover:file:bg-green-100 border border-gray-300 rounded-xl p-1" required>
+                        <button type="submit" class="bg-green-700 hover:bg-green-800 text-white font-semibold rounded-xl px-5 py-2.5 transition text-sm shrink-0 flex items-center justify-center gap-1.5">
+                            <i class="ti ti-upload"></i> Upload Photo
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            {{-- Photo List --}}
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+                @forelse($spot->images as $img)
+                    <div class="gallery-card relative group bg-white border border-gray-200 rounded-2xl overflow-hidden shadow-sm">
+                        <img src="{{ asset('storage/' . $img->path) }}" 
+                             class="w-full h-48 object-cover" 
+                             alt="{{ $spot->name }} photo {{ $loop->iteration }}"
+                             loading="lazy"
+                             decoding="async"
+                             width="400"
+                             height="192">
+                        <div class="p-4 flex items-center justify-between border-t border-gray-50">
+                            <div class="flex items-center gap-1.5">
+                                @if($img->is_primary)
+                                    <span class="inline-flex items-center gap-1 text-xs font-semibold text-green-700 bg-green-50 px-2.5 py-1 rounded-full border border-green-200">
+                                        <i class="ti ti-star-filled" style="font-size: 11px;"></i> Primary Cover
+                                    </span>
+                                @else
+                                    <form action="{{ route('spots.images.primary', $img) }}" method="POST" class="inline">
+                                        @csrf
+                                        <button type="submit" class="text-xs text-gray-600 hover:text-green-700 font-semibold flex items-center gap-1">
+                                            <i class="ti ti-star"></i> Set as Cover
+                                        </button>
+                                    </form>
+                                @endif
+                            </div>
+                            
+                            <button type="button" 
+                                    @click="deleteUrl = '{{ route('spots.images.delete', $img) }}'; $dispatch('open-confirm-modal', { id: 'delete-photo-modal' })"
+                                    class="text-red-600 hover:text-red-700 p-1.5 rounded-lg hover:bg-red-50 transition" 
+                                    title="Delete photo {{ $loop->iteration }}"
+                                    aria-label="Delete photo {{ $loop->iteration }} for {{ $spot->name }}">
+                                <i class="ti ti-trash" style="font-size:16px;"></i>
+                            </button>
+                        </div>
+                    </div>
+                @empty
+                    <div class="col-span-full bg-white border border-gray-200 rounded-2xl p-12 text-center shadow-sm">
+                        <div class="flex flex-col items-center gap-2 text-gray-500">
+                            <i class="ti ti-photo" style="font-size:36px;"></i>
+                            <span class="text-sm">No photos uploaded yet for this spot.</span>
+                        </div>
+                    </div>
+                @endforelse
+            </div>
+
+            {{-- Delete Photo Confirmation Modal --}}
+            <x-confirm-modal id="delete-photo-modal" title="Delete Photo" message="Are you sure you want to delete this photo? This action cannot be undone.">
+                <form method="POST" :action="deleteUrl">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" @click.stop class="px-4 py-2.5 rounded-xl bg-red-600 hover:bg-red-700 text-white font-semibold text-sm transition-all duration-200 hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
+                        Delete
+                    </button>
+                </form>
+            </x-confirm-modal>
+        </div>
     </div>
 
-    {{-- Toast --}}
-    <div class="save-toast" id="save-toast">
+    {{-- Toast Notification --}}
+    <div class="save-toast" id="save-toast" role="status" aria-live="polite">
         <i class="ti ti-circle-check-filled" id="save-toast-icon"></i>
         <span id="save-toast-msg">Check-in location updated</span>
     </div>
@@ -369,11 +478,36 @@
             let map, marker, radiusCircle;
             let isPreviewMode = false;
 
-            // ── Initialize Map after document loads ───────────────────────────
-            setTimeout(() => {
+            const spotName = @json($spot->name);
+            const getVisitorPinIcon = () => L.divIcon({
+                className: 'custom-visitor-pin-container',
+                html: `
+                    <div class="visitor-pin-wrapper">
+                        <div class="visitor-pin-pulse"></div>
+                        <div class="visitor-pin-body">
+                            <span class="visitor-pin-icon"><i class="ti ti-scan"></i></span>
+                        </div>
+                    </div>
+                `,
+                iconSize: [38, 38],
+                iconAnchor: [19, 38],
+                popupAnchor: [0, -40]
+            });
+
+            // ── Robust Map Initialization ─────────────────────────────────────
+            function initCheckinMap() {
+                if (typeof L === 'undefined') {
+                    setTimeout(initCheckinMap, 100);
+                    return;
+                }
+
+                const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+
                 map = L.map('checkin-map', {
                     zoomControl: true,
-                    scrollWheelZoom: true
+                    scrollWheelZoom: false, // Prevents page-scroll trapping
+                    tap: !isMobile,
+                    dragging: true
                 }).setView([defaultLat, defaultLng], hasInitial ? 15 : 10);
 
                 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -394,26 +528,33 @@
                     weight: 1.5
                 }).addTo(map);
 
-                // Hide skeleton loader once map completes loading tiles
+                // Hide skeleton loader once map completes loading
                 map.whenReady(() => {
-                    mapLoader.style.opacity = '0';
-                    setTimeout(() => mapLoader.style.display = 'none', 300);
+                    if (mapLoader) {
+                        mapLoader.style.opacity = '0';
+                        setTimeout(() => mapLoader.style.display = 'none', 300);
+                    }
                 });
 
                 // ── Map Interactions & Syncing ───────────────────────────────
                 marker.on('dragend', function (e) {
                     if (isPreviewMode) return;
                     const pos = e.target.getLatLng();
-                    updateCoordinates(pos.lat, pos.lng, true); // trigger reverse-geocoding
+                    updateCoordinates(pos.lat, pos.lng, true);
                 });
 
                 map.on('click', function (e) {
                     if (isPreviewMode) return;
                     marker.setLatLng(e.latlng);
-                    updateCoordinates(e.latlng.lat, e.latlng.lng, true); // trigger reverse-geocoding
+                    updateCoordinates(e.latlng.lat, e.latlng.lng, true);
                 });
+            }
 
-            }, 200);
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', initCheckinMap);
+            } else {
+                initCheckinMap();
+            }
 
             // ── Update values & sync circle overlay ───────────────────────────
             function updateCoordinates(lat, lng, fetchAddress = false) {
@@ -421,7 +562,6 @@
                 lngInput.value = lng.toFixed(6);
                 coordDisplay.textContent = `${lat.toFixed(6)}, ${lng.toFixed(6)}`;
 
-                // Clear inline coord error highlight if filled
                 clearInputError(latInput);
                 clearInputError(lngInput);
 
@@ -443,7 +583,7 @@
                 const lng = parseFloat(lngInput.value);
                 if (!isNaN(lat) && !isNaN(lng) && lat >= -90 && lat <= 90 && lng >= -180 && lng <= 180) {
                     updateCoordinates(lat, lng, false);
-                    map.panTo([lat, lng]);
+                    if (map) map.panTo([lat, lng]);
                 }
             }
 
@@ -477,7 +617,7 @@
                     } catch (e) {
                         // Fail silently
                     }
-                }, 800);
+                }, 1000);
             }
 
             // ── Search & Geocoding address query ─────────────────────────────
@@ -490,7 +630,7 @@
                     if (results.length) {
                         const { lat, lon, display_name } = results[0];
                         const latF = parseFloat(lat), lngF = parseFloat(lon);
-                        map.setView([latF, lngF], 16);
+                        if (map) map.setView([latF, lngF], 16);
                         updateCoordinates(latF, lngF, false);
                         document.getElementById('location-text').value = display_name;
                     } else {
@@ -514,7 +654,7 @@
                 }
                 navigator.geolocation.getCurrentPosition(pos => {
                     const { latitude, longitude } = pos.coords;
-                    map.setView([latitude, longitude], 16);
+                    if (map) map.setView([latitude, longitude], 16);
                     updateCoordinates(latitude, longitude, true);
                 }, () => {
                     showToast('Unable to retrieve your device location.', true);
@@ -529,20 +669,20 @@
                     lngInput.value = savedLng;
                     radiusInput.value = savedRadius;
                     updateCoordinates(savedLat, savedLng, false);
-                    map.setView([savedLat, savedLng], 15);
-                    radiusCircle.setRadius(savedRadius);
+                    if (map) map.setView([savedLat, savedLng], 15);
+                    if (radiusCircle) radiusCircle.setRadius(savedRadius);
                 } else {
                     latInput.value = '';
                     lngInput.value = '';
                     radiusInput.value = 100;
-                    if (marker) map.removeLayer(marker);
-                    if (radiusCircle) map.removeLayer(radiusCircle);
+                    if (marker && map) map.removeLayer(marker);
+                    if (radiusCircle && map) map.removeLayer(radiusCircle);
                     coordDisplay.textContent = 'Not set — click the map';
                 }
                 showToast('Reset pin to last saved location');
             });
 
-            // ── Visitor Preview Mode Toggle ──────────────────────────────
+            // ── Visitor Preview Mode Toggle ──────────────────────────────────
             document.getElementById('visitor-preview-toggle').addEventListener('change', function (e) {
                 isPreviewMode = e.target.checked;
                 const wrapper = document.getElementById('map-container-wrapper');
@@ -551,43 +691,47 @@
                     wrapper.classList.add('preview-active');
                     form.classList.add('preview-active');
                     
-                    // Make marker static
-                    if (marker) marker.dragging.disable();
-                    
-                    // Show a visitor view popup in style
                     if (marker) {
+                        marker.dragging.disable();
+                        marker.setIcon(getVisitorPinIcon());
                         marker.bindPopup(`
-                            <div style="font-family:'Plus Jakarta Sans', sans-serif;">
-                                <div style="font-weight:700;color:#166534;font-size:13px;">📍 Tourist Check-in Point</div>
-                                <p style="font-size:11px;color:#6b7280;margin-top:2px;">Scan your QR ticket within the geofenced circle area to check-in.</p>
+                            <div class="checkin-popup-card">
+                                <div class="checkin-popup-header">
+                                    <span class="checkin-popup-icon-badge">
+                                        <i class="ti ti-radar"></i>
+                                    </span>
+                                    <span class="checkin-popup-title">Tourist Check-in Point</span>
+                                </div>
+                                <div class="checkin-popup-spotname">${spotName}</div>
+                                <p class="checkin-popup-desc">Scan your QR ticket within the geofenced circle area to check-in.</p>
                             </div>
                         `).openPopup();
                     }
                     
-                    // Change Geofence circle styling to match visitor preview look (blue/teal)
                     if (radiusCircle) {
                         radiusCircle.setStyle({
-                            color: '#2563eb',
-                            fillColor: '#3b82f6',
-                            fillOpacity: 0.12
+                            color: '#15803d',
+                            fillColor: '#22c55e',
+                            fillOpacity: 0.18,
+                            weight: 2
                         });
                     }
                 } else {
                     wrapper.classList.remove('preview-active');
                     form.classList.remove('preview-active');
                     
-                    // Make marker draggable again
                     if (marker) {
                         marker.dragging.enable();
                         marker.unbindPopup();
+                        marker.setIcon(new L.Icon.Default());
                     }
                     
-                    // Restore default styling
                     if (radiusCircle) {
                         radiusCircle.setStyle({
                             color: '#15803d',
                             fillColor: '#22c55e',
-                            fillOpacity: 0.15
+                            fillOpacity: 0.15,
+                            weight: 1.5
                         });
                     }
                 }
@@ -611,7 +755,6 @@
                 }
             }
 
-            // Remove errors when user starts typing
             const formInputs = form.querySelectorAll('.field-input');
             formInputs.forEach(input => {
                 input.addEventListener('input', () => clearInputError(input));
@@ -635,15 +778,14 @@
             form.addEventListener('submit', async function (e) {
                 e.preventDefault();
 
-                // Client-side inline validation
                 let hasErrors = false;
                 
                 const nameInput = document.getElementById('name');
                 const locationInput = document.getElementById('location-text');
                 const capacityInput = document.getElementById('capacity');
-                const latInput = document.getElementById('checkin_latitude');
-                const lngInput = document.getElementById('checkin_longitude');
-                const radiusInput = document.getElementById('checkin_radius');
+                const checkinLat = document.getElementById('checkin_latitude');
+                const checkinLng = document.getElementById('checkin_longitude');
+                const checkinRad = document.getElementById('checkin_radius');
 
                 if (!nameInput.value.trim()) {
                     showInputError(nameInput, 'Spot Name is required.');
@@ -658,21 +800,21 @@
                     hasErrors = true;
                 }
                 
-                const latVal = parseFloat(latInput.value);
+                const latVal = parseFloat(checkinLat.value);
                 if (isNaN(latVal) || latVal < -90 || latVal > 90) {
-                    showInputError(latInput, 'Latitude must be a valid number between -90 and 90.');
+                    showInputError(checkinLat, 'Latitude must be a valid number between -90 and 90.');
                     hasErrors = true;
                 }
                 
-                const lngVal = parseFloat(lngInput.value);
+                const lngVal = parseFloat(checkinLng.value);
                 if (isNaN(lngVal) || lngVal < -180 || lngVal > 180) {
-                    showInputError(lngInput, 'Longitude must be a valid number between -180 and 180.');
+                    showInputError(checkinLng, 'Longitude must be a valid number between -180 and 180.');
                     hasErrors = true;
                 }
 
-                const radVal = parseInt(radiusInput.value);
+                const radVal = parseInt(checkinRad.value);
                 if (isNaN(radVal) || radVal < 5 || radVal > 5000) {
-                    showInputError(radiusInput, 'Geofence radius must be between 5 and 5000 meters.');
+                    showInputError(checkinRad, 'Geofence radius must be between 5 and 5000 meters.');
                     hasErrors = true;
                 }
 
@@ -717,13 +859,12 @@
 
                     showToast(data.message || 'Spot details updated successfully!');
 
-                    // Trigger event to sync maps on other components/tabs immediately
                     window.dispatchEvent(new CustomEvent('spot-checkin-updated', {
                         detail: {
                             spotId: spotId,
-                            latitude: parseFloat(latInput.value),
-                            longitude: parseFloat(lngInput.value),
-                            radius: parseInt(radiusInput.value),
+                            latitude: parseFloat(checkinLat.value),
+                            longitude: parseFloat(checkinLng.value),
+                            radius: parseInt(checkinRad.value),
                         },
                     }));
 

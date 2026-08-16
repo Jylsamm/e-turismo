@@ -8,6 +8,7 @@ use App\Models\Booking;
 use App\Models\CheckIn;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Cache;
 
 class SpotController extends Controller
 {
@@ -44,14 +45,40 @@ class SpotController extends Controller
     }
 
     /**
+     * Ensure the authenticated user has permission to manage this destination.
+     * Non-admins assigned to a specific spot are safely redirected to their assigned spot
+     * with an alert message instead of hitting a raw 403 HTTP error screen.
+     */
+    private function ensureAuthorizedSpot(Destination $destination)
+    {
+        $user = auth()->user();
+        if ($user && !$user->isAdmin() && $user->assigned_destination_id !== $destination->id) {
+            $assigned = $user->assigned_destination_id
+                ? Destination::find($user->assigned_destination_id)
+                : null;
+
+            if ($assigned) {
+                return redirect()->route('spots.dashboard', $assigned)
+                    ->with('warning', 'Access Restricted: You are assigned to ' . $assigned->name . '. Managing ' . $destination->name . ' is unauthorized under the 1-Staff-1-Spot policy.')
+                    ->with('warning_title', 'Access Restricted (1 Staff = 1 Spot Policy)');
+            }
+
+            abort(403, 'Unauthorized action. You are not assigned to this spot.');
+        }
+
+        return null;
+    }
+
+    /**
      * Full spot detail/management page.
      */
     public function dashboard(Destination $destination)
     {
-        $user = auth()->user();
-        if (!$user->isAdmin() && $user->assigned_destination_id !== $destination->id) {
-            abort(403, 'Unauthorized action.');
+        if ($redirect = $this->ensureAuthorizedSpot($destination)) {
+            return $redirect;
         }
+
+        $user = auth()->user();
 
         // ── Today date range ──────────────────────────────────────────────
         $todayStart = now()->startOfDay();
@@ -70,22 +97,19 @@ class SpotController extends Controller
         // ── Today's statistics ────────────────────────────────────────────
         $totalVisitorsToday = $currentVisitors;
 
-        // Peak hour — group check-ins by hour, pick the busiest
-        $checkInsToday = CheckIn::whereHas(
+        // Peak hour — group check-ins by hour in database, pick the busiest
+        $peakHourRecord = CheckIn::whereHas(
             'booking',
             fn ($q) => $q->where('destination_id', $destination->id)
         )->whereBetween('arrival_time', [$todayStart, $todayEnd])
-         ->get(['arrival_time']);
-
-        $hourCounts = [];
-        foreach ($checkInsToday as $ci) {
-            $h = $ci->arrival_time->format('G'); // 0-23
-            $hourCounts[$h] = ($hourCounts[$h] ?? 0) + 1;
-        }
+         ->selectRaw('HOUR(arrival_time) as hour, COUNT(*) as count')
+         ->groupBy('hour')
+         ->orderByDesc('count')
+         ->first();
 
         $peakHour = null;
-        if (!empty($hourCounts)) {
-            $peakH    = array_search(max($hourCounts), $hourCounts);
+        if ($peakHourRecord) {
+            $peakH    = $peakHourRecord->hour;
             $peakHour = date('g:00 A', mktime($peakH, 0, 0)) . ' – ' . date('g:00 A', mktime($peakH + 1, 0, 0));
         }
 
@@ -108,9 +132,12 @@ class SpotController extends Controller
             ->get();
 
         // ── All spots for the selector dropdown ───────────────────────────
-        $allSpots = $user->isAdmin()
-            ? Destination::orderBy('name')->get(['id', 'name'])
-            : Destination::where('id', $destination->id)->get(['id', 'name']);
+        $allSpots = Cache::remember('all_destinations_names', 86400, function () {
+            return Destination::orderBy('name')->get(['id', 'name']);
+        });
+        if (!$user->isAdmin()) {
+            $allSpots = $allSpots->where('id', $destination->id)->values();
+        }
 
         // ── Load gallery images ───────────────────────────────────────────
         $destination->load('images');
@@ -135,11 +162,11 @@ class SpotController extends Controller
      */
     public function edit(Destination $destination)
     {
-        $user = auth()->user();
-        if (!$user->isAdmin() && $user->assigned_destination_id !== $destination->id) {
-            abort(403, 'Unauthorized action.');
+        if ($redirect = $this->ensureAuthorizedSpot($destination)) {
+            return $redirect;
         }
 
+        $destination->load('images');
         $spot = $destination;
         return view('spots.edit', compact('spot'));
     }
@@ -157,9 +184,8 @@ class SpotController extends Controller
      */
     public function gallery(Destination $destination)
     {
-        $user = auth()->user();
-        if (!$user->isAdmin() && $user->assigned_destination_id !== $destination->id) {
-            abort(403, 'Unauthorized action.');
+        if ($redirect = $this->ensureAuthorizedSpot($destination)) {
+            return $redirect;
         }
 
         $destination->load('images');
@@ -179,7 +205,15 @@ class SpotController extends Controller
     {
         $user = auth()->user();
         if (!$user->isAdmin() && $user->assigned_destination_id !== $destination->id) {
-            abort(403, 'Unauthorized action.');
+            if ($request->expectsJson() || $request->ajax()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Unauthorized action. You can only modify your assigned spot (' . optional(Destination::find($user->assigned_destination_id))->name . ').'
+                ], 403);
+            }
+            if ($redirect = $this->ensureAuthorizedSpot($destination)) {
+                return $redirect;
+            }
         }
 
         $validated = $request->validate([
@@ -245,9 +279,8 @@ class SpotController extends Controller
 
     public function uploadImage(Request $request, Destination $destination)
     {
-        $user = auth()->user();
-        if (!$user->isAdmin() && $user->assigned_destination_id !== $destination->id) {
-            abort(403, 'Unauthorized action.');
+        if ($redirect = $this->ensureAuthorizedSpot($destination)) {
+            return $redirect;
         }
 
         $request->validate(['image' => 'required|image|max:4096']);
@@ -269,10 +302,8 @@ class SpotController extends Controller
 
     public function deleteImage(DestinationImage $image)
     {
-        $user        = auth()->user();
-        $destination = $image->destination;
-        if (!$user->isAdmin() && $user->assigned_destination_id !== $destination->id) {
-            abort(403, 'Unauthorized action.');
+        if ($redirect = $this->ensureAuthorizedSpot($image->destination)) {
+            return $redirect;
         }
 
         Storage::disk('public')->delete($image->path);
@@ -295,10 +326,8 @@ class SpotController extends Controller
 
     public function setPrimary(DestinationImage $image)
     {
-        $user        = auth()->user();
-        $destination = $image->destination;
-        if (!$user->isAdmin() && $user->assigned_destination_id !== $destination->id) {
-            abort(403, 'Unauthorized action.');
+        if ($redirect = $this->ensureAuthorizedSpot($image->destination)) {
+            return $redirect;
         }
 
         $destination->images()->update(['is_primary' => false]);

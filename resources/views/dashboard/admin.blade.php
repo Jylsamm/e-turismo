@@ -110,17 +110,33 @@
 
         {{-- Unread Notifications --}}
         @if($notifications->count())
-        <div class="bg-amber-50 border border-amber-250 rounded-xl p-5 transition-all duration-300 hover:shadow-md hover:border-amber-350">
-            <h2 class="font-semibold text-amber-800 mb-3 flex items-center gap-1.5"><i class="ti ti-bell-ringing"></i> Unread Notifications</h2>
+        <div class="bg-white border border-amber-200/90 rounded-2xl p-5 shadow-sm card-hover-effect relative overflow-hidden">
+            <div class="flex items-center justify-between gap-3 mb-3 border-b border-amber-100 pb-2.5">
+                <h2 class="font-bold text-gray-900 flex items-center gap-2 text-sm">
+                    <span class="flex items-center justify-center w-7 h-7 rounded-lg bg-amber-50 text-amber-700 border border-amber-200">
+                        <i class="ti ti-bell-ringing text-base"></i>
+                    </span>
+                    <span>Unread Notifications</span>
+                    <span class="bg-amber-100 text-amber-800 text-[10px] font-bold px-2 py-0.5 rounded-full">{{ $notifications->count() }}</span>
+                </h2>
+                <form action="{{ route('notifications.read-all') }}" method="POST">
+                    @csrf
+                    <button type="submit" class="inline-flex items-center gap-1 text-xs text-amber-800 hover:text-amber-950 font-bold hover:underline transition">
+                        <i class="ti ti-checks text-amber-600"></i> Mark all as read
+                    </button>
+                </form>
+            </div>
             <ul class="space-y-2">
                 @foreach($notifications as $notif)
-                <li class="text-sm text-amber-900 border-b border-amber-200/40 pb-1.5 last:border-0 last:pb-0">{{ $notif->message }}</li>
+                <li class="text-sm text-gray-800 flex items-start gap-2.5 bg-gray-50/70 p-2.5 rounded-xl border border-gray-100">
+                    <span class="w-2 h-2 rounded-full bg-amber-500 shrink-0 mt-1.5 ring-2 ring-amber-100"></span>
+                    <div class="flex-1 min-w-0">
+                        <p class="text-xs font-semibold text-gray-900">{{ $notif->message }}</p>
+                        <span class="text-[10px] text-gray-600 mt-0.5 block">{{ $notif->created_at->diffForHumans() }}</span>
+                    </div>
+                </li>
                 @endforeach
             </ul>
-            <form action="{{ route('notifications.read-all') }}" method="POST" class="mt-3">
-                @csrf
-                <button class="text-xs text-amber-700 underline font-medium hover:text-amber-900 transition-colors">Mark all as read</button>
-            </form>
         </div>
         @endif
     </div>

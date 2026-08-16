@@ -1,20 +1,6 @@
 <x-app-layout>
     @push('head')
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css" />
     <style>
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(12px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        .animate-fade-in-up {
-            animation: fadeInUp 0.4s ease-out forwards;
-        }
         .admin-card-hover {
             transition: all 0.3s ease-in-out !important;
         }
@@ -29,32 +15,36 @@
     <x-slot name="header">
         <div class="flex items-center justify-between">
             <h2 class="font-semibold text-xl text-gray-800 leading-tight flex items-center gap-2">
-                <i class="ti ti-user-plus text-2xl text-green-700"></i>
-                Add Staff Account
+                <i class="ti ti-user-plus text-2xl text-emerald-700"></i>
+                <span>Add Account</span>
             </h2>
         </div>
     </x-slot>
 
-    <div class="pb-12 pt-0 animate-fade-in-up">
+    <div class="pb-12 pt-0">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
 
             <!-- Sub-Navigation Tabs -->
             <div class="flex flex-wrap gap-2 border-b border-gray-200 pb-3">
                 <a href="{{ route('verification.reviews') }}" aria-label="ID Verification Reviews"
-                   class="flex items-center justify-center h-11 px-4 py-2 md:h-auto md:w-auto text-sm font-semibold rounded-xl transition-all duration-200 transform hover:-translate-y-0.5 active:translate-y-0 {{ request()->routeIs('verification.reviews') ? 'bg-green-700 text-white shadow-md shadow-green-700/15' : 'text-gray-500 hover:text-gray-800 hover:bg-gray-100 hover:shadow-sm' }}">
-                    <i class="ti ti-checklist md:mr-1 text-lg md:text-base"></i> <span class="hidden md:inline">ID Verification Reviews</span>
+                   class="inline-flex items-center justify-center h-10 px-4 text-xs sm:text-sm font-bold rounded-xl transition-colors duration-150 {{ request()->routeIs('verification.reviews') ? 'bg-emerald-700 text-white shadow-sm' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100' }}">
+                    <i class="ti ti-checklist text-base shrink-0 mr-1.5"></i>
+                    <span>ID Verification Reviews</span>
                 </a>
                 <a href="{{ route('verification.accounts') }}" aria-label="Verify Tourists"
-                   class="flex items-center justify-center h-11 px-4 py-2 md:h-auto md:w-auto text-sm font-semibold rounded-xl transition-all duration-200 transform hover:-translate-y-0.5 active:translate-y-0 {{ request()->routeIs('verification.accounts') ? 'bg-green-700 text-white shadow-md shadow-green-700/15' : 'text-gray-500 hover:text-gray-800 hover:bg-gray-100 hover:shadow-sm' }}">
-                    <i class="ti ti-users md:mr-1 text-lg md:text-base"></i> <span class="hidden md:inline">Verify Tourists</span>
+                   class="inline-flex items-center justify-center h-10 px-4 text-xs sm:text-sm font-bold rounded-xl transition-colors duration-150 {{ request()->routeIs('verification.accounts') ? 'bg-emerald-700 text-white shadow-sm' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100' }}">
+                    <i class="ti ti-users text-base shrink-0 mr-1.5"></i>
+                    <span>Verify Tourists</span>
                 </a>
                 <a href="{{ route('verification.staff') }}" aria-label="Manage Staff"
-                   class="flex items-center justify-center h-11 px-4 py-2 md:h-auto md:w-auto text-sm font-semibold rounded-xl transition-all duration-200 transform hover:-translate-y-0.5 active:translate-y-0 {{ request()->routeIs('verification.staff') ? 'bg-green-700 text-white shadow-md shadow-green-700/15' : 'text-gray-500 hover:text-gray-800 hover:bg-gray-100 hover:shadow-sm' }}">
-                    <i class="ti ti-user-cog md:mr-1 text-lg md:text-base"></i> <span class="hidden md:inline">Manage Staff</span>
+                   class="inline-flex items-center justify-center h-10 px-4 text-xs sm:text-sm font-bold rounded-xl transition-colors duration-150 {{ request()->routeIs('verification.staff') ? 'bg-emerald-700 text-white shadow-sm' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100' }}">
+                    <i class="ti ti-user-cog text-base shrink-0 mr-1.5"></i>
+                    <span>Manage Staff</span>
                 </a>
                 <a href="{{ route('verification.add_account') }}" aria-label="Add Account"
-                   class="flex items-center justify-center h-11 px-4 py-2 md:h-auto md:w-auto text-sm font-semibold rounded-xl transition-all duration-200 transform hover:-translate-y-0.5 active:translate-y-0 {{ request()->routeIs('verification.add_account') ? 'bg-green-700 text-white shadow-md shadow-green-700/15' : 'text-gray-500 hover:text-gray-800 hover:bg-gray-100 hover:shadow-sm' }}">
-                    <i class="ti ti-user-plus md:mr-1 text-lg md:text-base"></i> <span class="hidden md:inline">Add Account</span>
+                   class="inline-flex items-center justify-center h-10 px-4 text-xs sm:text-sm font-bold rounded-xl transition-colors duration-150 {{ request()->routeIs('verification.add_account') ? 'bg-emerald-700 text-white shadow-sm' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100' }}">
+                    <i class="ti ti-user-plus text-base shrink-0 mr-1.5"></i>
+                    <span>Add Account</span>
                 </a>
             </div>
 
@@ -195,7 +185,7 @@
                             <div x-show="otpSent && !emailVerified" x-transition class="p-3 bg-gray-50 border border-gray-200 rounded-xl space-y-2">
                                 <p class="text-xs text-gray-500">Please check the staff member's inbox and enter the 6-digit code below.</p>
                                 <div class="flex flex-col sm:flex-row gap-2 items-center">
-                                    <input type="text" x-model="otpCode" placeholder="Enter 6-digit OTP" maxlength="6" class="w-full border-gray-200 focus:border-brand-500 focus:ring-brand-500 rounded-lg px-3 py-2 text-center text-sm shadow-sm bg-white font-mono tracking-widest" />
+                                    <input type="text" id="admin-otp-code" name="otp_code" x-model="otpCode" placeholder="Enter 6-digit OTP" maxlength="6" class="w-full border-gray-200 focus:border-brand-500 focus:ring-brand-500 rounded-lg px-3 py-2 text-center text-sm shadow-sm bg-white font-mono tracking-widest" />
                                     <button type="button" @click="verifyOtp()" :disabled="verifyingOtp" class="w-full sm:w-auto px-4 py-2 bg-green-700 hover:bg-green-800 disabled:bg-gray-100 text-white rounded-lg text-xs font-bold shadow-sm transition shrink-0">
                                         <span x-show="!verifyingOtp">Verify OTP</span>
                                         <span x-show="verifyingOtp">Verifying...</span>

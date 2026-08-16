@@ -143,8 +143,8 @@
     {{-- ============================================================ --}}
     <header
         x-data="{ scrolled: false, mobileMenuOpen: false }"
-        @scroll.window="scrolled = (window.pageYOffset > 20)"
-        :class="scrolled ? 'backdrop-blur-xl bg-white border-b border-gray-200 shadow-sm' : 'bg-transparent border-transparent'"
+        @scroll.window.passive="scrolled = (window.scrollY > 20)"
+        :class="(scrolled || mobileMenuOpen) ? 'backdrop-blur-xl bg-white border-b border-gray-200 shadow-sm' : 'bg-transparent border-transparent'"
         class="fixed top-0 inset-x-0 z-50 transition-all duration-300"
     >
         <div class="max-w-7xl mx-auto px-4 sm:px-6 flex items-center justify-between transition-all duration-300"
@@ -153,7 +153,7 @@
             {{-- 1. Logo --}}
             <div class="flex items-center gap-2 transition-all duration-200 hover:scale-105 z-50 select-none">
                 <img src="{{ asset('Pictures/LOGO/LOGO-eturismo2.png') }}" alt="E-Turismo Logo"
-                     :class="scrolled ? 'brightness-100 invert-0' : 'brightness-0 invert'"
+                     :class="(scrolled || mobileMenuOpen) ? 'brightness-100 invert-0' : 'brightness-0 invert'"
                      class="h-16 sm:h-18 w-auto object-contain transition-all duration-300" />
             </div>
 
@@ -210,28 +210,24 @@
             </div>
         </div>
 
-        {{-- 5. Mobile Dropdown Menu --}}
+        {{-- 5. Mobile Dropdown Menu (directly attached below the header bar) --}}
         <div x-show="mobileMenuOpen" x-cloak
              x-transition:enter="transition ease-out duration-200"
-             x-transition:enter-start="opacity-0 -translate-y-5"
+             x-transition:enter-start="opacity-0 -translate-y-2"
              x-transition:enter-end="opacity-100 translate-y-0"
              x-transition:leave="transition ease-in duration-150"
              x-transition:leave-start="opacity-100 translate-y-0"
-             x-transition:leave-end="opacity-0 -translate-y-5"
-             class="md:hidden absolute top-0 inset-x-0 bg-white border-b border-gray-200 shadow-xl pt-20 pb-6 px-6 flex flex-col gap-4 text-center z-40">
-            
-            <a href="#discover" @click="mobileMenuOpen = false" class="text-gray-800 font-semibold py-2 hover:text-green-600">Discover</a>
-            <a href="#features" @click="mobileMenuOpen = false" class="text-gray-800 font-semibold py-2 hover:text-green-600">Features</a>
-            <a href="#how-it-works" @click="mobileMenuOpen = false" class="text-gray-800 font-semibold py-2 hover:text-green-600">How It Works</a>
-            
-            <div class="h-px bg-gray-100 my-2"></div>
+             x-transition:leave-end="opacity-0 -translate-y-2"
+             class="md:hidden absolute top-full inset-x-0 bg-white border-b border-gray-200/90 shadow-2xl pt-2 pb-6 px-6 z-40">
             
             @if(Route::has('login'))
                 @auth
-                    <a href="{{ url('/dashboard') }}" class="text-green-600 border-2 border-green-500 font-bold py-3 rounded-full hover:bg-green-50">Dashboard</a>
+                    <a href="{{ url('/dashboard') }}" class="w-full text-center text-green-700 bg-green-50 border border-green-200 font-bold py-3 rounded-full hover:bg-green-100 transition-all flex items-center justify-center">Dashboard →</a>
                 @else
-                    <a href="{{ route('login') }}" class="text-gray-700 border-2 border-gray-300 font-bold py-3 rounded-full hover:bg-gray-50">Sign In</a>
-                    <a href="{{ route('register') }}" class="bg-green-600 text-white font-bold py-3 rounded-full hover:bg-green-700">Register</a>
+                    <div class="grid grid-cols-2 gap-3">
+                        <a href="{{ route('login') }}" class="w-full text-center text-gray-700 border-2 border-gray-300 font-bold py-2.5 px-3 rounded-full hover:bg-gray-50 flex items-center justify-center text-sm transition-all duration-200">Sign In</a>
+                        <a href="{{ route('register') }}" class="w-full text-center bg-green-600 text-white font-bold py-2.5 px-3 rounded-full hover:bg-green-700 shadow-md flex items-center justify-center text-sm transition-all duration-200">Register</a>
+                    </div>
                 @endauth
             @endif
         </div>

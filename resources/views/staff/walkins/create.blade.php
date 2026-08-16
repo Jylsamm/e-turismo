@@ -32,6 +32,7 @@
             gap: 14px;
             transition: all 0.3s ease-in-out;
         }
+
         .stat-card:hover {
             transform: translateY(-4px);
             box-shadow: 0 10px 25px -5px rgba(21, 128, 61, 0.15), 0 4px 10px -5px rgba(21, 128, 61, 0.1);
@@ -401,16 +402,17 @@
                 <textarea x-ref="pasteArea" @paste="handlePaste($event)" class="sr-only"
                     aria-label="Paste area for bulk import" tabindex="-1"></textarea>
                 <p class="text-xs text-gray-400 mt-2 mb-1">
-                    <strong>Column order:</strong> Name · Age · Gender · Contact Number · Email · Classification (Local /
+                    <strong>Column order:</strong> Name · Age · Gender · Contact Number · Email · Classification (Local
+                    /
                     Domestic Tourist / International Tourist) · Days Stay
                 </p>
             </div>
 
             {{-- ③ Visitor Grid Table ───────────────────────────────────────── --}}
-            <div class="overflow-x-auto lg:overflow-visible" id="table-scroll-container">
+            <div class="overflow-x-auto overflow-y-visible min-h-[220px]" id="table-scroll-container">
                 <form id="walkin-form" action="{{ route('staff.walkins.store') }}" method="POST">
                     @csrf
-                    <table class="visitor-table" id="visitor-table">
+                    <table class="visitor-table mb-6" id="visitor-table">
                         <thead>
                             <tr>
                                 <th class="text-center" style="width:38px;">#</th>
@@ -451,34 +453,67 @@
                                             required>
                                     </td>
 
-                                    {{-- Gender --}}
+                                    {{-- Gender (Teleported Animated Custom Dropdown) --}}
                                     <td>
-                                        <div class="relative">
-                                            <button type="button" @click="row.showGenderDropdown = !row.showGenderDropdown" @click.away="row.showGenderDropdown = false"
+                                        <div class="relative" x-data="{ open: false, rect: {} }">
+                                            <button type="button"
+                                                @click="open = !open; if(open) { rect = $event.currentTarget.getBoundingClientRect() }"
                                                 @keydown.tab.prevent="focusNext($event, i, 'gender')"
-                                                class="cell-input text-left flex justify-between items-center w-full focus:outline-none focus:ring-2 focus:ring-green-500 focus:bg-white" style="min-width: 90px;">
-                                                <span x-text="row.gender || 'Select'" class="truncate"></span>
-                                                <svg class="h-3 w-3 text-gray-400 transform transition-transform duration-150 shrink-0 ml-1" :class="row.showGenderDropdown ? 'rotate-180' : ''" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7" />
-                                                </svg>
+                                                class="cell-input text-left flex justify-between items-center w-full focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-gradient-to-b from-white to-gray-50/70 hover:from-white hover:to-emerald-50/40 hover:border-emerald-400 transition-all duration-200 group rounded-xl px-2.5 py-1.5 text-xs shadow-2xs hover:shadow-sm"
+                                                style="min-width: 105px;">
+                                                <span class="flex items-center gap-1.5 truncate">
+                                                    <template x-if="row.gender === 'Male'">
+                                                        <span
+                                                            class="w-5 h-5 rounded-md bg-blue-100 text-blue-600 flex items-center justify-center text-xs font-bold shadow-2xs group-hover:scale-110 transition-transform"><i
+                                                                class="ti ti-man"></i></span>
+                                                    </template>
+                                                    <template x-if="row.gender === 'Female'">
+                                                        <span
+                                                            class="w-5 h-5 rounded-md bg-pink-100 text-pink-600 flex items-center justify-center text-xs font-bold shadow-2xs group-hover:scale-110 transition-transform"><i
+                                                                class="ti ti-woman"></i></span>
+                                                    </template>
+                                                    <span x-text="row.gender || 'Select'"
+                                                        :class="!row.gender ? 'text-gray-400 font-normal' : 'font-semibold text-gray-800'"></span>
+                                                </span>
+                                                <i class="ti ti-chevron-down text-xs text-gray-400 group-hover:text-emerald-600 transition-transform duration-200 transform shrink-0 ml-1"
+                                                    :class="open ? 'rotate-180 text-emerald-600' : ''"></i>
                                             </button>
-                                            <input type="hidden" :name="'visitors['+i+'][gender]'" :value="row.gender" required />
-                                            
-                                            <!-- Animated Dropdown Options -->
-                                            <div x-show="row.showGenderDropdown"
-                                                x-transition:enter="transition ease-out duration-100"
-                                                x-transition:enter-start="opacity-0 scale-95"
-                                                x-transition:enter-end="opacity-100 scale-100"
-                                                x-transition:leave="transition ease-in duration-75"
-                                                x-transition:leave-start="opacity-100 scale-100"
-                                                x-transition:leave-end="opacity-0 scale-95"
-                                                class="absolute left-0 mt-1 z-50 w-full min-w-[100px] rounded-lg bg-white border border-gray-200 shadow-lg py-1 text-xs"
-                                                style="display: none;">
-                                                <button type="button" @click="row.gender = 'Male'; row.showGenderDropdown = false" class="w-full text-left px-3 py-2 hover:bg-green-50 hover:text-green-950 transition-colors">
-                                                    Male
+                                            <input type="hidden" :name="'visitors['+i+'][gender]'" :value="row.gender"
+                                                required />
+
+                                            <div x-show="open" x-cloak @click.away="open = false"
+                                                x-transition:enter="transition ease-out duration-200"
+                                                x-transition:enter-start="opacity-0 scale-95 -translate-y-1"
+                                                x-transition:enter-end="opacity-100 scale-100 translate-y-0"
+                                                x-transition:leave="transition ease-in duration-150"
+                                                x-transition:leave-start="opacity-100 scale-100 translate-y-0"
+                                                x-transition:leave-end="opacity-0 scale-95 -translate-y-1"
+                                                class="absolute left-0 top-full mt-1.5 z-50 rounded-2xl bg-white/95 backdrop-blur-xl border border-emerald-200/80 shadow-[0_10px_35px_-5px_rgba(0,0,0,0.18),0_0_0_1px_rgba(16,185,129,0.15)] p-1.5 min-w-[130px] overflow-hidden font-sans">
+                                                <button type="button"
+                                                    @click="row.gender = 'Male'; open = false; clearError(row, 'gender')"
+                                                    class="w-full text-left px-3 py-2 rounded-xl text-xs font-semibold flex items-center justify-between gap-2 transition-all duration-150 group"
+                                                    :class="row.gender === 'Male' ? 'bg-blue-50/90 text-blue-950 font-bold border border-blue-200/60 shadow-2xs' : 'text-gray-700 hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50/60 hover:text-blue-950 hover:translate-x-0.5'">
+                                                    <span class="flex items-center gap-2">
+                                                        <span
+                                                            class="w-6 h-6 rounded-lg bg-blue-100 text-blue-600 flex items-center justify-center text-sm shadow-2xs group-hover:scale-110 transition-transform"><i
+                                                                class="ti ti-man"></i></span>
+                                                        <span>Male</span>
+                                                    </span>
+                                                    <i x-show="row.gender === 'Male'"
+                                                        class="ti ti-check text-blue-600 text-sm font-extrabold animate-bounce"></i>
                                                 </button>
-                                                <button type="button" @click="row.gender = 'Female'; row.showGenderDropdown = false" class="w-full text-left px-3 py-2 hover:bg-green-50 hover:text-green-950 transition-colors">
-                                                    Female
+                                                <button type="button"
+                                                    @click="row.gender = 'Female'; open = false; clearError(row, 'gender')"
+                                                    class="w-full text-left px-3 py-2 rounded-xl text-xs font-semibold flex items-center justify-between gap-2 transition-all duration-150 group mt-1"
+                                                    :class="row.gender === 'Female' ? 'bg-pink-50/90 text-pink-950 font-bold border border-pink-200/60 shadow-2xs' : 'text-gray-700 hover:bg-gradient-to-r hover:from-pink-50 hover:to-rose-50/60 hover:text-pink-950 hover:translate-x-0.5'">
+                                                    <span class="flex items-center gap-2">
+                                                        <span
+                                                            class="w-6 h-6 rounded-lg bg-pink-100 text-pink-600 flex items-center justify-center text-sm shadow-2xs group-hover:scale-110 transition-transform"><i
+                                                                class="ti ti-woman"></i></span>
+                                                        <span>Female</span>
+                                                    </span>
+                                                    <i x-show="row.gender === 'Female'"
+                                                        class="ti ti-check text-pink-600 text-sm font-extrabold animate-bounce"></i>
                                                 </button>
                                             </div>
                                         </div>
@@ -501,37 +536,100 @@
                                             placeholder="optional">
                                     </td>
 
-                                    {{-- Classification --}}
+                                    {{-- Classification (Teleported Animated Custom Dropdown) --}}
                                     <td>
-                                        <div class="relative">
-                                            <button type="button" @click="row.showClassDropdown = !row.showClassDropdown" @click.away="row.showClassDropdown = false"
+                                        <div class="relative" x-data="{ open: false, rect: {} }">
+                                            <button type="button"
+                                                @click="open = !open; if(open) { rect = $event.currentTarget.getBoundingClientRect() }"
                                                 @keydown.tab.prevent="focusNext($event, i, 'classification')"
-                                                class="cell-input text-left flex justify-between items-center w-full focus:outline-none focus:ring-2 focus:ring-green-500 focus:bg-white" style="min-width: 140px;">
-                                                <span x-text="row.classification || 'Select'" class="truncate"></span>
-                                                <svg class="h-3 w-3 text-gray-400 transform transition-transform duration-150 shrink-0 ml-1" :class="row.showClassDropdown ? 'rotate-180' : ''" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7" />
-                                                </svg>
+                                                class="cell-input text-left flex justify-between items-center w-full focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-gradient-to-b from-white to-gray-50/70 hover:from-white hover:to-emerald-50/40 hover:border-emerald-400 transition-all duration-200 group rounded-xl px-2.5 py-1.5 text-xs shadow-2xs hover:shadow-sm"
+                                                style="min-width: 150px;">
+                                                <span class="flex items-center gap-1.5 truncate">
+                                                    <template x-if="row.classification === 'Local'">
+                                                        <span
+                                                            class="w-5 h-5 rounded-md bg-emerald-100 text-emerald-600 flex items-center justify-center text-xs font-bold shadow-2xs group-hover:scale-110 transition-transform"><i
+                                                                class="ti ti-home-heart"></i></span>
+                                                    </template>
+                                                    <template x-if="row.classification === 'Domestic Tourist'">
+                                                        <span
+                                                            class="w-5 h-5 rounded-md bg-blue-100 text-blue-600 flex items-center justify-center text-xs font-bold shadow-2xs group-hover:scale-110 transition-transform"><i
+                                                                class="ti ti-car"></i></span>
+                                                    </template>
+                                                    <template x-if="row.classification === 'International Tourist'">
+                                                        <span
+                                                            class="w-5 h-5 rounded-md bg-purple-100 text-purple-600 flex items-center justify-center text-xs font-bold shadow-2xs group-hover:scale-110 transition-transform"><i
+                                                                class="ti ti-world"></i></span>
+                                                    </template>
+                                                    <span x-text="row.classification || 'Select'"
+                                                        :class="!row.classification ? 'text-gray-400 font-normal' : 'font-semibold text-gray-800'"></span>
+                                                </span>
+                                                <i class="ti ti-chevron-down text-xs text-gray-400 group-hover:text-emerald-600 transition-transform duration-200 transform shrink-0 ml-1"
+                                                    :class="open ? 'rotate-180 text-emerald-600' : ''"></i>
                                             </button>
-                                            <input type="hidden" :name="'visitors['+i+'][classification]'" :value="row.classification" required />
-                                            
-                                            <!-- Animated Dropdown Options -->
-                                            <div x-show="row.showClassDropdown"
-                                                x-transition:enter="transition ease-out duration-100"
-                                                x-transition:enter-start="opacity-0 scale-95"
-                                                x-transition:enter-end="opacity-100 scale-100"
-                                                x-transition:leave="transition ease-in duration-75"
-                                                x-transition:leave-start="opacity-100 scale-100"
-                                                x-transition:leave-end="opacity-0 scale-95"
-                                                class="absolute left-0 mt-1 z-50 w-full min-w-[150px] rounded-lg bg-white border border-gray-200 shadow-lg py-1 text-xs"
-                                                style="display: none;">
-                                                <button type="button" @click="row.classification = 'Local'; row.showClassDropdown = false" class="w-full text-left px-3 py-2 hover:bg-green-50 hover:text-green-950 transition-colors">
-                                                    Local
+                                            <input type="hidden" :name="'visitors['+i+'][classification]'"
+                                                :value="row.classification" required />
+
+                                            <div x-show="open" x-cloak @click.away="open = false"
+                                                x-transition:enter="transition ease-out duration-200"
+                                                x-transition:enter-start="opacity-0 scale-95 -translate-y-1"
+                                                x-transition:enter-end="opacity-100 scale-100 translate-y-0"
+                                                x-transition:leave="transition ease-in duration-150"
+                                                x-transition:leave-start="opacity-100 scale-100 translate-y-0"
+                                                x-transition:leave-end="opacity-0 scale-95 -translate-y-1"
+                                                class="absolute left-0 top-full mt-1.5 z-50 rounded-2xl bg-white/95 backdrop-blur-xl border border-emerald-200/80 shadow-[0_10px_35px_-5px_rgba(0,0,0,0.18),0_0_0_1px_rgba(16,185,129,0.15)] p-1.5 min-w-[200px] overflow-hidden font-sans">
+                                                <button type="button"
+                                                    @click="row.classification = 'Local'; open = false; clearError(row, 'classification')"
+                                                    class="w-full text-left px-3 py-2 rounded-xl text-xs font-semibold flex items-center justify-between gap-2 transition-all duration-150 group"
+                                                    :class="row.classification === 'Local' ? 'bg-emerald-50/90 text-emerald-950 font-bold border border-emerald-200/60 shadow-2xs' : 'text-gray-700 hover:bg-gradient-to-r hover:from-emerald-50 hover:to-teal-50/60 hover:text-emerald-950 hover:translate-x-0.5'">
+                                                    <span class="flex items-center gap-2.5">
+                                                        <span
+                                                            class="w-7 h-7 rounded-lg bg-emerald-100 text-emerald-600 flex items-center justify-center text-base shadow-2xs group-hover:scale-110 transition-transform shrink-0"><i
+                                                                class="ti ti-home-heart"></i></span>
+                                                        <div>
+                                                            <div class="leading-tight">Local</div>
+                                                            <div
+                                                                class="text-[10px] text-gray-400 font-normal mt-0.5 group-hover:text-emerald-700 transition-colors">
+                                                                Resident of municipality</div>
+                                                        </div>
+                                                    </span>
+                                                    <i x-show="row.classification === 'Local'"
+                                                        class="ti ti-check text-emerald-600 text-sm font-extrabold animate-bounce shrink-0"></i>
                                                 </button>
-                                                <button type="button" @click="row.classification = 'Domestic Tourist'; row.showClassDropdown = false" class="w-full text-left px-3 py-2 hover:bg-green-50 hover:text-green-950 transition-colors">
-                                                    Domestic Tourist
+                                                <button type="button"
+                                                    @click="row.classification = 'Domestic Tourist'; open = false; clearError(row, 'classification')"
+                                                    class="w-full text-left px-3 py-2 rounded-xl text-xs font-semibold flex items-center justify-between gap-2 transition-all duration-150 group mt-1"
+                                                    :class="row.classification === 'Domestic Tourist' ? 'bg-blue-50/90 text-blue-950 font-bold border border-blue-200/60 shadow-2xs' : 'text-gray-700 hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50/60 hover:text-blue-950 hover:translate-x-0.5'">
+                                                    <span class="flex items-center gap-2.5">
+                                                        <span
+                                                            class="w-7 h-7 rounded-lg bg-blue-100 text-blue-600 flex items-center justify-center text-base shadow-2xs group-hover:scale-110 transition-transform shrink-0"><i
+                                                                class="ti ti-car"></i></span>
+                                                        <div>
+                                                            <div class="leading-tight">Domestic Tourist</div>
+                                                            <div
+                                                                class="text-[10px] text-gray-400 font-normal mt-0.5 group-hover:text-blue-700 transition-colors">
+                                                                Other PH cities / provinces</div>
+                                                        </div>
+                                                    </span>
+                                                    <i x-show="row.classification === 'Domestic Tourist'"
+                                                        class="ti ti-check text-blue-600 text-sm font-extrabold animate-bounce shrink-0"></i>
                                                 </button>
-                                                <button type="button" @click="row.classification = 'International Tourist'; row.showClassDropdown = false" class="w-full text-left px-3 py-2 hover:bg-green-50 hover:text-green-950 transition-colors">
-                                                    International Tourist
+                                                <button type="button"
+                                                    @click="row.classification = 'International Tourist'; open = false; clearError(row, 'classification')"
+                                                    class="w-full text-left px-3 py-2 rounded-xl text-xs font-semibold flex items-center justify-between gap-2 transition-all duration-150 group mt-1"
+                                                    :class="row.classification === 'International Tourist' ? 'bg-purple-50/90 text-purple-950 font-bold border border-purple-200/60 shadow-2xs' : 'text-gray-700 hover:bg-gradient-to-r hover:from-purple-50 hover:to-fuchsia-50/60 hover:text-purple-950 hover:translate-x-0.5'">
+                                                    <span class="flex items-center gap-2.5">
+                                                        <span
+                                                            class="w-7 h-7 rounded-lg bg-purple-100 text-purple-600 flex items-center justify-center text-base shadow-2xs group-hover:scale-110 transition-transform shrink-0"><i
+                                                                class="ti ti-world"></i></span>
+                                                        <div>
+                                                            <div class="leading-tight">International Tourist</div>
+                                                            <div
+                                                                class="text-[10px] text-gray-400 font-normal mt-0.5 group-hover:text-purple-700 transition-colors">
+                                                                Foreign visitor / traveler</div>
+                                                        </div>
+                                                    </span>
+                                                    <i x-show="row.classification === 'International Tourist'"
+                                                        class="ti ti-check text-purple-600 text-sm font-extrabold animate-bounce shrink-0"></i>
                                                 </button>
                                             </div>
                                         </div>

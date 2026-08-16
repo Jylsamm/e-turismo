@@ -230,7 +230,15 @@ class Filesystem
 
         file_put_contents($tempPath, $content);
 
-        rename($tempPath, $path);
+        try {
+            rename($tempPath, $path);
+        } catch (\Throwable $e) {
+            // Windows file locking workaround for concurrent view compilation / OPcache
+            if (! @rename($tempPath, $path)) {
+                copy($tempPath, $path);
+                @unlink($tempPath);
+            }
+        }
     }
 
     /**

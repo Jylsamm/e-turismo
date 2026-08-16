@@ -28,7 +28,21 @@ class DashboardController extends Controller
 
     private function adminDashboard()
     {
-        return view('dashboard');
+        $analytics = app(AnalyticsController::class);
+        $request = request();
+        $request->merge(['range' => 'today']);
+
+        $kpis = json_decode($analytics->getKpis($request)->getContent(), true);
+        $trends = json_decode($analytics->getTrendData($request)->getContent(), true);
+        $advanced = json_decode($analytics->getAdvancedData($request)->getContent(), true);
+
+        $initialAnalytics = [
+            'kpis' => $kpis,
+            'trends' => $trends,
+            'advanced' => $advanced,
+        ];
+
+        return view('dashboard', compact('initialAnalytics'));
     }
 
     private function staffDashboard()
@@ -50,10 +64,9 @@ class DashboardController extends Controller
 
         // Count walk-ins currently on-site: registered <= today AND (registered_date + duration_days - 1) >= today
         // i.e., they checked in on day X and are staying X + duration_days - 1 days total
-        $today = Carbon::today();
         $onSiteWalkinsCount = WalkIn::where('destination_id', $destinationId)
             ->whereDate('created_at', '<=', $today)
-            ->whereRaw('DATE(DATE_ADD(DATE(created_at), INTERVAL (duration_days - 1) DAY)) >= ?', [$today->toDateString()])
+            ->whereRaw('DATE(DATE_ADD(DATE(created_at), INTERVAL (duration_days - 1) DAY)) >= ?', [$today])
             ->count();
 
         // Total live visitors today = checked-in pre-bookings + on-site walk-ins
@@ -113,7 +126,11 @@ class DashboardController extends Controller
         });
 
         $notifications = Notification::where('recipient_id', auth()->id())
-            ->where('is_read', false)->latest()->limit(5)->get();
+            ->where('is_read', false)
+            ->where('type', '!=', 'broadcast_alert')
+            ->latest()
+            ->limit(5)
+            ->get();
 
         return view('dashboard.staff', compact('stats', 'recentPendingBookings', 'recentCheckIns', 'recentWalkins', 'spots', 'notifications', 'destination'));
     }
@@ -121,19 +138,52 @@ class DashboardController extends Controller
 
     private function touristDashboard()
     {
+        $userId = auth()->id();
+
         $myBookings = Booking::query()
             ->select(['id', 'tourist_id', 'destination_id', 'visit_date', 'status', 'payment_status', 'gcash_reference_number', 'payment_submitted_at', 'checked_in_at', 'qr_token', 'created_at'])
+            ->with(['destination:id,name,location,photos', 'ticket:id,booking_id,qr_code', 'tourist:id,name,classification'])
+            ->where('tourist_id', $userId)
+            ->latest()
+            ->limit(4)
+            ->get();
+
+        $stats = [
+            'total' => Booking::where('tourist_id', $userId)->count(),
+            'confirmed' => Booking::where('tourist_id', $userId)->where('status', 'confirmed')->count(),
+            'pending' => Booking::where('tourist_id', $userId)->where('status', 'pending')->count(),
+            'unpaid' => Booking::where('tourist_id', $userId)
+                ->whereNotIn('status', ['cancelled', 'declined'])
+                ->where(function ($q) {
+                    $q->where('payment_status', 'unpaid')
+                      ->orWhereNull('payment_status');
+                })->count(),
+            'completed' => Booking::where('tourist_id', $userId)->where('status', 'completed')->count(),
+        ];
+
+        $activePass = Booking::query()
             ->with(['destination:id,name,location', 'ticket:id,booking_id,qr_code'])
-            ->where('tourist_id', auth()->id())
+            ->where('tourist_id', $userId)
+            ->where('status', 'confirmed')
+            ->whereDate('visit_date', '>=', now()->toDateString())
+            ->orderBy('visit_date', 'asc')
+            ->first();
+
+        $notifications = Notification::where('recipient_id', $userId)
+            ->where('is_read', false)
+            ->where('type', '!=', 'broadcast_alert')
             ->latest()
             ->limit(5)
             ->get();
 
-        $notifications = Notification::where('recipient_id', auth()->id())
-            ->where('is_read', false)->latest()->limit(5)->get();
+        $destinations = Destination::query()
+            ->withCount(['bookings as visits_count' => function ($query) {
+                $query->whereIn('status', ['confirmed', 'completed']);
+            }])
+            ->orderByDesc('visits_count')
+            ->limit(4)
+            ->get();
 
-        $destinations = Destination::limit(6)->get();
-
-        return view('dashboard.tourist', compact('myBookings', 'notifications', 'destinations'));
+        return view('dashboard.tourist', compact('myBookings', 'notifications', 'destinations', 'stats', 'activePass'));
     }
 }

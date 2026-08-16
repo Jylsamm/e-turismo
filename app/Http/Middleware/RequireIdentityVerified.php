@@ -30,21 +30,17 @@ class RequireIdentityVerified
             return $next($request);
         }
 
-        $status = $user->id_verification_status ?? 'unverified';
+        $status = $user->id_verification_status ?? 'pending';
         $path   = $request->getPathInfo();
 
-        // Only booking routes require a verified identity
-        $isBookingRoute = str_starts_with($path, '/destinations') && str_ends_with($path, '/book')
-            || str_starts_with($path, '/bookings');
+        // Gated routes for non-verified tourists: Booking creation, Bookings list, My Tickets
+        $isRestrictedRoute = str_contains($path, '/book')
+            || str_starts_with($path, '/bookings')
+            || str_starts_with($path, '/tickets');
 
-        if ($isBookingRoute && $status !== 'verified') {
-            $msg = match($status) {
-                'pending'   => 'Your identity is under review. Booking is temporarily unavailable.',
-                'rejected'  => 'Your identity verification was unsuccessful. Please update your details to book.',
-                default     => 'Please verify your identity to make a booking.',
-            };
-
-            return redirect(route('profile.edit') . '#verification')->with('warning', $msg);
+        if ($isRestrictedRoute && $status !== 'verified') {
+            return redirect(route('profile.edit') . '#verification')
+                ->with('warning', 'Your identity is under review (Pending). Bookings and Tickets are locked until your ID is verified.');
         }
 
         return $next($request);

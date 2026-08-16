@@ -340,7 +340,9 @@
                         const lat = {{ $destination->checkin_latitude }};
                         const lng = {{ $destination->checkin_longitude }};
                         const spotName = @json($destination->name);
-                        const coordsEndpoint = @json(route('spots.checkin-coords', $destination));
+                        const absoluteCoordsUrl = @json(route('spots.checkin-coords', $destination));
+                        const urlObj = new URL(absoluteCoordsUrl);
+                        const coordsEndpoint = window.location.origin + urlObj.pathname + urlObj.search;
                         const editUrl = @json(route('spots.edit', $destination));
 
                         const map = L.map('staff-checkin-map', { zoomControl: true, scrollWheelZoom: false })
@@ -351,28 +353,37 @@
                             maxZoom: 19,
                         }).addTo(map);
 
-                        // Custom green pin icon
+                        // Custom animated green pin icon with hover effects (Seamless UI)
                         const pinIcon = L.divIcon({
-                            className: '',
-                            html: `<div style="
-                                width:32px; height:32px; border-radius:50% 50% 50% 0;
-                                background:#15803d; border:3px solid #fff;
-                                box-shadow:0 2px 8px rgba(0,0,0,0.25);
-                                transform:rotate(-45deg);
-                            "></div>`,
-                            iconSize: [32, 32],
-                            iconAnchor: [16, 32],
-                            popupAnchor: [0, -36],
+                            className: 'custom-visitor-pin-container',
+                            html: `
+                                <div class="visitor-pin-wrapper">
+                                    <div class="visitor-pin-pulse"></div>
+                                    <div class="visitor-pin-body">
+                                        <span class="visitor-pin-icon"><i class="ti ti-scan"></i></span>
+                                    </div>
+                                </div>
+                            `,
+                            iconSize: [38, 38],
+                            iconAnchor: [19, 38],
+                            popupAnchor: [0, -40]
                         });
 
                         const marker = L.marker([lat, lng], { icon: pinIcon })
                             .addTo(map)
                             .bindPopup(`
-                                <div style="font-size:13px; font-weight:600; color:#1f2937;">${spotName}</div>
-                                <div style="font-size:11px; color:#6b7280; margin-top:2px;">Check-in point</div>
-                                <a href="${editUrl}" style="font-size:11px; color:#15803d; font-weight:600; text-decoration:none;">
-                                    ✏ Edit location →
-                                </a>
+                                <div class="checkin-popup-card">
+                                    <div class="checkin-popup-header">
+                                        <span class="checkin-popup-icon-badge">
+                                            <i class="ti ti-radar"></i>
+                                        </span>
+                                        <span class="checkin-popup-title">Check-in Point</span>
+                                    </div>
+                                    <div class="checkin-popup-spotname">${spotName}</div>
+                                    <a href="${editUrl}" class="inline-flex items-center gap-1 mt-2 text-xs font-semibold text-green-700 hover:text-green-800 transition" style="text-decoration:none;">
+                                        <i class="ti ti-edit"></i> Edit location →
+                                    </a>
+                                </div>
                             `);
 
                         // Auto-poll every 30 s so the pin stays in sync with staff edits
@@ -421,18 +432,31 @@
         @endif
 
         {{-- Alerts & Notifications System --}}
-
         @if($notifications->count())
-            <div class="bg-amber-50 border border-amber-200 rounded-2xl p-5">
-                <h2 class="font-semibold text-amber-800 mb-3 flex items-center gap-2">
-                    <i class="ti ti-bell-ringing" style="font-size:18px;"></i>
-                    Alert Log
-                </h2>
-                <ul class="space-y-1.5">
+            <div class="bg-white border border-amber-200/90 rounded-2xl p-5 shadow-sm card-hover-effect relative overflow-hidden">
+                <div class="flex items-center justify-between gap-3 mb-3 border-b border-amber-100 pb-2.5">
+                    <h2 class="font-bold text-gray-900 flex items-center gap-2 text-sm">
+                        <span class="flex items-center justify-center w-7 h-7 rounded-lg bg-amber-50 text-amber-700 border border-amber-200">
+                            <i class="ti ti-bell-ringing text-base"></i>
+                        </span>
+                        <span>Alert Log & Notifications</span>
+                        <span class="bg-amber-100 text-amber-800 text-[10px] font-bold px-2 py-0.5 rounded-full">{{ $notifications->count() }}</span>
+                    </h2>
+                    <form action="{{ route('notifications.read-all') }}" method="POST">
+                        @csrf
+                        <button type="submit" class="inline-flex items-center gap-1 text-xs text-amber-800 hover:text-amber-950 font-bold hover:underline transition">
+                            <i class="ti ti-checks text-amber-600"></i> Mark all as read
+                        </button>
+                    </form>
+                </div>
+                <ul class="space-y-2">
                     @foreach($notifications as $notif)
-                        <li class="text-sm text-amber-950 flex items-start gap-2">
-                            <i class="ti ti-point-filled mt-0.5 text-amber-600" style="font-size:12px;"></i>
-                            {{ $notif->message }}
+                        <li class="text-sm text-gray-800 flex items-start gap-2.5 bg-gray-50/70 p-2.5 rounded-xl border border-gray-100">
+                            <i class="ti ti-point-filled mt-0.5 text-amber-600 shrink-0" style="font-size:12px;"></i>
+                            <div class="flex-1 min-w-0">
+                                <p class="text-xs font-semibold text-gray-900">{{ $notif->message }}</p>
+                                <span class="text-[10px] text-gray-600 mt-0.5 block">{{ $notif->created_at->diffForHumans() }}</span>
+                            </div>
                         </li>
                     @endforeach
                 </ul>

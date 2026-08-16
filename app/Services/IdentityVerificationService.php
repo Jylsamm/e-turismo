@@ -39,22 +39,22 @@ class IdentityVerificationService
         }
 
         if (!$user->id_photo) {
-            return ['status' => 'rejected', 'score' => 0, 'notes' => 'No ID photo was uploaded.'];
+            return ['status' => 'pending', 'score' => 0, 'notes' => 'No ID photo uploaded yet.'];
         }
 
         $photoPath = Storage::disk('public')->path($user->id_photo);
 
         if (!file_exists($photoPath)) {
-            return ['status' => 'rejected', 'score' => 0, 'notes' => 'Uploaded ID photo file could not be found.'];
+            return ['status' => 'pending', 'score' => 0, 'notes' => 'Uploaded ID photo file could not be found.'];
         }
 
-        // Call OCR.space API to read the actual text from the uploaded photo
+        // Call OCR.space API to read the text from uploaded photo
         $ocrResult = $this->extractTextViaOCR($photoPath);
 
         if ($ocrResult['is_errored'] || $ocrResult['exit_code'] === 4 || empty($ocrResult['text'])) {
-            $errorMsg = $ocrResult['error_message'] ?: 'Photo is too blurry, dark, or unsupported format.';
+            $errorMsg = $ocrResult['error_message'] ?: 'Photo is blurry or unreadable.';
             return [
-                'status' => 'rejected',
+                'status' => 'pending',
                 'score' => 0,
                 'notes' => 'OCR_READ_ERROR: ' . $errorMsg
             ];
@@ -65,14 +65,12 @@ class IdentityVerificationService
 
         if ($ocrResult['exit_code'] === 2 || $ocrResult['exit_code'] === 3) {
             $status = 'pending';
-            $notes = 'PENDING_REVIEW: Exit code ' . $ocrResult['exit_code'] . ' (partial success). Confidence shaky. | ' . $result['notes'];
+            $notes = 'PENDING_REVIEW: Exit code ' . $ocrResult['exit_code'] . ' (partial success). | ' . $result['notes'];
         } else {
             if ($result['score'] >= 90) {
                 $status = 'verified';
-            } elseif ($result['score'] >= 60) {
-                $status = 'pending';
             } else {
-                $status = 'rejected';
+                $status = 'pending';
             }
             $notes = $result['notes'];
         }

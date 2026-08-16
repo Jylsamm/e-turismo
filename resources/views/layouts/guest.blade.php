@@ -42,7 +42,6 @@
                 backdrop-filter: blur(16px) !important;
                 -webkit-backdrop-filter: blur(16px) !important;
                 transition: border-color 0.3s ease, box-shadow 0.3s ease, background 0.3s ease, transform 0.1s ease-out !important;
-                transform-style: preserve-3d;
             }
 
             #auth-card:hover,
@@ -339,14 +338,12 @@
         <!-- Dark Overlay -->
         <div class="fixed inset-0 bg-black/40 -z-10"></div>
 
-        <div class="min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0 relative z-0">
-            <div>
-                <a href="/">
-                    <x-application-logo class="w-20 h-20 drop-shadow-md" style="filter: brightness(0) invert(1);" />
-                </a>
+        <div class="min-h-screen flex flex-col justify-center items-center py-6 px-4 sm:px-6 relative z-0">
+            <div class="pointer-events-none select-none mb-3">
+                <x-application-logo class="w-16 h-16 sm:w-20 sm:h-20 drop-shadow-md cursor-default" style="filter: brightness(0) invert(1);" />
             </div>
 
-            <div id="auth-card" class="{{ $maxWidth }} w-full mt-6 px-6 py-4 overflow-hidden">
+            <div id="auth-card" class="{{ $maxWidth }} w-full max-w-md mx-auto px-5 py-5 sm:px-7 sm:py-6 overflow-hidden">
                 <div class="spotlight-overlay"></div>
                 {{ $slot }}
             </div>
@@ -485,6 +482,12 @@
                     input.style.color = '';
                 }, totalDuration);
             }
+        </script>
+        <!-- CSRF Token Keep-Alive -->
+        <script>
+            setInterval(function () {
+                fetch('{{ route("home") }}', { method: 'HEAD' }).catch(function () {});
+            }, 600000);
         </script>
     </body>
 </html>

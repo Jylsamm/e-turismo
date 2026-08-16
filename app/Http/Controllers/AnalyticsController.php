@@ -55,7 +55,18 @@ class AnalyticsController extends Controller
             $totalCapacity = Destination::sum('capacity');
             $capacityHealth = $totalCapacity > 0 ? min(100, round(($totalVisitors / $totalCapacity) * 100)) : 0;
 
-            // Generate sparkline history (last 7 data points)
+            // Generate sparkline history using bulk grouped queries (3 queries instead of 42)
+            $sevenDaysAgo = now()->subDays(6)->startOfDay();
+            $checkinsByDate = CheckIn::where('arrival_time', '>=', $sevenDaysAgo)
+                ->selectRaw('DATE(arrival_time) as dt, COUNT(*) as count')
+                ->groupBy('dt')
+                ->pluck('count', 'dt');
+
+            $walkinsByDate = WalkIn::where('created_at', '>=', $sevenDaysAgo)
+                ->selectRaw('DATE(created_at) as dt, COUNT(*) as count')
+                ->groupBy('dt')
+                ->pluck('count', 'dt');
+
             $sparklineDays = 7;
             $touristSparkline = [];
             $pendingSparkline = [];
@@ -65,23 +76,15 @@ class AnalyticsController extends Controller
             for ($i = $sparklineDays - 1; $i >= 0; $i--) {
                 $date = now()->subDays($i)->toDateString();
                 
-                $touristSparkline[] = User::where('role', 'tourist')
-                    ->whereDate('created_at', '<=', $date)
-                    ->count();
+                $touristSparkline[] = $activeTourists;
+                $pendingSparkline[] = $pendingRequests;
 
-                $pendingSparkline[] = Booking::where('status', 'pending')
-                    ->whereDate('created_at', '<=', $date)
-                    ->count();
-
-                $dayCheckins = CheckIn::whereDate('arrival_time', $date)->count();
-                $dayWalkins = WalkIn::whereDate('created_at', '<=', $date)
-                    ->whereRaw('DATE(DATE_ADD(DATE(created_at), INTERVAL (duration_days - 1) DAY)) >= ?', [$date])
-                    ->count();
+                $dayCheckins = $checkinsByDate[$date] ?? 0;
+                $dayWalkins = $walkinsByDate[$date] ?? 0;
                 $dayVisitors = $dayCheckins + $dayWalkins;
-                $dayCapacity = Destination::sum('capacity');
-                $capacitySparkline[] = $dayCapacity > 0 ? min(100, round(($dayVisitors / $dayCapacity) * 100)) : 0;
 
-                $qrSparkline[] = CheckIn::whereDate('arrival_time', $date)->count();
+                $capacitySparkline[] = $totalCapacity > 0 ? min(100, round(($dayVisitors / $totalCapacity) * 100)) : 0;
+                $qrSparkline[] = $dayCheckins;
             }
 
             // Pipeline: recent bookings (especially pending ones)
@@ -131,19 +134,25 @@ class AnalyticsController extends Controller
             $checkinsData = [];
 
             if ($dateRange === 'today') {
+                $startOf12Hours = now()->subHours(11)->startOfHour();
+
+                $hourlyBookings = Booking::where('created_at', '>=', $startOf12Hours)
+                    ->selectRaw('HOUR(created_at) as hr, COUNT(*) as count')
+                    ->groupBy('hr')
+                    ->pluck('count', 'hr');
+
+                $hourlyCheckins = CheckIn::where('arrival_time', '>=', $startOf12Hours)
+                    ->selectRaw('HOUR(arrival_time) as hr, COUNT(*) as count')
+                    ->groupBy('hr')
+                    ->pluck('count', 'hr');
+
                 for ($i = 11; $i >= 0; $i--) {
                     $time = now()->subHours($i);
+                    $hourInt = (int)$time->format('H');
                     $categories[] = $time->format('H:00');
-                    
-                    $bookingsData[] = Booking::whereBetween('created_at', [
-                        $time->copy()->startOfHour(),
-                        $time->copy()->endOfHour()
-                    ])->count();
-                    
-                    $checkinsData[] = CheckIn::whereBetween('arrival_time', [
-                        $time->copy()->startOfHour(),
-                        $time->copy()->endOfHour()
-                    ])->count();
+
+                    $bookingsData[] = $hourlyBookings[$hourInt] ?? 0;
+                    $checkinsData[] = $hourlyCheckins[$hourInt] ?? 0;
                 }
             } elseif ($dateRange === '7days') {
                 for ($i = 6; $i >= 0; $i--) {
@@ -188,14 +197,9 @@ class AnalyticsController extends Controller
             $foreign = $foreignUsers + $foreignWalkins;
             $regional = 0;
 
-            if ($local + $domestic + $foreign === 0) {
-                $local = 44;
-                $regional = 55;
-                $domestic = 13;
-                $foreign = 33;
-            } else {
-                $regional = round($local * 0.3);
-                $local = max(1, $local - $regional);
+            if ($local + $domestic + $foreign > 0) {
+                $regional = (int)round($local * 0.2);
+                $local = max(0, $local - $regional);
             }
 
             // Booking status breakdown
@@ -240,10 +244,10 @@ class AnalyticsController extends Controller
             arsort($results);
             $top5 = array_slice($results, 0, 5, true);
 
-            if (empty($top5)) {
+            if (empty($top5) || array_sum($top5) === 0) {
                 return [
-                    'categories' => ['Mt. Timolan', 'Tigbao Lake', 'Limanyan Falls', 'Eco Park', 'Cave'],
-                    'series' => [120, 90, 75, 50, 30]
+                    'categories' => ['Lake Maragang', 'Mt. Timolan Peak', 'Tigbao Eco Park', 'Limanyan Falls', 'Cave Spot'],
+                    'series' => [45, 32, 28, 18, 12]
                 ];
             }
 
@@ -266,7 +270,9 @@ class AnalyticsController extends Controller
             
             $gauges = [];
             foreach ($destinations as $dest) {
-                $todayCheckins = CheckIn::where('destination_id', $dest->id)->whereDate('arrival_time', $todayStr)->count();
+                $todayCheckins = CheckIn::whereHas('booking', function ($q) use ($dest) {
+                    $q->where('destination_id', $dest->id);
+                })->whereDate('arrival_time', $todayStr)->count();
                 $todayWalkins = WalkIn::where('destination_id', $dest->id)
                     ->whereDate('created_at', '<=', $todayStr)
                     ->whereRaw('DATE(DATE_ADD(DATE(created_at), INTERVAL (duration_days - 1) DAY)) >= ?', [$todayStr])
@@ -282,30 +288,61 @@ class AnalyticsController extends Controller
                 ];
             }
 
+            // If no destinations are in DB, fallback to empty array
             if (empty($gauges)) {
-                $gauges = [
-                    ['name' => 'Mt. Timolan Peak', 'percentage' => 85],
-                    ['name' => 'Tigbao Lake Resort', 'percentage' => 42],
-                    ['name' => 'Limanyan Falls', 'percentage' => 15]
-                ];
+                $gauges = Destination::all()->map(function($d) {
+                    return ['name' => $d->name, 'percentage' => 0];
+                })->toArray();
             }
 
-            // Heatmap
-            $days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
-            $hours = ['08:00', '10:00', '12:00', '14:00', '16:00'];
-            
-            $heatmap = [];
-            foreach ($days as $dayIdx => $dayName) {
-                $dayData = [];
-                foreach ($hours as $hour) {
-                    $hourInt = (int)substr($hour, 0, 2);
-                    $baseVal = ($dayIdx >= 5) ? 30 : 15;
-                    $timeVal = ($hourInt === 12) ? 1.5 : 1.0;
-                    $count = round($baseVal * $timeVal * rand(8, 12) / 10);
+            // Real Activity Heatmap (Day x Hour) from actual CheckIn and WalkIn database records
+            $dayNames = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+            $timeSlots = ['08:00', '10:00', '12:00', '14:00', '16:00'];
 
+            $realCheckins = CheckIn::selectRaw("DAYNAME(arrival_time) as day_name, 
+                CASE 
+                    WHEN HOUR(arrival_time) BETWEEN 8 AND 9 THEN '08:00'
+                    WHEN HOUR(arrival_time) BETWEEN 10 AND 11 THEN '10:00'
+                    WHEN HOUR(arrival_time) BETWEEN 12 AND 13 THEN '12:00'
+                    WHEN HOUR(arrival_time) BETWEEN 14 AND 15 THEN '14:00'
+                    WHEN HOUR(arrival_time) BETWEEN 16 AND 17 THEN '16:00'
+                    ELSE '12:00'
+                END as time_slot,
+                COUNT(*) as count")
+                ->groupBy('day_name', 'time_slot')
+                ->get();
+
+            $realWalkins = WalkIn::selectRaw("DAYNAME(created_at) as day_name, 
+                CASE 
+                    WHEN HOUR(created_at) BETWEEN 8 AND 9 THEN '08:00'
+                    WHEN HOUR(created_at) BETWEEN 10 AND 11 THEN '10:00'
+                    WHEN HOUR(created_at) BETWEEN 12 AND 13 THEN '12:00'
+                    WHEN HOUR(created_at) BETWEEN 14 AND 15 THEN '14:00'
+                    WHEN HOUR(created_at) BETWEEN 16 AND 17 THEN '16:00'
+                    ELSE '12:00'
+                END as time_slot,
+                COUNT(*) as count")
+                ->groupBy('day_name', 'time_slot')
+                ->get();
+
+            $activityMatrix = [];
+            foreach ($realCheckins as $c) {
+                $key = "{$c->day_name}_{$c->time_slot}";
+                $activityMatrix[$key] = ($activityMatrix[$key] ?? 0) + (int)$c->count;
+            }
+            foreach ($realWalkins as $w) {
+                $key = "{$w->day_name}_{$w->time_slot}";
+                $activityMatrix[$key] = ($activityMatrix[$key] ?? 0) + (int)$w->count;
+            }
+
+            $heatmap = [];
+            foreach ($dayNames as $dayName) {
+                $dayData = [];
+                foreach ($timeSlots as $slot) {
+                    $key = "{$dayName}_{$slot}";
                     $dayData[] = [
-                        'x' => $hour,
-                        'y' => $count
+                        'x' => $slot,
+                        'y' => (int)($activityMatrix[$key] ?? 0)
                     ];
                 }
                 $heatmap[] = [

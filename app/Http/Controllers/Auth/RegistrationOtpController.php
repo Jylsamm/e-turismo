@@ -19,8 +19,11 @@ class RegistrationOtpController extends Controller
 {
     public function sendCode(Request $request)
     {
+        // [TEMPORARY INSTRUMENTATION - REMOVE AFTER DIAGNOSTICS]
+        $tStart = microtime(true);
+
         $request->validate([
-            'email' => ['required', 'string', 'email', 'max:255', 'regex:/^[a-zA-Z0-9._%+-]+@gmail\.com$/i'],
+            'email' => ['required', 'string', 'email', 'max:255', 'regex:/^[a-zA-Z0-9._%\+\-]+@gmail\.com$/i'],
         ]);
 
         $email = strtolower(trim($request->email));
@@ -29,7 +32,7 @@ class RegistrationOtpController extends Controller
             return response()->json(['status' => 'error', 'message' => 'This Gmail is already registered.'], 422);
         }
 
-        $throttleKey = 'registration-otp-send:' . $request->ip();
+        $throttleKey = 'registration-otp-send:' . $email . '|' . $request->ip();
         if (RateLimiterFacade::tooManyAttempts($throttleKey, 3)) {
             $seconds = RateLimiterFacade::availableIn($throttleKey);
             return response()->json(['status' => 'error', 'message' => "Too many requests. Try again in {$seconds} seconds."], 429);
@@ -46,8 +49,19 @@ class RegistrationOtpController extends Controller
             'sent_at' => now()->timestamp,
         ], now()->addMinutes(10));
 
+        $tPreMail = microtime(true);
+
         try {
             Mail::to($email)->send(new RegistrationOtpMail($otp));
+            $tMailDone = microtime(true);
+
+            // [TEMPORARY INSTRUMENTATION - REMOVE AFTER DIAGNOSTICS]
+            Log::info(sprintf(
+                "[OTP Latency Diagnostic] Total: %.2f ms | DB/Cache setup: %.2f ms | SMTP Transport: %.2f ms",
+                ($tMailDone - $tStart) * 1000,
+                ($tPreMail - $tStart) * 1000,
+                ($tMailDone - $tPreMail) * 1000
+            ));
         } catch (\Throwable $e) {
             Log::error("[RegistrationOtpController] Failed to send OTP email to {$email}: " . $e->getMessage(), [
                 'exception' => $e,
@@ -69,7 +83,7 @@ class RegistrationOtpController extends Controller
     public function verifyCode(Request $request)
     {
         $request->validate([
-            'email' => ['required', 'string', 'email', 'max:255', 'regex:/^[a-zA-Z0-9._%+-]+@gmail\.com$/i'],
+            'email' => ['required', 'string', 'email', 'max:255', 'regex:/^[a-zA-Z0-9._%\+\-]+@gmail\.com$/i'],
             'code' => ['required', 'string', 'size:6', 'regex:/^[0-9]{6}$/'],
         ]);
 
@@ -81,7 +95,7 @@ class RegistrationOtpController extends Controller
             return response()->json(['status' => 'error', 'message' => 'No active verification code was found. Please request a new code.'], 422);
         }
 
-        $verifyKey = 'registration-otp-verify:' . $request->ip();
+        $verifyKey = 'registration-otp-verify:' . $email . '|' . $request->ip();
         if (RateLimiterFacade::tooManyAttempts($verifyKey, 5)) {
             $seconds = RateLimiterFacade::availableIn($verifyKey);
             return response()->json(['status' => 'error', 'message' => "Too many attempts. Try again in {$seconds} seconds."], 429);
@@ -96,6 +110,7 @@ class RegistrationOtpController extends Controller
         RateLimiterFacade::clear($verifyKey);
 
         session(['otp_verified_email' => $email]);
+        Cache::put('otp_verified_marker:' . $email, true, now()->addMinutes(30));
 
         return response()->json(['status' => 'ok', 'message' => 'Email verified successfully.']);
     }

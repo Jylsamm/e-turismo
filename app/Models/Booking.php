@@ -4,6 +4,9 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * @mixin \Illuminate\Database\Eloquent\Builder
+ */
 class Booking extends Model
 {
     protected $fillable = [
@@ -11,6 +14,7 @@ class Booking extends Model
         'tourist_id',
         'destination_id',
         'visit_date',
+        'duration_days',
         'status',
         'decline_reason',
         'decided_by_staff_id',
@@ -52,5 +56,10 @@ class Booking extends Model
     public function checkIn()
     {
         return $this->hasOne(CheckIn::class);
+    }
+
+    public function companions()
+    {
+        return $this->hasMany(BookingCompanion::class);
     }
 }

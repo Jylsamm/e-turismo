@@ -37,38 +37,138 @@
 
     {{-- html5-qrcode Library CDN --}}
     <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js" type="text/javascript"></script>
 
     <script>
         let html5QrcodeScanner = null;
         let lastResult = null;
+        let isScanningActive = false;
+        let scanCanvas = null;
+        let scanContext = null;
 
-        function startScanning() {
-            stopScanning();
+        async function startScanning() {
+            if (html5QrcodeScanner) await stopScanning();
 
             document.getElementById('verification-result').classList.add('hidden');
             lastResult = null;
 
-            html5QrcodeScanner = new Html5Qrcode("reader");
-            const config = { fps: 10, qrbox: { width: 250, height: 250 } };
+            const config = {
+                fps: 25,
+                qrbox: (viewfinderWidth, viewfinderHeight) => {
+                    const minEdge = Math.min(viewfinderWidth, viewfinderHeight);
+                    const size = Math.floor(minEdge * 0.85);
+                    return { width: size, height: size };
+                }
+            };
 
-            html5QrcodeScanner.start(
+            const constraintsToTry = [
                 { facingMode: "environment" },
-                config,
-                onScanSuccess,
-                onScanFailure
-            ).catch(err => {
-                console.error("Error starting scanner: ", err);
-                alert("Camera permission denied or camera not found.");
-            });
+                { facingMode: "environment", width: { ideal: 1280 }, height: { ideal: 720 } },
+                {}
+            ];
+
+            let started = false;
+            let lastError = null;
+
+            for (const c of constraintsToTry) {
+                try {
+                    if (html5QrcodeScanner) {
+                        try {
+                            if (html5QrcodeScanner.isScanning || (typeof html5QrcodeScanner.getState === 'function' && html5QrcodeScanner.getState() === 2)) {
+                                await html5QrcodeScanner.stop();
+                            }
+                        } catch (_) { }
+                        html5QrcodeScanner = null;
+                    }
+                    html5QrcodeScanner = new Html5Qrcode("reader");
+                    await html5QrcodeScanner.start(c, config, onScanSuccess, onScanFailure);
+                    started = true;
+                    isScanningActive = true;
+                    requestAnimationFrame(scanVideoFrameWithJsQRScanPage);
+                    break;
+                } catch (err) {
+                    lastError = err;
+                }
+            }
+
+            if (!started) {
+                stopScanning();
+                console.error("Error starting scanner: ", lastError);
+                alert("Camera permission denied or camera not found: " + ((lastError && lastError.message) || lastError));
+            }
+        }
+
+        function scanVideoFrameWithJsQRScanPage() {
+            if (!isScanningActive) return;
+            try {
+                const video = document.querySelector('#reader video');
+                if (video && video.readyState >= 2 && video.videoWidth > 0) {
+                    if (!scanCanvas) {
+                        scanCanvas = document.createElement('canvas');
+                        scanContext = scanCanvas.getContext('2d', { willReadFrequently: true });
+                    }
+                    scanCanvas.width = video.videoWidth;
+                    scanCanvas.height = video.videoHeight;
+
+                    // Pass 1: Standard Frame + Inverted Color Check
+                    scanContext.drawImage(video, 0, 0, scanCanvas.width, scanCanvas.height);
+                    let imageData = scanContext.getImageData(0, 0, scanCanvas.width, scanCanvas.height);
+
+                    if (typeof jsQR !== 'undefined') {
+                        let code = jsQR(imageData.data, imageData.width, imageData.height, {
+                            inversionAttempts: "attemptBoth",
+                        });
+
+                        // Pass 2: Horizontally Flipped Frame (handles mirrored QR codes / front-camera mirrors)
+                        if (!code || !code.data) {
+                            scanContext.save();
+                            scanContext.translate(scanCanvas.width, 0);
+                            scanContext.scale(-1, 1);
+                            scanContext.drawImage(video, 0, 0, scanCanvas.width, scanCanvas.height);
+                            scanContext.restore();
+                            imageData = scanContext.getImageData(0, 0, scanCanvas.width, scanCanvas.height);
+                            code = jsQR(imageData.data, imageData.width, imageData.height, {
+                                inversionAttempts: "attemptBoth",
+                            });
+                        }
+
+                        // Pass 3: Contrast Binarization (thresholding for creased/damaged/shadowed prints)
+                        if (!code || !code.data) {
+                            const d = imageData.data;
+                            for (let i = 0; i < d.length; i += 4) {
+                                const gray = (d[i] * 0.299 + d[i + 1] * 0.587 + d[i + 2] * 0.114);
+                                const val = gray < 128 ? 0 : 255;
+                                d[i] = val;
+                                d[i + 1] = val;
+                                d[i + 2] = val;
+                            }
+                            code = jsQR(d, imageData.width, imageData.height, {
+                                inversionAttempts: "attemptBoth",
+                            });
+                        }
+
+                        if (code && code.data && code.data.trim()) {
+                            onScanSuccess(code.data.trim());
+                            return;
+                        }
+                    }
+                }
+            } catch (_) { }
+
+            if (isScanningActive) {
+                requestAnimationFrame(scanVideoFrameWithJsQRScanPage);
+            }
         }
 
         function stopScanning() {
+            isScanningActive = false;
             if (html5QrcodeScanner) {
-                html5QrcodeScanner.stop().then(() => {
-                    html5QrcodeScanner = null;
-                }).catch(err => {
-                    console.error("Error stopping scanner: ", err);
-                });
+                try {
+                    if (html5QrcodeScanner.isScanning || (typeof html5QrcodeScanner.getState === 'function' && html5QrcodeScanner.getState() === 2)) {
+                        html5QrcodeScanner.stop().catch(() => { });
+                    }
+                } catch (_) { }
+                html5QrcodeScanner = null;
             }
         }
 

@@ -80,11 +80,6 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->id_verification_status === 'pending';
     }
 
-    public function isIdentityRejected(): bool
-    {
-        return $this->id_verification_status === 'rejected';
-    }
-
     public function fullName(): string
     {
         $parts = array_filter([$this->name, $this->middle_initial, $this->last_name]);

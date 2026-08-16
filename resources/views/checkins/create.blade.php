@@ -167,10 +167,6 @@
             height: 100% !important;
         }
 
-        #reader video {
-            object-fit: cover !important;
-        }
-
         #reader img {
             display: none !important;
         }
@@ -485,6 +481,7 @@
     <div id="toast-wrapper" class="fixed bottom-5 right-5 z-50 space-y-2 pointer-events-none"></div>
 
     <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js" type="text/javascript"></script>
     <script>
         /* ── Constants ──────────────────────────────────────────────────────── */
         const PREVIEW_URL = @json(route('staff.preview-ticket'));
@@ -500,10 +497,12 @@
         let activeCamId = null;
         let pendingOpen = true;
         let activityOpen = true;
+        let jsQrCanvas = null;
+        let jsQrContext = null;
 
         /* ── Camera Management ──────────────────────────────────────────────── */
-        function startCamera(deviceId) {
-            if (scanning) stopCamera();
+        async function startCamera(deviceId) {
+            if (scanning) await stopCamera();
 
             document.getElementById('camera-idle').style.display = 'none';
             document.getElementById('viewfinder').style.display = 'block';
@@ -513,27 +512,127 @@
             updateScannerHealth('active');
             lastToken = null;
 
-            const constraint = deviceId
+            const baseConstraint = deviceId
                 ? { deviceId: { exact: deviceId } }
                 : { facingMode: 'environment' };
 
-            scanner = new Html5Qrcode('reader');
-            scanner.start(
-                constraint,
-                { fps: 10, qrbox: { width: 230, height: 230 } },
-                onScan,
-                () => { }
-            ).then(() => {
-                scanning = true;
-                enumerateCameras();         // populate device selector now permissions are granted
-            }).catch(err => {
+            const config = {
+                fps: 25,
+                qrbox: (viewfinderWidth, viewfinderHeight) => {
+                    const minEdge = Math.min(viewfinderWidth, viewfinderHeight);
+                    const size = Math.floor(minEdge * 0.85);
+                    return { width: size, height: size };
+                }
+            };
+
+            const constraintsToTry = [
+                baseConstraint,
+                Object.assign({}, baseConstraint, { width: { ideal: 1280 }, height: { ideal: 720 } }),
+                {}
+            ];
+            let started = false;
+            let lastError = null;
+
+            for (const c of constraintsToTry) {
+                try {
+                    if (scanner) {
+                        try {
+                            if (scanner.isScanning || (typeof scanner.getState === 'function' && scanner.getState() === 2)) {
+                                await scanner.stop();
+                            }
+                        } catch (_) { }
+                        scanner = null;
+                    }
+                    scanner = new Html5Qrcode('reader');
+                    await scanner.start(c, config, onScan, () => { });
+                    started = true;
+                    scanning = true;
+                    enumerateCameras();         // populate device selector now permissions are granted
+                    requestAnimationFrame(scanVideoFrameWithJsQR);
+                    break;
+                } catch (err) {
+                    lastError = err;
+                }
+            }
+
+            if (!started) {
                 stopCamera();
-                triggerToast(err.message || 'Camera access denied.', 'error');
-            });
+                console.error("Camera start failed:", lastError);
+                triggerToast((lastError && lastError.message) || 'Camera access denied or unavailable.', 'error');
+            }
+        }
+
+        function scanVideoFrameWithJsQR() {
+            if (!scanning) return;
+            try {
+                const video = document.querySelector('#reader video');
+                if (video && video.readyState >= 2 && video.videoWidth > 0) {
+                    if (!jsQrCanvas) {
+                        jsQrCanvas = document.createElement('canvas');
+                        jsQrContext = jsQrCanvas.getContext('2d', { willReadFrequently: true });
+                    }
+                    jsQrCanvas.width = video.videoWidth;
+                    jsQrCanvas.height = video.videoHeight;
+
+                    // Pass 1: Standard Frame + Inverted Color Check
+                    jsQrContext.drawImage(video, 0, 0, jsQrCanvas.width, jsQrCanvas.height);
+                    let imageData = jsQrContext.getImageData(0, 0, jsQrCanvas.width, jsQrCanvas.height);
+
+                    if (typeof jsQR !== 'undefined') {
+                        let code = jsQR(imageData.data, imageData.width, imageData.height, {
+                            inversionAttempts: "attemptBoth",
+                        });
+
+                        // Pass 2: Horizontally Flipped Frame (handles mirrored QR codes / front-camera mirrors)
+                        if (!code || !code.data) {
+                            jsQrContext.save();
+                            jsQrContext.translate(jsQrCanvas.width, 0);
+                            jsQrContext.scale(-1, 1);
+                            jsQrContext.drawImage(video, 0, 0, jsQrCanvas.width, jsQrCanvas.height);
+                            jsQrContext.restore();
+                            imageData = jsQrContext.getImageData(0, 0, jsQrCanvas.width, jsQrCanvas.height);
+                            code = jsQR(imageData.data, imageData.width, imageData.height, {
+                                inversionAttempts: "attemptBoth",
+                            });
+                        }
+
+                        // Pass 3: Contrast Binarization (thresholding for creased/damaged/shadowed prints)
+                        if (!code || !code.data) {
+                            const d = imageData.data;
+                            for (let i = 0; i < d.length; i += 4) {
+                                const gray = (d[i] * 0.299 + d[i + 1] * 0.587 + d[i + 2] * 0.114);
+                                const val = gray < 128 ? 0 : 255;
+                                d[i] = val;
+                                d[i + 1] = val;
+                                d[i + 2] = val;
+                            }
+                            code = jsQR(d, imageData.width, imageData.height, {
+                                inversionAttempts: "attemptBoth",
+                            });
+                        }
+
+                        if (code && code.data && code.data.trim()) {
+                            onScan(code.data.trim());
+                            return;
+                        }
+                    }
+                }
+            } catch (_) { }
+
+            if (scanning) {
+                requestAnimationFrame(scanVideoFrameWithJsQR);
+            }
         }
 
         function stopCamera() {
-            if (scanner) { scanner.stop().catch(() => { }); scanner = null; }
+            if (scanner) {
+                try {
+                    if (scanner.isScanning || (typeof scanner.getState === 'function' && scanner.getState() === 2)) {
+                        scanner.stop().catch(() => { });
+                    }
+                } catch (_) { }
+                scanner = null;
+            }
             scanning = false;
             document.getElementById('viewfinder').style.display = 'none';
             document.getElementById('btn-start').style.display = 'flex';
@@ -569,10 +668,11 @@
 
         /* ── Scan Detection ─────────────────────────────────────────────────── */
         function onScan(token) {
-            if (token === lastToken) return;
-            lastToken = token;
+            const cleanToken = (token || '').trim();
+            if (!cleanToken || cleanToken === lastToken) return;
+            lastToken = cleanToken;
             stopCamera();
-            previewTicket(token);
+            previewTicket(cleanToken);
         }
 
         function previewManual() {
@@ -656,17 +756,34 @@
         function showPreviewCard(d, token) {
             const card = document.getElementById('result-card');
             card.style.display = 'block';
+
+            const isWarning = d.warning ? true : false;
+            const borderColorClass = isWarning ? 'border-amber-400 bg-amber-50/10' : 'border-green-300';
+            const iconBgClass = isWarning ? 'bg-amber-100' : 'bg-green-100';
+            const iconColorClass = isWarning ? 'text-amber-700 ti-alert-triangle' : 'text-green-700 ti-ticket';
+            const statusSubtext = isWarning ? 'Date mismatch — review and approve if permitted' : 'Valid ticket found — review then approve';
+            const statusSubtextColor = isWarning ? 'text-amber-700' : 'text-green-700';
+            const btnColorClass = isWarning ? 'bg-amber-600 hover:bg-amber-700' : 'bg-green-700 hover:bg-green-800';
+
+            const warningAlert = isWarning
+                ? `<div class="p-3 bg-amber-50 border border-amber-300 rounded-xl text-amber-900 text-xs font-semibold flex items-start gap-2">
+                     <i class="ti ti-alert-circle text-amber-700 text-sm mt-0.5 flex-shrink-0"></i>
+                     <span>${escHtml(d.warning)}</span>
+                   </div>`
+                : '';
+
             card.innerHTML = `
-            <div class="bg-white border-2 border-green-300 rounded-2xl p-5 shadow-md space-y-4">
-                <div class="flex items-center gap-3 border-b border-green-100 pb-3">
-                    <div class="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0">
-                        <i class="ti ti-ticket text-green-700 text-xl"></i>
+            <div class="bg-white border-2 ${borderColorClass} rounded-2xl p-5 shadow-md space-y-4">
+                <div class="flex items-center gap-3 border-b border-gray-100 pb-3">
+                    <div class="w-10 h-10 rounded-full ${iconBgClass} flex items-center justify-center flex-shrink-0">
+                        <i class="ti ${iconColorClass} text-xl"></i>
                     </div>
                     <div>
                         <h3 class="font-bold text-gray-800 text-base">Confirm Check-In</h3>
-                        <p class="text-xs text-green-700 font-semibold">Valid ticket found — review then approve</p>
+                        <p class="text-xs ${statusSubtextColor} font-semibold">${statusSubtext}</p>
                     </div>
                 </div>
+                ${warningAlert}
                 <div class="space-y-2 text-sm">
                     <div class="flex justify-between items-center py-1.5 border-b border-gray-50">
                         <span class="text-gray-500 flex items-center gap-1.5"><i class="ti ti-user"></i> Visitor</span>
@@ -678,16 +795,16 @@
                     </div>
                     <div class="flex justify-between items-center py-1.5 border-b border-gray-50">
                         <span class="text-gray-500 flex items-center gap-1.5"><i class="ti ti-calendar"></i> Visit Date</span>
-                        <span class="font-bold text-gray-800">${escHtml(d.visit_date)}</span>
+                        <span class="font-bold ${isWarning ? 'text-amber-700 font-extrabold' : 'text-gray-800'}">${escHtml(d.visit_date)}</span>
                     </div>
                     <div class="flex justify-between items-center py-1.5">
                         <span class="text-gray-500 flex items-center gap-1.5"><i class="ti ti-badge-check"></i> Status</span>
-                        <span class="bg-green-100 text-green-800 text-xs font-bold px-2 py-0.5 rounded-full">${escHtml(d.booking_status)}</span>
+                        <span class="${isWarning ? 'bg-amber-100 text-amber-800' : 'bg-green-100 text-green-800'} text-xs font-bold px-2 py-0.5 rounded-full">${escHtml(d.booking_status)}</span>
                     </div>
                 </div>
                 <div class="flex gap-3 pt-1">
                     <button onclick="approveCheckin()"
-                            class="flex-1 bg-green-700 hover:bg-green-800 text-white font-bold py-3 rounded-xl text-sm flex items-center justify-center gap-2 transition shadow-sm">
+                            class="flex-1 ${btnColorClass} text-white font-bold py-3 rounded-xl text-sm flex items-center justify-center gap-2 transition shadow-sm">
                         <i class="ti ti-circle-check-filled"></i> Approve Check-In
                     </button>
                     <button onclick="cancelPreview()"
@@ -738,19 +855,22 @@
             const card = document.getElementById('result-card');
             card.style.display = 'block';
             card.innerHTML = `
-            <div class="bg-red-50 border border-red-300 rounded-2xl p-5 shadow-sm space-y-3">
-                <div class="flex items-start gap-3">
+            <div class="bg-red-50 border-2 border-red-400 rounded-2xl p-5 shadow-md space-y-4">
+                <div class="flex items-center gap-3 border-b border-red-200 pb-3">
                     <div class="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center flex-shrink-0">
-                        <i class="ti ti-alert-circle-filled text-red-600 text-xl"></i>
+                        <i class="ti ti-square-x-filled text-red-600 text-2xl"></i>
                     </div>
                     <div>
-                        <h3 class="font-bold text-red-800 text-sm">Access Denied</h3>
-                        <p class="text-sm text-red-700 mt-1 leading-relaxed">${escHtml(msg)}</p>
+                        <h3 class="font-bold text-red-900 text-base">Invalid QR Code / Access Denied</h3>
+                        <p class="text-xs text-red-600 font-semibold">Verification failed</p>
                     </div>
                 </div>
+                <div class="p-3.5 bg-white rounded-xl border border-red-200 text-red-800 text-sm font-medium leading-relaxed">
+                    <i class="ti ti-alert-circle text-red-500 mr-1"></i> ${escHtml(msg)}
+                </div>
                 <button onclick="resetScanner()"
-                        class="w-full bg-red-600 hover:bg-red-700 text-white font-semibold py-2.5 rounded-xl text-sm flex items-center justify-center gap-1.5 transition">
-                    <i class="ti ti-rotate-clockwise"></i> Try Again
+                        class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 rounded-xl text-sm flex items-center justify-center gap-2 transition shadow-sm">
+                    <i class="ti ti-scan"></i> Scan Next QR Code
                 </button>
             </div>`;
             card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });

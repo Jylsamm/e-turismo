@@ -34,7 +34,7 @@
     </x-slot>
 
     <!-- Alpine Component Initialization -->
-    <div x-data="analyticsDashboard()" x-init="initCharts()" class="pt-0 pb-12 relative">
+    <div x-data="analyticsDashboard(@js($initialAnalytics ?? null))" x-init="initCharts()" class="pt-0 pb-12 relative">
         <!-- Toast Notification -->
         <div x-show="toastMessage" x-transition:enter="transition ease-out duration-300"
             x-transition:enter-start="opacity-0 translate-y-2" x-transition:enter-end="opacity-100 translate-y-0"
@@ -59,14 +59,14 @@
 
             <!-- 2.1 Global Controls -->
             <div
-                class="mb-6 flex flex-col sm:flex-row justify-between items-center bg-white p-4 rounded-xl shadow-sm border border-gray-100 relative z-20 admin-card-hover">
-                <div class="flex items-center w-full sm:w-auto mb-4 sm:mb-0 gap-3">
-                    <span class="text-sm font-medium text-gray-500 mr-1">Date Range:</span>
-                    <div class="relative" x-data="{ showRangeDropdown: false }" @click.away="showRangeDropdown = false">
+                class="mb-6 flex flex-col sm:flex-row justify-between items-stretch sm:items-center bg-white p-3.5 sm:p-4 rounded-xl shadow-sm border border-gray-100 relative z-30 admin-card-hover gap-3 sm:gap-4">
+                <div class="flex items-center justify-between sm:justify-start w-full sm:w-auto gap-2.5 sm:gap-3">
+                    <span class="text-xs sm:text-sm font-semibold text-gray-600 shrink-0">Date Range:</span>
+                    <div class="relative z-50 flex-1 sm:flex-initial" x-data="{ showRangeDropdown: false }" @click.away="showRangeDropdown = false">
                         <button type="button" @click="showRangeDropdown = !showRangeDropdown"
-                            class="flex justify-between items-center w-48 rounded-xl border border-gray-200 shadow-sm bg-white px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-all focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2">
-                            <span class="font-semibold text-gray-800" x-text="getDateRangeLabel()"></span>
-                            <svg class="h-4 w-4 text-gray-400 transform transition-transform duration-200"
+                            class="flex justify-between items-center w-full sm:w-48 rounded-xl border border-gray-200 shadow-xs bg-white px-3.5 py-2 text-xs sm:text-sm text-gray-700 hover:bg-gray-50 transition-all focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2">
+                            <span class="font-semibold text-gray-800 truncate" x-text="getDateRangeLabel()"></span>
+                            <svg class="h-4 w-4 text-gray-400 transform transition-transform duration-200 shrink-0 ml-1.5"
                                 :class="showRangeDropdown ? 'rotate-180' : ''" fill="none" viewBox="0 0 24 24"
                                 stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -81,12 +81,12 @@
                             x-transition:leave="transition ease-in duration-150"
                             x-transition:leave-start="opacity-100 translate-y-0 scale-100"
                             x-transition:leave-end="opacity-0 translate-y-1 scale-95"
-                            class="absolute z-35 mt-2 w-48 rounded-xl bg-white border border-gray-200 shadow-xl py-1 overflow-hidden"
+                            class="absolute z-50 mt-2 left-0 sm:left-auto right-0 sm:right-auto w-full sm:w-48 rounded-xl bg-white border border-gray-200 shadow-2xl py-1 overflow-hidden"
                             style="display: none;">
 
                             <button type="button" @click="setDateRange('today'); showRangeDropdown = false"
                                 :class="dateRange === 'today' ? 'bg-emerald-50 text-emerald-800 font-bold' : 'text-gray-700 hover:bg-gray-50'"
-                                class="w-full text-left px-4 py-2.5 text-sm transition-colors flex items-center justify-between border-b border-gray-50 last:border-0">
+                                class="w-full text-left px-4 py-2.5 text-sm transition-colors flex items-center justify-between border-b border-gray-50 last:border-0 cursor-pointer">
                                 <span>Today</span>
                                 <svg x-show="dateRange === 'today'" class="h-4 w-4 text-emerald-600" fill="none"
                                     viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
@@ -95,7 +95,7 @@
                             </button>
                             <button type="button" @click="setDateRange('7days'); showRangeDropdown = false"
                                 :class="dateRange === '7days' ? 'bg-emerald-50 text-emerald-800 font-bold' : 'text-gray-700 hover:bg-gray-50'"
-                                class="w-full text-left px-4 py-2.5 text-sm transition-colors flex items-center justify-between border-b border-gray-50 last:border-0">
+                                class="w-full text-left px-4 py-2.5 text-sm transition-colors flex items-center justify-between border-b border-gray-50 last:border-0 cursor-pointer">
                                 <span>Last 7 Days</span>
                                 <svg x-show="dateRange === '7days'" class="h-4 w-4 text-emerald-600" fill="none"
                                     viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
@@ -104,7 +104,7 @@
                             </button>
                             <button type="button" @click="setDateRange('month'); showRangeDropdown = false"
                                 :class="dateRange === 'month' ? 'bg-emerald-50 text-emerald-800 font-bold' : 'text-gray-700 hover:bg-gray-50'"
-                                class="w-full text-left px-4 py-2.5 text-sm transition-colors flex items-center justify-between border-b border-gray-50 last:border-0">
+                                class="w-full text-left px-4 py-2.5 text-sm transition-colors flex items-center justify-between border-b border-gray-50 last:border-0 cursor-pointer">
                                 <span>This Month</span>
                                 <svg x-show="dateRange === 'month'" class="h-4 w-4 text-emerald-600" fill="none"
                                     viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
@@ -113,7 +113,7 @@
                             </button>
                             <button type="button" @click="setDateRange('ytd'); showRangeDropdown = false"
                                 :class="dateRange === 'ytd' ? 'bg-emerald-50 text-emerald-800 font-bold' : 'text-gray-700 hover:bg-gray-50'"
-                                class="w-full text-left px-4 py-2.5 text-sm transition-colors flex items-center justify-between border-b border-gray-50 last:border-0">
+                                class="w-full text-left px-4 py-2.5 text-sm transition-colors flex items-center justify-between border-b border-gray-50 last:border-0 cursor-pointer">
                                 <span>Year-to-Date</span>
                                 <svg x-show="dateRange === 'ytd'" class="h-4 w-4 text-emerald-600" fill="none"
                                     viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
@@ -124,15 +124,17 @@
                     </div>
                 </div>
 
-                <button @click="openBroadcastModal()"
-                    class="w-full sm:w-auto inline-flex items-center justify-center rounded-md border border-transparent bg-red-600 hover:bg-red-750 px-4 py-2 text-sm font-medium text-white shadow-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition-all duration-200 transform hover:-translate-y-0.5 active:translate-y-0 hover:shadow-md broadcast-btn-hover">
-                    <svg class="mr-2 h-4 w-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"
-                        stroke-width="2">
-                        <path stroke-linecap="round" stroke-linejoin="round"
-                            d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z" />
-                    </svg>
-                    <span>Broadcast Alert</span>
-                </button>
+                <div class="flex items-center gap-2 w-full sm:w-auto relative z-10">
+                    <button @click="openBroadcastModal()"
+                        class="w-full sm:w-auto inline-flex items-center justify-center rounded-xl border border-transparent bg-red-600 hover:bg-red-700 px-4 py-2 text-sm font-bold text-white shadow-xs focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition-all duration-200 transform hover:-translate-y-0.5 active:translate-y-0 hover:shadow-md cursor-pointer broadcast-btn-hover">
+                        <svg class="mr-2 h-4 w-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                            stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z" />
+                        </svg>
+                        <span>Broadcast Alert</span>
+                    </button>
+                </div>
             </div>
 
             <!-- Global Error State -->
@@ -312,31 +314,11 @@
 
                     <div id="donutChart" class="w-full flex-grow flex items-center justify-center min-h-[300px]"></div>
                 </div>
-
-                <!-- Horizontal Bar Chart: Top Destinations -->
-                <div class="lg:col-span-3 bg-white rounded-xl shadow-sm border border-gray-100 p-6 relative admin-card-hover">
-                    <h3 class="text-base font-semibold text-gray-900 mb-4">Top 5 Destinations (Visits)</h3>
-
-                    <div x-show="isLoadingDestinations"
-                        class="absolute inset-0 z-10 bg-white/80 flex items-center justify-center rounded-xl"
-                        style="display: none;">
-                        <svg class="animate-spin h-8 w-8 text-emerald-600" fill="none" viewBox="0 0 24 24">
-                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4">
-                            </circle>
-                            <path class="opacity-75" fill="currentColor"
-                                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
-                            </path>
-                        </svg>
-                    </div>
-
-                    <div id="destinationsChart" class="w-full h-72"></div>
-                </div>
             </div>
 
             <!-- Tier 2.5: Advanced Charts -->
-            <h3 class="text-lg font-semibold text-gray-900 mb-4">Advanced Insights</h3>
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-
+            <!-- Tier 2.5: Site Capacity Monitoring -->
+            <div class="mb-8">
                 <!-- Capacity Gauges -->
                 <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 relative admin-card-hover">
                     <h3 class="text-base font-semibold text-gray-900 mb-4">Site Capacity Monitoring</h3>
@@ -363,35 +345,6 @@
                                     d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
                             </svg>
                             <span class="text-sm">No capacity data available</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Activity Heatmap -->
-                <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 relative admin-card-hover">
-                    <h3 class="text-base font-semibold text-gray-900 mb-4">Activity Heatmap (Day x Hour)</h3>
-
-                    <div x-show="isLoadingAdvanced"
-                        class="absolute inset-0 z-10 bg-white/80 flex items-center justify-center rounded-xl"
-                        style="display: none;">
-                        <svg class="animate-spin h-6 w-6 text-emerald-600" fill="none" viewBox="0 0 24 24">
-                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4">
-                            </circle>
-                            <path class="opacity-75" fill="currentColor"
-                                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
-                            </path>
-                        </svg>
-                    </div>
-
-                    <div id="heatmapChart" class="w-full h-64">
-                        <div x-show="!isLoadingAdvanced && (!advancedData || !advancedData.heatmap || advancedData.heatmap.length === 0)"
-                            class="h-full flex flex-col items-center justify-center text-gray-400">
-                            <svg class="h-12 w-12 mb-3 text-gray-300" fill="none" viewBox="0 0 24 24"
-                                stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
-                                    d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                            </svg>
-                            <span class="text-sm">No activity data available</span>
                         </div>
                     </div>
                 </div>
@@ -752,32 +705,37 @@
 
     <script>
         document.addEventListener('alpine:init', () => {
-            Alpine.data('analyticsDashboard', () => ({
+            Alpine.data('analyticsDashboard', (initData = null) => ({
                 dateRange: 'today',
 
                 // Loading States
-                isLoadingKpis: true,
-                isLoadingCore: true,
-                isLoadingDestinations: true,
-                isLoadingAdvanced: true,
+                isLoadingKpis: !initData,
+                isLoadingCore: !initData,
+                isLoadingDestinations: !initData,
+                isLoadingAdvanced: !initData,
 
                 globalError: '',
                 toastMessage: '',
 
                 // State Data
-                kpis: {
+                kpis: initData && initData.kpis ? {
+                    activeTourists: initData.kpis.activeTourists,
+                    pendingRequests: initData.kpis.pendingRequests,
+                    capacityHealth: initData.kpis.capacityHealth,
+                    qrScans: initData.kpis.qrScans
+                } : {
                     activeTourists: 0,
                     pendingRequests: 0,
                     capacityHealth: 0,
                     qrScans: 0
                 },
-                sparklineData: {},
+                sparklineData: initData && initData.kpis ? (initData.kpis.sparklines || {}) : {},
 
-                coreData: null,
+                coreData: initData ? initData.trends : null,
                 donutTab: 'demographics', // 'demographics' or 'status'
 
                 destinationsData: null,
-                advancedData: null,
+                advancedData: initData ? initData.advanced : null,
 
                 // Broadcast Modal State
                 showBroadcastModal: false,
@@ -793,7 +751,7 @@
                     destination: ''
                 },
                 premadeMessages: [
-                    { id: 'typhoon', label: 'Severe Weather Warning', message: 'Severe Weather Warning: Heavy rainfall and high winds expected. Please avoid mountain trails and coastal areas.', suggestedSeverity: 'critical' },
+                    { id: 'typhoon', label: 'Severe Weather Warning', message: '[CRITICAL] Severe Weather Warning: Heavy rainfall and high winds expected. Please avoid mountain trails and coastal areas.', suggestedSeverity: 'critical' },
                     { id: 'maintenance', label: 'Spot Maintenance Closure', message: 'Facility Maintenance Notice: The destination spot is temporarily closed today for scheduled facility maintenance.', suggestedSeverity: 'warning' },
                     { id: 'sys_maintenance', label: 'Booking System Scheduled Downtime', message: 'System Maintenance: The booking portal will undergo scheduled maintenance tonight from 10:00 PM to 12:00 AM.', suggestedSeverity: 'info' },
                     { id: 'capacity', label: 'Capacity Limit Reached', message: 'Capacity Limit Reached: Tigbao environmental limit has been reached. Walk-in and booking entries are paused.', suggestedSeverity: 'critical' },
@@ -812,8 +770,7 @@
                     trend: null,
                     donut: null,
                     destinations: null,
-                    gauges: [],
-                    heatmap: null
+                    gauges: []
                 },
 
                 getDateRangeLabel() {
@@ -830,83 +787,58 @@
                     this.fetchData();
                 },
                 initCharts() {
-                    this.fetchData();
+                    if (initData) {
+                        this.renderSparklines();
+                        if (initData.trends) {
+                            this.renderTrendChart(initData.trends.trends);
+                            this.renderDonutChart();
+                        }
+                        if (initData.advanced) {
+                            this.renderGauges(initData.advanced.gauges);
+                        }
+                    } else {
+                        this.fetchData();
+                    }
                 },
 
                 fetchData() {
                     this.globalError = '';
-                    this.fetchKpis();
-                    this.fetchCoreCharts();
-                    this.fetchDestinations();
-                    this.fetchAdvancedCharts();
-                },
-
-                fetchKpis() {
                     this.isLoadingKpis = true;
-                    fetch(`{{ route('admin.analytics.kpis') }}?range=${this.dateRange}`)
-                        .then(r => { if (!r.ok) throw new Error(`HTTP error! status: ${r.status} ${r.statusText}`); return r.json(); })
-                        .then(data => {
-                            this.kpis = {
-                                activeTourists: data.activeTourists,
-                                pendingRequests: data.pendingRequests,
-                                capacityHealth: data.capacityHealth,
-                                qrScans: data.qrScans
-                            };
-                            this.sparklineData = data.sparklines || {};
-                            this.renderSparklines();
-                            this.isLoadingKpis = false;
-                        })
-                        .catch(err => {
-                            console.error('Error fetching KPIs:', err);
-                            this.isLoadingKpis = false;
-                        });
-                },
-
-                fetchCoreCharts() {
                     this.isLoadingCore = true;
-                    fetch(`{{ route('admin.analytics.trends') }}?range=${this.dateRange}`)
-                        .then(r => { if (!r.ok) throw new Error(`HTTP error! status: ${r.status} ${r.statusText}`); return r.json(); })
-                        .then(data => {
-                            this.coreData = data;
-                            this.renderTrendChart(data.trends);
-                            this.renderDonutChart();
-                            this.isLoadingCore = false;
-                        })
-                        .catch(err => {
-                            console.error('Error fetching core charts:', err);
-                            this.isLoadingCore = false;
-                        });
-                },
-
-                fetchDestinations() {
-                    this.isLoadingDestinations = true;
-                    fetch(`{{ route('admin.analytics.destinations') }}?range=${this.dateRange}`)
-                        .then(r => { if (!r.ok) throw new Error(`HTTP error! status: ${r.status} ${r.statusText}`); return r.json(); })
-                        .then(data => {
-                            this.destinationsData = data;
-                            this.renderDestinationsChart(data);
-                            this.isLoadingDestinations = false;
-                        })
-                        .catch(err => {
-                            console.error('Error fetching destinations:', err);
-                            this.isLoadingDestinations = false;
-                        });
-                },
-
-                fetchAdvancedCharts() {
                     this.isLoadingAdvanced = true;
-                    fetch(`{{ route('admin.analytics.advanced') }}?range=${this.dateRange}`)
-                        .then(r => { if (!r.ok) throw new Error(`HTTP error! status: ${r.status} ${r.statusText}`); return r.json(); })
-                        .then(data => {
-                            this.advancedData = data;
-                            this.renderGauges(data.gauges);
-                            this.renderHeatmap(data.heatmap);
-                            this.isLoadingAdvanced = false;
-                        })
-                        .catch(err => {
-                            console.error('Error fetching advanced charts:', err);
-                            this.isLoadingAdvanced = false;
-                        });
+
+                    Promise.all([
+                        fetch(`{{ route('admin.analytics.kpis') }}?range=${this.dateRange}`).then(r => { if (!r.ok) throw new Error('KPI network error'); return r.json(); }),
+                        fetch(`{{ route('admin.analytics.trends') }}?range=${this.dateRange}`).then(r => { if (!r.ok) throw new Error('Trends network error'); return r.json(); }),
+                        fetch(`{{ route('admin.analytics.advanced') }}?range=${this.dateRange}`).then(r => { if (!r.ok) throw new Error('Advanced network error'); return r.json(); })
+                    ]).then(([kpisData, trendsData, advancedData]) => {
+                        // KPIs
+                        this.kpis = {
+                            activeTourists: kpisData.activeTourists,
+                            pendingRequests: kpisData.pendingRequests,
+                            capacityHealth: kpisData.capacityHealth,
+                            qrScans: kpisData.qrScans
+                        };
+                        this.sparklineData = kpisData.sparklines || {};
+                        this.renderSparklines();
+                        this.isLoadingKpis = false;
+
+                        // Core Trends & Donut
+                        this.coreData = trendsData;
+                        this.renderTrendChart(trendsData.trends);
+                        this.renderDonutChart();
+                        this.isLoadingCore = false;
+
+                        // Advanced Gauges
+                        this.advancedData = advancedData;
+                        this.renderGauges(advancedData.gauges);
+                        this.isLoadingAdvanced = false;
+                    }).catch(err => {
+                        console.error('Error fetching analytics:', err);
+                        this.isLoadingKpis = false;
+                        this.isLoadingCore = false;
+                        this.isLoadingAdvanced = false;
+                    });
                 },
 
                 openBroadcastModal() {
@@ -1021,6 +953,8 @@
 
                 // --- Chart Renderers ---
 
+                // --- Chart Renderers (optimized with rAF to eliminate forced reflow) ---
+
                 renderSparklines() {
                     const sparklineConfig = {
                         chart: { type: 'line', width: '100%', height: 40, sparkline: { enabled: true } },
@@ -1028,23 +962,25 @@
                         tooltip: { fixed: { enabled: false }, x: { show: false }, y: { title: { formatter: function (seriesName) { return '' } } }, marker: { show: false } }
                     };
 
-                    const createOrUpdateSparkline = (id, data, color) => {
-                        if (!data || data.length === 0) return;
-                        if (this.charts.sparklines[id]) {
-                            this.charts.sparklines[id].updateSeries([{ data }]);
-                        } else {
-                            const el = document.querySelector(`#${id}`);
-                            if (el) {
-                                this.charts.sparklines[id] = new ApexCharts(el, { ...sparklineConfig, series: [{ data }], colors: [color] });
-                                this.charts.sparklines[id].render();
+                    requestAnimationFrame(() => {
+                        const createOrUpdateSparkline = (id, data, color) => {
+                            if (!data || data.length === 0) return;
+                            if (this.charts.sparklines[id]) {
+                                this.charts.sparklines[id].updateSeries([{ data }]);
+                            } else {
+                                const el = document.querySelector(`#${id}`);
+                                if (el) {
+                                    this.charts.sparklines[id] = new ApexCharts(el, { ...sparklineConfig, series: [{ data }], colors: [color] });
+                                    this.charts.sparklines[id].render();
+                                }
                             }
-                        }
-                    };
+                        };
 
-                    createOrUpdateSparkline('sparkline-tourists', this.sparklineData.activeTourists, '#059669');
-                    createOrUpdateSparkline('sparkline-pending', this.sparklineData.pendingRequests, '#d97706'); // amber-600
-                    createOrUpdateSparkline('sparkline-capacity', this.sparklineData.capacityHealth, '#0d9488'); // teal-600
-                    createOrUpdateSparkline('sparkline-qr', this.sparklineData.qrScans, '#059669'); // emerald-600
+                        createOrUpdateSparkline('sparkline-tourists', this.sparklineData.activeTourists, '#059669');
+                        createOrUpdateSparkline('sparkline-pending', this.sparklineData.pendingRequests, '#d97706'); // amber-600
+                        createOrUpdateSparkline('sparkline-capacity', this.sparklineData.capacityHealth, '#0d9488'); // teal-600
+                        createOrUpdateSparkline('sparkline-qr', this.sparklineData.qrScans, '#059669'); // emerald-600
+                    });
                 },
 
                 renderTrendChart(trendData) {
@@ -1060,15 +996,17 @@
                         legend: { position: 'top' }
                     };
 
-                    if (this.charts.trend) {
-                        this.charts.trend.updateOptions(options);
-                    } else {
-                        const container = document.querySelector("#trendChart");
-                        if (container) {
-                            this.charts.trend = new ApexCharts(container, options);
-                            this.charts.trend.render();
+                    requestAnimationFrame(() => {
+                        if (this.charts.trend) {
+                            this.charts.trend.updateOptions(options);
+                        } else {
+                            const container = document.querySelector("#trendChart");
+                            if (container) {
+                                this.charts.trend = new ApexCharts(container, options);
+                                this.charts.trend.render();
+                            }
                         }
-                    }
+                    });
                 },
 
                 renderDonutChart() {
@@ -1089,15 +1027,17 @@
                         plotOptions: { pie: { donut: { size: '65%' } } }
                     };
 
-                    if (this.charts.donut) {
-                        this.charts.donut.updateOptions(options);
-                    } else {
-                        const container = document.querySelector("#donutChart");
-                        if (container) {
-                            this.charts.donut = new ApexCharts(container, options);
-                            this.charts.donut.render();
+                    requestAnimationFrame(() => {
+                        if (this.charts.donut) {
+                            this.charts.donut.updateOptions(options);
+                        } else {
+                            const container = document.querySelector("#donutChart");
+                            if (container) {
+                                this.charts.donut = new ApexCharts(container, options);
+                                this.charts.donut.render();
+                            }
                         }
-                    }
+                    });
                 },
 
                 renderDestinationsChart(data) {
@@ -1115,15 +1055,17 @@
                         legend: { show: false }
                     };
 
-                    if (this.charts.destinations) {
-                        this.charts.destinations.updateOptions(options);
-                    } else {
-                        const container = document.querySelector("#destinationsChart");
-                        if (container) {
-                            this.charts.destinations = new ApexCharts(container, options);
-                            this.charts.destinations.render();
+                    requestAnimationFrame(() => {
+                        if (this.charts.destinations) {
+                            this.charts.destinations.updateOptions(options);
+                        } else {
+                            const container = document.querySelector("#destinationsChart");
+                            if (container) {
+                                this.charts.destinations = new ApexCharts(container, options);
+                                this.charts.destinations.render();
+                            }
                         }
-                    }
+                    });
                 },
 
                 renderGauges(gaugesData) {
@@ -1138,65 +1080,44 @@
                         container.innerHTML = '';
                     }
 
-                    gaugesData.forEach((gauge, index) => {
-                        const divId = `gauge-chart-${index}`;
-                        const div = document.createElement('div');
-                        div.id = divId;
-                        div.className = 'w-full h-48';
-                        container.appendChild(div);
+                    requestAnimationFrame(() => {
+                        gaugesData.forEach((gauge, index) => {
+                            const divId = `gauge-chart-${index}`;
+                            const div = document.createElement('div');
+                            div.id = divId;
+                            div.className = 'w-full h-48';
+                            container.appendChild(div);
 
-                        var options = {
-                            series: [gauge.percentage],
-                            chart: { type: 'radialBar', height: 220, fontFamily: 'inherit' },
-                            plotOptions: {
-                                radialBar: {
-                                    startAngle: -90, endAngle: 90, track: { background: "#e7e7e7", strokeWidth: '97%', margin: 5 },
-                                    dataLabels: { name: { show: false }, value: { offsetY: -2, fontSize: '22px' } }
-                                }
-                            },
-                            fill: {
-                                type: 'gradient',
-                                gradient: {
-                                    shade: 'light', shadeIntensity: 0.4, inverseColors: false, opacityFrom: 1, opacityTo: 1,
-                                    stops: [0, 50, 53, 91],
-                                    colorStops: [
-                                        { offset: 0, color: '#10b981', opacity: 1 }, // Green
-                                        { offset: 70, color: '#f59e0b', opacity: 1 }, // Yellow
-                                        { offset: 90, color: '#ef4444', opacity: 1 }  // Red
-                                    ]
-                                }
-                            },
-                            labels: [gauge.name],
-                            title: { text: gauge.name, align: 'center', margin: 0, style: { fontSize: '13px', fontWeight: 'bold', color: '#374151' } }
-                        };
+                            var options = {
+                                series: [gauge.percentage],
+                                chart: { type: 'radialBar', height: 220, fontFamily: 'inherit' },
+                                plotOptions: {
+                                    radialBar: {
+                                        startAngle: -90, endAngle: 90, track: { background: "#e7e7e7", strokeWidth: '97%', margin: 5 },
+                                        dataLabels: { name: { show: false }, value: { offsetY: -2, fontSize: '22px' } }
+                                    }
+                                },
+                                fill: {
+                                    type: 'gradient',
+                                    gradient: {
+                                        shade: 'light', shadeIntensity: 0.4, inverseColors: false, opacityFrom: 1, opacityTo: 1,
+                                        stops: [0, 50, 53, 91],
+                                        colorStops: [
+                                            { offset: 0, color: '#10b981', opacity: 1 }, // Green
+                                            { offset: 70, color: '#f59e0b', opacity: 1 }, // Yellow
+                                            { offset: 90, color: '#ef4444', opacity: 1 }  // Red
+                                        ]
+                                    }
+                                },
+                                labels: [gauge.name],
+                                title: { text: gauge.name, align: 'center', margin: 0, style: { fontSize: '13px', fontWeight: 'bold', color: '#374151' } }
+                            };
 
-                        const chart = new ApexCharts(document.querySelector(`#${divId}`), options);
-                        chart.render();
-                        this.charts.gauges.push(chart);
+                            const chart = new ApexCharts(document.querySelector(`#${divId}`), options);
+                            chart.render();
+                            this.charts.gauges.push(chart);
+                        });
                     });
-                },
-
-                renderHeatmap(heatmapData) {
-                    if (!heatmapData || heatmapData.length === 0) return;
-
-                    var options = {
-                        series: heatmapData,
-                        chart: { height: 260, type: 'heatmap', fontFamily: 'inherit', toolbar: { show: false } },
-                        dataLabels: { enabled: false },
-                        colors: ["#10b981"], // Base Emerald color
-                        title: { text: '' },
-                        tooltip: { theme: 'light' }
-                    };
-
-                    if (this.charts.heatmap) {
-                        this.charts.heatmap.updateOptions(options);
-                    } else {
-                        const container = document.querySelector("#heatmapChart");
-                        if (container) {
-                            this.charts.heatmap = new ApexCharts(container, options);
-                            this.charts.heatmap.render();
-                        }
-                    }
                 }
             }));
         });

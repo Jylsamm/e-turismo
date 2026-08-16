@@ -9,9 +9,11 @@ use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rules;
 use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
@@ -39,52 +41,77 @@ class RegisteredUserController extends Controller
         $dobExemptTypes = ['School ID', 'Company ID', 'Barangay ID'];
         $requiresDob    = !in_array($request->input('id_type'), $dobExemptTypes);
 
-        // Fix 5: DOB conditionally required based on ID type
-        // Fix 4: Backend 12+ age check — only applied when DOB is required
+        // Fix 5: DOB conditionally required based on ID type with exact 12+ birthday boundary
+        $minAgeBoundary = \Illuminate\Support\Carbon::today()->subYears(12)->toDateString();
         $dobRules = $requiresDob
-            ? ['required', 'date', 'before:' . now()->subYears(12)->toDateString()]
+            ? ['required', 'date', 'before_or_equal:' . $minAgeBoundary]
             : ['nullable', 'date'];
 
-        $request->validate([
-            'first_name'     => ['required', 'string', 'max:100'],
-            'last_name'      => ['required', 'string', 'max:100'],
-            'middle_initial' => ['nullable', 'string', 'max:10'],
-            'suffix'         => ['nullable', 'string', 'max:20'],
-            'email'          => [
-                'required',
-                'string',
-                'lowercase',
-                'email',
-                'max:255',
-                'regex:/^[a-zA-Z0-9._%+-]+@gmail\.com$/i',
-                'unique:' . User::class,
-            ],
-            'password'       => ['required', 'confirmed', Rules\Password::defaults()],
-            'classification' => ['required', 'string', 'in:Local,Domestic,Foreign'],
-            'gender'         => ['required', 'string', 'in:Male,Female'],
-            'id_type'        => ['required', 'string', 'max:50'],
-            // School ID submits school_name; all others submit id_number
-            'school_name'    => $isSchoolId ? ['required', 'string', 'max:150'] : ['nullable'],
-            'id_number'      => !$isSchoolId ? ['required', 'string', 'max:50'] : ['nullable'],
-            'dob'            => $dobRules,
-            // Composite front+back JPEG can reach ~10 MB at native phone resolution; allow up to 20 MB.
-            'id_photo'       => ['required', 'file', 'mimes:jpg,jpeg,png,pdf,gif,tiff,bmp', 'max:20480'],
-        ], [
-            'email.regex'         => 'The email address must be a valid @gmail.com address.',
-            'school_name.required'=> 'Please enter your school name.',
-            'id_number.required'  => 'The ID number field is required.',
-            // Fix 4: Clear 12+ error message
-            'dob.before'          => 'You must be at least 12 years old to register.',
-        ]);
-
-        // Verify the email matches the one confirmed via OTP in this session
-        if (!app()->environment('testing') && strtolower($request->email) !== strtolower(session('otp_verified_email'))) {
-            throw ValidationException::withMessages([
-                'email' => 'Please verify your Gmail address with the one-time code sent to your email.',
+        try {
+            $request->validate([
+                'first_name'     => ['required', 'string', 'max:100'],
+                'last_name'      => ['required', 'string', 'max:100'],
+                'middle_initial' => ['nullable', 'string', 'max:10'],
+                'suffix'         => ['nullable', 'string', 'max:20'],
+                'email'          => [
+                    'required',
+                    'string',
+                    'lowercase',
+                    'email',
+                    'max:255',
+                    'regex:/^[a-zA-Z0-9._%\+\-]+@gmail\.com$/i',
+                    'unique:' . User::class,
+                ],
+                'password'       => ['required', 'confirmed', Rules\Password::defaults()],
+                'classification' => ['required', 'string', 'in:Local,Domestic,Foreign'],
+                'gender'         => ['required', 'string', 'in:Male,Female'],
+                'contact'        => ['required', 'string', 'max:20', 'regex:/^[0-9\+\-\s()]{7,20}$/'],
+                'id_type'        => ['required', 'string', 'max:50'],
+                // School ID submits school_name; all others submit id_number
+                'school_name'    => $isSchoolId ? ['required', 'string', 'max:150'] : ['nullable'],
+                'id_number'      => !$isSchoolId ? ['required', 'string', 'max:50'] : ['nullable'],
+                'dob'            => $dobRules,
+                'id_photo'       => [
+                    function ($attribute, $value, $fail) use ($request) {
+                        if (!$request->hasFile('id_photo') && !$request->filled('id_photo_base64')) {
+                            $fail('Please capture or upload your ID photo.');
+                        }
+                    }
+                ],
+            ], [
+                'contact.required'    => 'Please enter your phone number to proceed.',
+                'contact.regex'       => 'Please enter a valid phone number (digits only, e.g. 09XXXXXXXXX).',
+                'email.regex'         => 'The email address must be a valid @gmail.com address.',
+                'school_name.required'=> 'Please enter your school name.',
+                'id_number.required'  => 'The ID number field is required.',
+                // Fix 4: Clear 12+ error message
+                'dob.before'          => 'You must be at least 12 years old to register.',
             ]);
+
+            // Verify the email matches the one confirmed via OTP in this session or cache marker
+            if (!app()->environment('testing')) {
+                $reqEmail    = strtolower(trim($request->email));
+                $sessEmail   = strtolower(trim((string) session('otp_verified_email')));
+                $cacheMarker = Cache::get('otp_verified_marker:' . $reqEmail);
+
+                if ($reqEmail !== $sessEmail && !$cacheMarker) {
+                    throw ValidationException::withMessages([
+                        'email' => 'Please verify your Gmail address with the one-time code sent to your email.',
+                    ]);
+                }
+            }
+        } catch (ValidationException $e) {
+            Log::warning('[Registration Validation Failed]', [
+                'email' => $request->email,
+                'errors' => $e->errors(),
+                'session_otp_email' => session('otp_verified_email'),
+                'has_file' => $request->hasFile('id_photo'),
+                'has_base64' => $request->filled('id_photo_base64'),
+            ]);
+            throw $e;
         }
 
-        // Store uploaded ID photo
+        // Store uploaded or base64 ID photo
         $idPhotoPath = null;
         if ($request->hasFile('id_photo')) {
             $file        = $request->file('id_photo');
@@ -93,6 +120,15 @@ class RegisteredUserController extends Controller
                 time() . '_' . strtolower($file->getClientOriginalName()),
                 'public'
             );
+        } elseif ($request->filled('id_photo_base64')) {
+            $base64Data = $request->input('id_photo_base64');
+            if (preg_match('/^data:image\/(\w+);base64,/', $base64Data)) {
+                $data = substr($base64Data, strpos($base64Data, ',') + 1);
+                $decoded = base64_decode($data);
+                $filename = time() . '_captured_id.jpg';
+                Storage::disk('public')->put('id_photos/' . $filename, $decoded);
+                $idPhotoPath = 'id_photos/' . $filename;
+            }
         }
 
         // Compose full name: First [M.I.] Last [Suffix]
@@ -121,6 +157,7 @@ class RegisteredUserController extends Controller
                     'email'           => $request->email,
                     'password'        => Hash::make($request->password),
                     'role'            => 'tourist',
+                    'contact'         => $request->contact,
                     'classification'  => $request->classification,
                     'gender'          => $request->gender,
                     'id_type'         => $request->id_type,
@@ -128,8 +165,8 @@ class RegisteredUserController extends Controller
                     'dob'             => $request->dob ?: null,
                     'id_photo'        => $idPhotoPath,
                     'email_verified_at'               => now(),
-                    // Fix 2: Start as 'processing' — job will update this after OCR
-                    'id_verification_status'          => 'processing',
+                    // Start as 'pending' identity verification
+                    'id_verification_status'          => 'pending',
                     'ready_to_complete_requirements'  => true,
                 ]);
 
@@ -137,13 +174,24 @@ class RegisteredUserController extends Controller
 
                 return $newUser;
             });
+        } catch (\Illuminate\Database\QueryException $e) {
+            if ($e->getCode() == 23000 || str_contains($e->getMessage(), '1062')) {
+                Log::warning('[Registration] Duplicate DB entry blocked: ' . $request->email);
+                throw ValidationException::withMessages([
+                    'email' => 'This email address is already registered.',
+                ]);
+            }
+            Log::error('[Registration] Database error creating user row: ' . $e->getMessage(), [
+                'email'     => $request->email,
+                'exception' => $e,
+            ]);
+            throw $e;
         } catch (\Throwable $e) {
-            // Fix 6: Log DB insert failures explicitly — never silently fail
             Log::error('[Registration] Failed to create user row: ' . $e->getMessage(), [
                 'email'     => $request->email,
                 'exception' => $e,
             ]);
-            throw $e; // Re-throw so Laravel returns a proper 500 / shows the error
+            throw $e;
         }
 
         // Fire Laravel's Registered event outside the transaction
