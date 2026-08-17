@@ -148,17 +148,23 @@ class DashboardController extends Controller
             ->limit(4)
             ->get();
 
+        // Optimize 5 queries into a single aggregate query
+        $bookingStats = Booking::where('tourist_id', $userId)
+            ->selectRaw("
+                COUNT(*) as total,
+                SUM(CASE WHEN status = 'confirmed' THEN 1 ELSE 0 END) as confirmed,
+                SUM(CASE WHEN status = 'pending' THEN 1 ELSE 0 END) as pending,
+                SUM(CASE WHEN status = 'completed' THEN 1 ELSE 0 END) as completed,
+                SUM(CASE WHEN status NOT IN ('cancelled', 'declined') AND (payment_status = 'unpaid' OR payment_status IS NULL) THEN 1 ELSE 0 END) as unpaid
+            ")
+            ->first();
+
         $stats = [
-            'total' => Booking::where('tourist_id', $userId)->count(),
-            'confirmed' => Booking::where('tourist_id', $userId)->where('status', 'confirmed')->count(),
-            'pending' => Booking::where('tourist_id', $userId)->where('status', 'pending')->count(),
-            'unpaid' => Booking::where('tourist_id', $userId)
-                ->whereNotIn('status', ['cancelled', 'declined'])
-                ->where(function ($q) {
-                    $q->where('payment_status', 'unpaid')
-                      ->orWhereNull('payment_status');
-                })->count(),
-            'completed' => Booking::where('tourist_id', $userId)->where('status', 'completed')->count(),
+            'total' => (int) ($bookingStats->total ?? 0),
+            'confirmed' => (int) ($bookingStats->confirmed ?? 0),
+            'pending' => (int) ($bookingStats->pending ?? 0),
+            'unpaid' => (int) ($bookingStats->unpaid ?? 0),
+            'completed' => (int) ($bookingStats->completed ?? 0),
         ];
 
         $activePass = Booking::query()
