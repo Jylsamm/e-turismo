@@ -622,7 +622,7 @@
                     <div id="pay-{{ $booking->id }}" class="payment-panel" style="display:none;">
                         <div class="pp-title">
                             <i class="ti ti-credit-card text-teal-600 text-lg"></i> Submit GCash Payment Proof
-                            <button type="button" onclick="togglePanel('pay-{{ $booking->id }}')" style="margin-left:auto;background:none;border:none;cursor:pointer;color:var(--text-4);font-size:1.2rem;">✕</button>
+                            <button type="button" onclick="togglePanel('pay-{{ $booking->id }}')" aria-label="Close" style="margin-left:auto;background:none;border:none;cursor:pointer;color:var(--text-4);font-size:1.2rem;">✕</button>
                         </div>
                         <form action="{{ route('bookings.submit-payment', $booking) }}" method="POST" enctype="multipart/form-data">
                             @csrf
@@ -659,7 +659,7 @@
                     <div id="verify-{{ $booking->id }}" class="verify-panel" style="display:none;">
                         <div class="pp-title">
                             <i class="ti ti-shield-check text-amber-700 text-lg"></i> GCash Payment Verification
-                            <button type="button" onclick="togglePanel('verify-{{ $booking->id }}')" style="margin-left:auto;background:none;border:none;cursor:pointer;color:var(--text-4);font-size:1.2rem;">✕</button>
+                            <button type="button" onclick="togglePanel('verify-{{ $booking->id }}')" aria-label="Close" style="margin-left:auto;background:none;border:none;cursor:pointer;color:var(--text-4);font-size:1.2rem;">✕</button>
                         </div>
                         <div class="vp-grid">
                             <div>
@@ -749,7 +749,7 @@
                             Booking Receipt #<span x-text="details.id" style="color: #a7f3d0;"></span>
                         </h3>
                     </div>
-                    <button type="button" @click="showDetailsModal = false" class="p-2 rounded-xl transition cursor-pointer" style="background: rgba(255, 255, 255, 0.15); color: #ffffff;">
+                    <button type="button" @click="showDetailsModal = false" aria-label="Close" class="p-2 rounded-xl transition cursor-pointer" style="background: rgba(255, 255, 255, 0.15); color: #ffffff;">
                         <i class="ti ti-x text-lg"></i>
                     </button>
                 </div>
@@ -895,7 +895,7 @@
                             <span x-text="qrData.location"></span>
                         </p>
                     </div>
-                    <button type="button" @click="closeQrModal()" class="p-2 rounded-xl transition cursor-pointer" style="background: rgba(255, 255, 255, 0.15); color: #ffffff;">
+                    <button type="button" @click="closeQrModal()" aria-label="Close" class="p-2 rounded-xl transition cursor-pointer" style="background: rgba(255, 255, 255, 0.15); color: #ffffff;">
                         <i class="ti ti-x text-lg"></i>
                     </button>
                 </div>
@@ -983,7 +983,7 @@
                             Are you sure you want to cancel this booking? This will release your reserved slot and update your reservation status.
                         </p>
                     </div>
-                    <button type="button" @click="closeCancelModal()" class="text-gray-400 hover:text-gray-600 transition p-1 rounded-lg">
+                    <button type="button" @click="closeCancelModal()" aria-label="Close" class="text-gray-400 hover:text-gray-600 transition p-1 rounded-lg">
                         <i class="ti ti-x text-lg"></i>
                     </button>
                 </div>
