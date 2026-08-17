@@ -112,7 +112,7 @@
         <div style="background:#fff;border-radius:0.75rem;box-shadow:0 25px 50px -12px rgba(0,0,0,.25);width:90vw;max-width:36rem;max-height:90vh;display:flex;flex-direction:column;">
             <div style="display:flex;justify-space:between;align-items:center;padding:1.25rem 1.5rem;border-bottom:1px solid #e5e7eb;flex-shrink:0;">
                 <h3 style="font-weight:700;color:#1f2937;font-size:1rem;">Identity Verification Details</h3>
-                <button type="button" class="btn-close-modal" style="color:#9ca3af;background:none;border:none;cursor:pointer;padding:0.25rem;">✕</button>
+                <button type="button" class="btn-close-modal" aria-label="Close" style="color:#9ca3af;background:none;border:none;cursor:pointer;padding:0.25rem;">✕</button>
             </div>
             <div style="padding:1.5rem;overflow-y:auto;flex:1;">
                 <dl style="display:grid;grid-template-columns:1fr 1fr;gap:1rem 1.5rem;font-size:0.875rem;">
@@ -160,7 +160,7 @@
                     <h3 class="font-bold text-gray-900 text-base">Front &amp; Back ID Camera Capture</h3>
                     <p class="text-xs text-gray-500 mt-0.5">Capture both sides of your government ID</p>
                 </div>
-                <button type="button" class="btn-close-modal text-gray-400 hover:text-gray-600 p-1 text-lg font-bold">✕</button>
+                <button type="button" class="btn-close-modal text-gray-400 hover:text-gray-600 p-1 text-lg font-bold" aria-label="Close">✕</button>
             </div>
 
             {{-- Form Body --}}
