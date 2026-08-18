@@ -123,8 +123,40 @@ class DashboardController extends Controller
     {
         $myBookings = Booking::query()
             ->select(['id', 'tourist_id', 'destination_id', 'visit_date', 'status', 'payment_status', 'gcash_reference_number', 'payment_submitted_at', 'checked_in_at', 'qr_token', 'created_at'])
+<<<<<<< Updated upstream
             ->with(['destination:id,name,location', 'ticket:id,booking_id,qr_code'])
             ->where('tourist_id', auth()->id())
+=======
+            ->with(['destination:id,name,location,photos', 'ticket:id,booking_id,qr_code', 'tourist:id,name,classification'])
+            ->where('tourist_id', $userId)
+            ->latest()
+            ->limit(4)
+            ->get();
+
+        $stats = [
+            'total' => Booking::where('tourist_id', $userId)->count(),
+            'confirmed' => Booking::where('tourist_id', $userId)->where('status', 'confirmed')->count(),
+            'pending' => Booking::where('tourist_id', $userId)->where('status', 'pending')->count(),
+            'unpaid' => Booking::where('tourist_id', $userId)
+                ->whereNotIn('status', ['cancelled', 'declined'])
+                ->where(function ($q) {
+                    $q->where('payment_status', 'unpaid')
+                      ->orWhereNull('payment_status');
+                })->count(),
+            'completed' => Booking::where('tourist_id', $userId)->where('status', 'completed')->count(),
+        ];
+
+        $activePass = Booking::with(['destination:id,name,location', 'ticket:id,booking_id,qr_code'])
+            ->where('tourist_id', $userId)
+            ->where('status', 'confirmed')
+            ->whereDate('visit_date', '>=', now()->toDateString())
+            ->orderBy('visit_date', 'asc')
+            ->first();
+
+        $notifications = Notification::where('recipient_id', $userId)
+            ->where('is_read', false)
+            ->where('type', '!=', 'broadcast_alert')
+>>>>>>> Stashed changes
             ->latest()
             ->limit(5)
             ->get();

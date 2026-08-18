@@ -2,8 +2,15 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
+<<<<<<< Updated upstream
+=======
+/**
+ * @mixin Builder
+ */
+>>>>>>> Stashed changes
 class CheckIn extends Model
 {
     protected $fillable = [

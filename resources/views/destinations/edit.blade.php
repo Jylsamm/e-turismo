@@ -56,7 +56,7 @@
                         <label class="block text-sm font-medium text-gray-700 mb-1">Replace Cover Photo</label>
                         @if($destination->photos)
                         <div class="mb-2">
-                            <img src="{{ Storage::url($destination->photos) }}" class="h-24 rounded-lg object-cover">
+                            <img src="{{ \Illuminate\Support\Facades\Storage::url($destination->photos) }}" class="h-24 rounded-lg object-cover">
                         </div>
                         @endif
                         <input type="file" name="photo" accept="image/*"

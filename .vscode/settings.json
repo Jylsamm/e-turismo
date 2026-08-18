@@ -1,1 +1,17 @@
-{}
+{
+    "intelephense.diagnostics.exclude": [
+        "**/_ide_helper.php",
+        "**/_ide_helper_models.php",
+        "**/.phpstorm.meta.php"
+    ],
+    "intelephense.files.exclude": [
+        "**/.git/**",
+        "**/.svn/**",
+        "**/.hg/**",
+        "**/CVS/**",
+        "**/.DS_Store/**",
+        "**/node_modules/**",
+        "**/bower_components/**",
+        "**/_ide_helper_models.php"
+    ]
+}
