@@ -16,7 +16,9 @@ return new class extends Migration
             ->update(['id_verification_status' => 'pending']);
 
         // 2. Modify column definition to strictly allow 'pending' and 'verified'
-        DB::statement("ALTER TABLE users MODIFY COLUMN id_verification_status ENUM('pending', 'verified') NOT NULL DEFAULT 'pending'");
+        if (DB::getDriverName() !== 'sqlite') {
+            DB::statement("ALTER TABLE users MODIFY COLUMN id_verification_status ENUM('pending', 'verified') NOT NULL DEFAULT 'pending'");
+        }
     }
 
     public function down(): void
