@@ -110,7 +110,7 @@ class IdentityVerificationService
                 'file'              => new \CURLFile($photoPath),
             ],
             CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_SSL_VERIFYPEER => false,
+            CURLOPT_SSL_VERIFYPEER => true,
             CURLOPT_TIMEOUT        => 30,
         ]);
 
