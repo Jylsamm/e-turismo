@@ -584,8 +584,16 @@
             activeLayout = mode;
             const grid = document.getElementById('dest-grid');
             if (grid) grid.classList.toggle('list-view', mode === 'list');
-            document.getElementById('btn-grid').classList.toggle('active', mode === 'grid');
-            document.getElementById('btn-list').classList.toggle('active', mode === 'list');
+            const btnGrid = document.getElementById('btn-grid');
+            const btnList = document.getElementById('btn-list');
+            if (btnGrid) {
+                btnGrid.classList.toggle('active', mode === 'grid');
+                btnGrid.setAttribute('aria-pressed', mode === 'grid' ? 'true' : 'false');
+            }
+            if (btnList) {
+                btnList.classList.toggle('active', mode === 'list');
+                btnList.setAttribute('aria-pressed', mode === 'list' ? 'true' : 'false');
+            }
         };
 
         // ── Filter + Sort ──
