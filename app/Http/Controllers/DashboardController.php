@@ -51,12 +51,18 @@ class DashboardController extends Controller
         $today = now()->toDateString();
         $destinationId = $user->assigned_destination_id;
         
-        $todaysBookingsCount = Booking::where('destination_id', $destinationId)
-            ->where('visit_date', $today)->count();
-        $pendingBookingsCount = Booking::where('destination_id', $destinationId)
-            ->where('status', 'pending')->count();
-        $confirmedBookingsCount = Booking::where('destination_id', $destinationId)
-            ->where('status', 'confirmed')->count();
+        // ⚡ Bolt Optimization: Consolidate 3 count() queries into 1 using conditional aggregation
+        // Impact: Reduces DB roundtrips by 66% (from 3 queries to 1), improving staff dashboard load time
+        // Measurement: Check debugbar/telescope queries panel before and after
+        $staffStatsData = Booking::where('destination_id', $destinationId)
+            ->selectRaw("SUM(CASE WHEN visit_date = ? THEN 1 ELSE 0 END) as todays_bookings", [$today])
+            ->selectRaw("SUM(CASE WHEN status = 'pending' THEN 1 ELSE 0 END) as pending_bookings")
+            ->selectRaw("SUM(CASE WHEN status = 'confirmed' THEN 1 ELSE 0 END) as confirmed_bookings")
+            ->first();
+
+        $todaysBookingsCount = (int) ($staffStatsData->todays_bookings ?? 0);
+        $pendingBookingsCount = (int) ($staffStatsData->pending_bookings ?? 0);
+        $confirmedBookingsCount = (int) ($staffStatsData->confirmed_bookings ?? 0);
         
         $todaysCheckinsCount = CheckIn::whereHas('booking', function ($q) use ($destinationId) {
             $q->where('destination_id', $destinationId);
@@ -148,17 +154,23 @@ class DashboardController extends Controller
             ->limit(4)
             ->get();
 
+        // ⚡ Bolt Optimization: Consolidate 5 count() queries into 1 using conditional aggregation
+        // Impact: Reduces DB roundtrips by 80% (from 5 queries to 1), improving tourist dashboard load time
+        // Measurement: Check debugbar/telescope queries panel before and after
+        $statsData = Booking::where('tourist_id', $userId)
+            ->selectRaw('COUNT(*) as total')
+            ->selectRaw("SUM(CASE WHEN status = 'confirmed' THEN 1 ELSE 0 END) as confirmed")
+            ->selectRaw("SUM(CASE WHEN status = 'pending' THEN 1 ELSE 0 END) as pending")
+            ->selectRaw("SUM(CASE WHEN status NOT IN ('cancelled', 'declined') AND (payment_status = 'unpaid' OR payment_status IS NULL) THEN 1 ELSE 0 END) as unpaid")
+            ->selectRaw("SUM(CASE WHEN status = 'completed' THEN 1 ELSE 0 END) as completed")
+            ->first();
+
         $stats = [
-            'total' => Booking::where('tourist_id', $userId)->count(),
-            'confirmed' => Booking::where('tourist_id', $userId)->where('status', 'confirmed')->count(),
-            'pending' => Booking::where('tourist_id', $userId)->where('status', 'pending')->count(),
-            'unpaid' => Booking::where('tourist_id', $userId)
-                ->whereNotIn('status', ['cancelled', 'declined'])
-                ->where(function ($q) {
-                    $q->where('payment_status', 'unpaid')
-                      ->orWhereNull('payment_status');
-                })->count(),
-            'completed' => Booking::where('tourist_id', $userId)->where('status', 'completed')->count(),
+            'total' => (int) ($statsData->total ?? 0),
+            'confirmed' => (int) ($statsData->confirmed ?? 0),
+            'pending' => (int) ($statsData->pending ?? 0),
+            'unpaid' => (int) ($statsData->unpaid ?? 0),
+            'completed' => (int) ($statsData->completed ?? 0),
         ];
 
         $activePass = Booking::query()
