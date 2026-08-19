@@ -188,6 +188,7 @@ class AnalyticsController extends Controller
             $foreign = $foreignUsers + $foreignWalkins;
             $regional = 0;
 
+<<<<<<< Updated upstream
             if ($local + $domestic + $foreign === 0) {
                 $local = 44;
                 $regional = 55;
@@ -196,12 +197,24 @@ class AnalyticsController extends Controller
             } else {
                 $regional = round($local * 0.3);
                 $local = max(1, $local - $regional);
+=======
+            if ($local + $domestic + $foreign > 0) {
+                $regional = (int)round($local * 0.25);
+                $local = max(1, $local - $regional);
+                $demoValues = [(int)$local, (int)$regional, (int)$domestic, (int)$foreign];
+            } else {
+                $demoValues = [18, 7, 9, 4];
+>>>>>>> Stashed changes
             }
 
             // Booking status breakdown
             $approved = Booking::where('status', 'approved')->count();
             $pending = Booking::where('status', 'pending')->count();
             $cancelled = Booking::where('status', 'cancelled')->count();
+
+            $statusValues = ($approved + $pending + $cancelled > 0) 
+                ? [$approved, $pending, $cancelled] 
+                : [15, 4, 2];
 
             return [
                 'trends' => [
@@ -211,11 +224,11 @@ class AnalyticsController extends Controller
                 ],
                 'demographics' => [
                     'labels' => ['Local', 'Regional', 'National', 'Foreign'],
-                    'values' => [(int)$local, (int)$regional, (int)$domestic, (int)$foreign]
+                    'values' => $demoValues
                 ],
                 'status' => [
                     'labels' => ['Approved', 'Pending', 'Cancelled'],
-                    'values' => [$approved, $pending, $cancelled]
+                    'values' => $statusValues
                 ]
             ];
         });

@@ -12,7 +12,31 @@ export default {
     theme: {
         extend: {
             fontFamily: {
-                sans: ['Figtree', ...defaultTheme.fontFamily.sans],
+                sans: ['"Space Grotesk"', 'Inter', ...defaultTheme.fontFamily.sans],
+                display: ['"Space Grotesk"', 'sans-serif'],
+                space: ['"Space Grotesk"', 'sans-serif'],
+                inter: ['Inter', 'sans-serif'],
+            },
+            letterSpacing: {
+                'tighter': '-0.05em',
+                'tight': '-0.025em',
+                'condensed': '-0.02em',
+                'normal': '0em',
+                'wide': '0.025em',
+                'wider': '0.05em',
+                'widest': '0.1em',
+            },
+            fontSize: {
+                '2xs': ['0.8125rem', { lineHeight: '1.125rem', letterSpacing: '-0.02em' }], // 13px
+                'xs': ['0.9375rem', { lineHeight: '1.375rem', letterSpacing: '-0.02em' }],   // 15px
+                'sm': ['1.0625rem', { lineHeight: '1.625rem', letterSpacing: '-0.02em' }],  // 17px
+                'base': ['1.1875rem', { lineHeight: '1.75rem', letterSpacing: '-0.02em' }], // 19px
+                'lg': ['1.3125rem', { lineHeight: '1.875rem', letterSpacing: '-0.02em' }],  // 21px
+                'xl': ['1.5rem', { lineHeight: '2rem', letterSpacing: '0.02em' }],          // 24px
+                '2xl': ['1.75rem', { lineHeight: '2.25rem', letterSpacing: '0.02em' }],     // 28px
+                '3xl': ['2.25rem', { lineHeight: '2.5rem', letterSpacing: '0.025em' }],      // 36px
+                '4xl': ['2.75rem', { lineHeight: '3rem', letterSpacing: '0.025em' }],        // 44px
+                'display': ['3.75rem', { lineHeight: '1.05', letterSpacing: '0.025em' }],     // 60px
             },
             colors: {
                 /* E-Turismo brand greens — usable as bg-brand-*, text-brand-*, etc. */

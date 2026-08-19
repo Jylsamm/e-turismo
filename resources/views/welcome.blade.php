@@ -8,9 +8,10 @@
         content="E-Turismo — The Official Digital Tourism Portal for managing tourist destinations, bookings, and check-ins.">
     <title>E-Turismo | Digital Tourism Portal</title>
 
+    <!-- Direct Typography: Space Grotesk & Inter -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
-        rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
 
     <!-- Favicon -->
     @php
@@ -25,9 +26,19 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap');
+
         body {
-            font-family: 'Inter', sans-serif;
+            font-family: 'Space Grotesk', 'Inter', sans-serif;
+            letter-spacing: -0.02em;
             background-color: #f0fdf4;
+        }
+
+        .font-anton, .heading-anton,
+        .font-anton span, .heading-anton span {
+            font-family: 'Space Grotesk', sans-serif !important;
+            letter-spacing: -0.025em;
+            font-weight: 700 !important;
         }
 
         /* ── Primary CTA button ── */
@@ -162,7 +173,6 @@
                  :class="scrolled ? 'text-gray-700' : 'text-white drop-shadow-md'">
                 <a href="#discover" :class="scrolled ? 'hover:text-green-600' : 'hover:text-green-300'" class="transition-all duration-200 hover:scale-105">Discover</a>
                 <a href="#features" :class="scrolled ? 'hover:text-green-600' : 'hover:text-green-300'" class="transition-all duration-200 hover:scale-105">Features</a>
-                <a href="#how-it-works" :class="scrolled ? 'hover:text-green-600' : 'hover:text-green-300'" class="transition-all duration-200 hover:scale-105">How It Works</a>
             </nav>
 
             {{-- 3. Desktop Auth Buttons --}}
@@ -262,10 +272,10 @@
                     <img src="{{ asset('Pictures/LOGO/LOGO-eturismo3.png') }}" alt="E-Turismo logo" class="w-20 h-20 object-contain mx-auto" />
                 </div>
             </div>
-            <h1 class="text-5xl sm:text-6xl lg:text-7xl font-black leading-tight tracking-tight animate-fade-in-up animation-delay-200">
-    <span class="bg-gradient-to-br from-white via-green-50 to-green-200 bg-clip-text text-transparent drop-shadow-[0_3px_4px_rgba(14,14,14,0.9)]">Explore. Book.</span><br>
-    <span class="text-green-300 drop-shadow-[0_3px_4px_rgba(14,14,14,0.9)]">Experience.</span>
-</h1>
+            <h1 class="font-anton text-5xl sm:text-6xl lg:text-7xl leading-tight tracking-wide animate-fade-in-up animation-delay-200">
+                <span class="font-anton bg-gradient-to-br from-white via-green-50 to-green-200 bg-clip-text text-transparent drop-shadow-[0_3px_4px_rgba(14,14,14,0.9)]">Explore. Book.</span><br>
+                <span class="font-anton text-green-300 drop-shadow-[0_3px_4px_rgba(14,14,14,0.9)]">Experience.</span>
+            </h1>
             <p class="text-lg sm:text-xl text-white mt-6 max-w-2xl mx-auto leading-relaxed animate-fade-in-up animation-delay-400" style="text-shadow: 0 3px 4px rgba(14, 14, 14, 0.9);">
                Tigbao E-Turismo Digital Tourism Portal
             </p>
@@ -314,8 +324,8 @@
                     <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
                     Tigbao, Zamboanga del Sur
                 </span>
-                <h2 class="text-4xl sm:text-5xl font-black text-white leading-tight mb-4">
-                    Discover the Beauty<br>of <span class="text-green-300">Tigbao</span>
+                <h2 class="font-anton text-4xl sm:text-5xl text-white leading-tight mb-4 tracking-wide">
+                    Discover the Beauty<br>of <span class="font-anton text-green-300">Tigbao</span>
                 </h2>
             </div>
         </div>
@@ -348,12 +358,15 @@
 
         #feat-header { text-align: center; margin-bottom: 64px; }
         #feat-header .eyebrow {
-            font-size: 12px; font-weight: 700; letter-spacing: 0.12em;
+            font-family: 'Space Grotesk', 'Inter', sans-serif;
+            font-size: 13px; font-weight: 600; letter-spacing: 0.05em;
             text-transform: uppercase; color: #059669; display: block; margin-bottom: 12px;
         }
         #feat-header h2 {
-            font-size: clamp(28px, 4vw, 44px);
-            font-weight: 900; color: #111827; line-height: 1.15;
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: clamp(32px, 4.5vw, 48px);
+            font-weight: 700; color: #111827; line-height: 1.15;
+            letter-spacing: -0.025em;
         }
         #feat-header h2 span { color: #059669; }
 
@@ -561,471 +574,6 @@
         }, { threshold: 0.1 });
 
         observer.observe(document.getElementById('features-section'));
-    })();
-    </script>
-
-    {{-- Section divider --}}
-    <div class="section-divider"></div>
-
-    {{-- ============================================================ --}}
-    {{-- HOW IT WORKS --}}
-    {{-- ============================================================ --}}
-    <style>
-        /* ── Section ─────────────────────────────────────────── */
-        #how-it-works {
-            padding: 96px 0;
-            position: relative;
-            overflow: hidden;
-            background: linear-gradient(160deg, #f0fdf4 0%, #ecfdf5 100%);
-        }
-        #how-it-works::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: radial-gradient(circle at 50% 60%, rgba(16,185,129,0.07) 0%, transparent 65%);
-            pointer-events: none;
-        }
-
-        /* ── Header ──────────────────────────────────────────── */
-        #hiw-header {
-            text-align: center;
-            margin-bottom: 64px;
-            opacity: 0;
-            transform: translateY(20px);
-            transition: opacity 0.6s ease, transform 0.6s ease;
-        }
-        #hiw-header.visible { opacity: 1; transform: translateY(0); }
-        #hiw-header .label {
-            font-size: 12px; font-weight: 700; letter-spacing: 0.12em;
-            text-transform: uppercase; color: #059669;
-        }
-        #hiw-header h2 {
-            font-size: clamp(28px, 4vw, 40px);
-            font-weight: 900; color: #111827; margin-top: 8px;
-        }
-
-        /* ── Per-segment connectors (SVG overlay) ───────────────── */
-        #hiw-svg-overlay {
-            display: none;
-            position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
-            pointer-events: none;
-            z-index: 3;
-            overflow: visible;
-        }
-        @media (min-width: 768px) { #hiw-svg-overlay { display: block; } }
-
-        /* Track lines (dim base) */
-        .seg-track { stroke: #d1fae5; stroke-width: 3; fill: none; stroke-linecap: round; }
-
-        /* Fill lines draw in via stroke-dashoffset */
-        .seg-fill {
-            stroke-width: 3; fill: none; stroke-linecap: round;
-            stroke: url(#seg-grad);
-            stroke-dashoffset: 9999; /* overridden by JS */
-            transition: stroke-dashoffset 0.7s cubic-bezier(0.22, 1, 0.36, 1),
-                        stroke-width 0.2s ease-out;
-        }
-        .seg-fill.drawn { stroke-dashoffset: 0; }
-        .seg-fill.hovered { stroke: url(#seg-grad-bright); stroke-width: 4.5; }
-
-        /* Traveling pulse dot */
-        .seg-dot { r: 4; fill: #34d399; filter: url(#seg-blur); opacity: 0; }
-
-        /* Respect prefers-reduced-motion */
-        @media (prefers-reduced-motion: reduce) {
-            .seg-dot { display: none !important; }
-            .hiw-pulse-ring { animation: none !important; opacity: 0 !important; }
-            .seg-fill { transition: stroke-dashoffset 0.1s; }
-        }
-
-        /* ── Mobile vertical connector ───────────────────────── */
-        #hiw-connector-v {
-            display: block;
-            position: absolute;
-            left: 50%;
-            top: calc(12.5% + 32px);
-            bottom: calc(12.5% + 32px);
-            width: 3px;
-            border-radius: 99px;
-            background: #d1fae5;
-            transform: translateX(-50%);
-            z-index: 1;
-            overflow: hidden;
-        }
-        #hiw-connector-v-fill {
-            position: absolute; left: 0; right: 0; top: 0;
-            background: linear-gradient(180deg, #059669, #10b981, #34d399);
-            border-radius: 99px;
-            height: 0;
-            transition: height 1.4s cubic-bezier(0.22, 1, 0.36, 1);
-        }
-        #hiw-connector-v-fill.drawn { height: 100%; }
-        @media (min-width: 768px) {
-            #hiw-connector-v { display: none; }
-        }
-
-        /* ── Grid wrapper ────────────────────────────────────── */
-        #hiw-grid-wrap { position: relative; }
-
-        /* ── Grid ────────────────────────────────────────────── */
-        #hiw-grid {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 24px;
-            position: relative;
-            z-index: 2;
-        }
-        @media (min-width: 768px) {
-            #hiw-grid { grid-template-columns: repeat(4, 1fr); gap: 28px; }
-        }
-
-        /* ── Step card ───────────────────────────────────────── */
-        .hiw-card {
-            background: #ffffff;
-            border-radius: 20px;
-            padding: 32px 24px 28px;
-            border: 1px solid rgba(16,185,129,0.12);
-            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-align: center;
-            cursor: pointer;
-            position: relative;
-            opacity: 0;
-            transform: translateY(28px);
-            transition:
-                opacity 0.65s cubic-bezier(0.22,1,0.36,1),
-                transform 0.65s cubic-bezier(0.22,1,0.36,1),
-                box-shadow 0.25s ease-out,
-                border-color 0.25s ease-out;
-        }
-        .hiw-card.visible { opacity: 1; transform: translateY(0); }
-        .hiw-card:hover {
-            transform: translateY(-6px);
-            box-shadow: 0 20px 40px rgba(5,150,105,0.12), 0 4px 16px rgba(0,0,0,0.08);
-            border-color: rgba(16,185,129,0.3);
-        }
-
-        /* ── Badge wrapper ───────────────────────────────────── */
-        .hiw-badge-wrap {
-            position: relative;
-            margin-bottom: 20px;
-            width: 64px; height: 64px;
-        }
-
-        /* Ambient glow (consistent on all badges) */
-        .hiw-glow {
-            position: absolute;
-            inset: -8px;
-            border-radius: 24px;
-            background: radial-gradient(circle, rgba(52,211,153,0.22) 0%, transparent 70%);
-            filter: blur(6px);
-            transition: opacity 0.25s ease-out;
-            pointer-events: none;
-        }
-        .hiw-card:hover .hiw-glow { opacity: 1.6; filter: blur(10px); }
-
-        /* Hover glow ring */
-        .hiw-glow-ring {
-            position: absolute;
-            inset: -4px;
-            border-radius: 20px;
-            border: 2px solid rgba(16,185,129,0);
-            transition: border-color 0.25s ease-out, box-shadow 0.25s ease-out;
-            pointer-events: none;
-        }
-        .hiw-card:hover .hiw-glow-ring {
-            border-color: rgba(16,185,129,0.5);
-            box-shadow: 0 0 16px rgba(16,185,129,0.3);
-        }
-
-        /* Pulse ring on step 1 */
-        @keyframes hiw-pulse {
-            0%   { transform: scale(1);   opacity: 0.45; }
-            70%  { transform: scale(1.45); opacity: 0; }
-            100% { transform: scale(1.45); opacity: 0; }
-        }
-        .hiw-pulse-ring {
-            position: absolute;
-            inset: 0;
-            border-radius: 16px;
-            background: rgba(52,211,153,0.4);
-            animation: hiw-pulse 2.2s cubic-bezier(0.22,1,0.36,1) infinite;
-            pointer-events: none;
-        }
-
-        /* The badge itself */
-        @keyframes hiw-badge-in {
-            0%   { transform: scale(0.6); opacity: 0; }
-            70%  { transform: scale(1.08); }
-            100% { transform: scale(1);  opacity: 1; }
-        }
-        .hiw-badge {
-            position: relative;
-            z-index: 2;
-            width: 64px; height: 64px;
-            border-radius: 16px;
-            background: linear-gradient(135deg, #059669 0%, #10b981 60%, #34d399 100%);
-            color: #fff;
-            font-weight: 900;
-            font-size: 20px;
-            display: flex; align-items: center; justify-content: center;
-            box-shadow: 0 8px 20px rgba(5,150,105,0.35);
-            transition: transform 0.25s cubic-bezier(0.22,1,0.36,1), box-shadow 0.25s ease-out;
-            opacity: 0;
-        }
-        .hiw-card.visible .hiw-badge {
-            animation: hiw-badge-in 0.55s cubic-bezier(0.22,1,0.36,1) forwards;
-        }
-        .hiw-card:hover .hiw-badge {
-            transform: scale(1.1);
-            box-shadow: 0 12px 28px rgba(5,150,105,0.5);
-        }
-
-        /* ── Title & desc ────────────────────────────────────── */
-        .hiw-title {
-            font-weight: 700; font-size: 17px; color: #111827;
-            transition: color 0.2s ease-out;
-        }
-        .hiw-card:hover .hiw-title { color: #047857; }
-        .hiw-desc {
-            font-size: 14px; color: #6b7280; margin-top: 10px; line-height: 1.65;
-        }
-    </style>
-
-    <section id="how-it-works">
-        <div style="max-width: 1100px; margin: 0 auto; padding: 0 24px; position: relative; z-index: 10;">
-
-            <div id="hiw-header">
-                <span class="label">Process Flow</span>
-                <h2>How E-Turismo Works</h2>
-            </div>
-
-            <div id="hiw-grid-wrap">
-                <!-- SVG overlay for animated segment connectors (desktop) -->
-                <svg id="hiw-svg-overlay" aria-hidden="true">
-                    <defs>
-                        <!-- Normal gradient -->
-                        <linearGradient id="seg-grad" x1="0" y1="0" x2="1" y2="0">
-                            <stop offset="0%"  stop-color="#059669"/>
-                            <stop offset="100%" stop-color="#34d399"/>
-                        </linearGradient>
-                        <!-- Hover-brightened gradient -->
-                        <linearGradient id="seg-grad-bright" x1="0" y1="0" x2="1" y2="0">
-                            <stop offset="0%"  stop-color="#10b981"/>
-                            <stop offset="100%" stop-color="#6ee7b7"/>
-                        </linearGradient>
-                        <!-- Soft blur for the pulse dot -->
-                        <filter id="seg-blur" x="-200%" y="-200%" width="500%" height="500%">
-                            <feGaussianBlur in="SourceGraphic" stdDeviation="3"/>
-                        </filter>
-                    </defs>
-
-                    <!-- 3 segments, one between each adjacent card pair -->
-                    <!-- positions are calculated in JS after layout -->
-                    <g id="seg-0"><line class="seg-track"/><line class="seg-fill"/><circle class="seg-dot"/></g>
-                    <g id="seg-1"><line class="seg-track"/><line class="seg-fill"/><circle class="seg-dot"/></g>
-                    <g id="seg-2"><line class="seg-track"/><line class="seg-fill"/><circle class="seg-dot"/></g>
-                </svg>
-
-                <!-- Mobile vertical connector -->
-                <div id="hiw-connector-v">
-                    <div id="hiw-connector-v-fill"></div>
-                </div>
-
-                <div id="hiw-grid">
-                    @php
-                        $steps = [
-                            ['num' => '01', 'title' => 'Register',   'desc' => 'Create your tourist account with government ID verification.'],
-                            ['num' => '02', 'title' => 'Book',       'desc' => 'Choose a destination and submit your preferred visit date.'],
-                            ['num' => '03', 'title' => 'Get Ticket', 'desc' => 'Receive your unique QR ticket once staff confirms your booking.'],
-                            ['num' => '04', 'title' => 'Check In',   'desc' => 'Present your QR at the entrance. Staff scans and you\'re in!'],
-                        ];
-                    @endphp
-
-                    @foreach($steps as $index => $step)
-                        <div class="hiw-card" data-step="{{ $index }}">
-                            <div class="hiw-badge-wrap">
-                                @if($index === 0)
-                                    <div class="hiw-pulse-ring"></div>
-                                @endif
-                                <div class="hiw-glow"></div>
-                                <div class="hiw-glow-ring"></div>
-                                <div class="hiw-badge">{{ $step['num'] }}</div>
-                            </div>
-                            <div class="hiw-title">{{ $step['title'] }}</div>
-                            <p class="hiw-desc">{{ $step['desc'] }}</p>
-                        </div>
-                    @endforeach
-                </div>
-            </div>
-
-        </div>
-    </section>
-
-    <script>
-    (function () {
-        var header    = document.getElementById('hiw-header');
-        var cards     = Array.from(document.querySelectorAll('.hiw-card'));
-        var svgEl     = document.getElementById('hiw-svg-overlay');
-        var connVFill = document.getElementById('hiw-connector-v-fill');
-        var segs      = [0,1,2].map(function(i){ return document.getElementById('seg-'+i); });
-        var triggered = false;
-        var dotAnims  = []; // store rAF handles per segment
-        var reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-        /* ── Compute connector geometry from card positions ─── */
-        function positionSegments() {
-            if (window.innerWidth < 768) return;
-            var wrap = document.getElementById('hiw-grid-wrap');
-            var wrapRect = wrap.getBoundingClientRect();
-
-            // Compute Y ONCE from the first card so all 3 segments share the exact same Y.
-            // Badge is 64px tall, card top-padding is 32px → badge center = 32 + 32 = 64px from card top.
-            var firstRect = cards[0].getBoundingClientRect();
-            var y = Math.round(firstRect.top - wrapRect.top + 32 + 32);
-
-            for (var i = 0; i < 3; i++) {
-                var leftCard  = cards[i];
-                var rightCard = cards[i + 1];
-                var lRect = leftCard.getBoundingClientRect();
-                var rRect = rightCard.getBoundingClientRect();
-
-                // Badge centers (card center-x = card left + half width)
-                var lcx = Math.round(lRect.left - wrapRect.left + lRect.width / 2);
-                var rcx = Math.round(rRect.left - wrapRect.left + rRect.width / 2);
-                // Start just past the right edge of the left badge, end just before the left edge of the right badge
-                var x1 = lcx + 32;
-                var x2 = rcx - 32;
-
-                var len = x2 - x1;
-                var g   = segs[i];
-                var track = g.querySelector('.seg-track');
-                var fill  = g.querySelector('.seg-fill');
-                var dot   = g.querySelector('.seg-dot');
-
-                [track, fill].forEach(function(line) {
-                    line.setAttribute('x1', x1);
-                    line.setAttribute('y1', y);
-                    line.setAttribute('x2', x2);
-                    line.setAttribute('y2', y);
-                });
-                fill.style.setProperty('--seg-len', len);
-                fill.setAttribute('stroke-dasharray', len);
-                fill.setAttribute('stroke-dashoffset', triggered ? 0 : len);
-                dot.setAttribute('cy', y);
-                dot._x1 = x1; dot._x2 = x2; dot._y = y;
-            }
-        }
-
-        /* ── Entrance: sequenced draw-in per segment ─────────── */
-        // Timing: card 0 → seg 0 draws → card 1 → seg 1 draws → card 2 → seg 2 draws → card 3
-        // Card i appears at: 120*i + 100ms
-        // Segment i draw starts right after card i appears: 120*i + 100 + 300ms (card anim ~0.65s but starts immediately)
-        function triggerEntrance() {
-            if (triggered) return;
-            triggered = true;
-
-            header.classList.add('visible');
-
-            cards.forEach(function(card, i) {
-                setTimeout(function() { card.classList.add('visible'); }, 120 * i + 100);
-            });
-
-            // Per-segment draw-in: starts after the LEFT card of that segment has appeared
-            segs.forEach(function(g, i) {
-                var fill = g.querySelector('.seg-fill');
-                setTimeout(function() {
-                    fill.classList.add('drawn');
-                    // Start ambient pulse after fill completes (0.7s transition)
-                    if (!reducedMotion) {
-                        setTimeout(function() { startPulse(i); }, 750);
-                    }
-                }, 120 * i + 100 + 350);
-            });
-
-            // Mobile vertical draw
-            setTimeout(function() { connVFill.classList.add('drawn'); }, 250);
-        }
-
-        /* ── Continuous traveling pulse dot ─────────────────── */
-        // Each segment has a staggered phase offset so the dot appears to flow
-        // seamlessly across all 3 segments as one continuous signal.
-        var PULSE_DURATION = 2200; // ms for a dot to traverse one segment
-        var STAGGER = PULSE_DURATION / 3; // ~733ms offset between segments
-
-        function startPulse(segIndex) {
-            var g   = segs[segIndex];
-            var dot = g.querySelector('.seg-dot');
-            var startTime = null;
-            var phase = segIndex * STAGGER; // stagger so it reads as one flow
-
-            function tick(ts) {
-                if (!startTime) startTime = ts - phase;
-                var elapsed = (ts - startTime) % PULSE_DURATION;
-                var progress = elapsed / PULSE_DURATION; // 0 → 1
-
-                // Ease-in-out: slow start, fast middle, slow end
-                var eased = progress < 0.5
-                    ? 2 * progress * progress
-                    : 1 - Math.pow(-2 * progress + 2, 2) / 2;
-
-                var x = dot._x1 + (dot._x2 - dot._x1) * eased;
-                dot.setAttribute('cx', x);
-
-                // Opacity: fade in for first 15%, full for 70%, fade out for last 15%
-                var opacity;
-                if (progress < 0.15)      opacity = progress / 0.15 * 0.85;
-                else if (progress > 0.85) opacity = (1 - progress) / 0.15 * 0.85;
-                else                      opacity = 0.85;
-                dot.setAttribute('opacity', opacity);
-
-                dotAnims[segIndex] = requestAnimationFrame(tick);
-            }
-            dotAnims[segIndex] = requestAnimationFrame(tick);
-        }
-
-        /* ── Hover: brighten adjacent segments + speed pulse ─── */
-        cards.forEach(function(card, i) {
-            card.addEventListener('mouseenter', function() {
-                // Segments adjacent to card i: seg i-1 and seg i
-                segs.forEach(function(g, si) {
-                    var fill = g.querySelector('.seg-fill');
-                    var dot  = g.querySelector('.seg-dot');
-                    if (si === i - 1 || si === i) {
-                        fill.classList.add('hovered');
-                        dot.setAttribute('r', 5);
-                    }
-                });
-            });
-            card.addEventListener('mouseleave', function() {
-                segs.forEach(function(g) {
-                    var fill = g.querySelector('.seg-fill');
-                    var dot  = g.querySelector('.seg-dot');
-                    fill.classList.remove('hovered');
-                    dot.setAttribute('r', 4);
-                });
-            });
-        });
-
-        /* ── IntersectionObserver ────────────────────────────── */
-        var observer = new IntersectionObserver(function(entries) {
-            if (entries[0].isIntersecting) {
-                positionSegments();
-                triggerEntrance();
-                observer.disconnect();
-            }
-        }, { threshold: 0.15 });
-        observer.observe(document.getElementById('how-it-works'));
-
-        // Recompute geometry on resize
-        var resizeTimer;
-        window.addEventListener('resize', function() {
-            clearTimeout(resizeTimer);
-            resizeTimer = setTimeout(positionSegments, 100);
-        });
     })();
     </script>
 </body>

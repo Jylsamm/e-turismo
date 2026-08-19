@@ -17,13 +17,17 @@ class DatabaseSeeder extends Seeder
         // -------------------------------------------------------
         // 1. Admin Account
         // -------------------------------------------------------
-        $admin = User::create([
-            'name'     => 'DOT Administrator',
-            'email'    => 'admin@eturismo.gov',
-            'password' => Hash::make('Admin@123!'),
-            'role'     => 'admin',
-            'contact'  => '09171234567',
-        ]);
+        $admin = User::firstOrCreate(
+            ['email' => 'admin@eturismo.com'],
+            [
+                'name'      => 'TOURISM',
+                'last_name' => 'PERSONNEL',
+                'password'  => Hash::make('omsi2026'),
+                'role'      => 'admin',
+                'contact'   => '09171234567',
+                'id_verification_status' => 'verified',
+            ]
+        );
 
         // -------------------------------------------------------
         // 2. Sample Destinations
@@ -64,49 +68,46 @@ class DatabaseSeeder extends Seeder
         ];
 
         foreach ($destinations as $data) {
-            Destination::create($data);
+            Destination::firstOrCreate(['name' => $data['name']], $data);
         }
 
         // -------------------------------------------------------
-        // 3. Staff Accounts (one per destination)
+        // 3. Staff Accounts
         // -------------------------------------------------------
-        $destModels = Destination::all();
-        foreach ($destModels as $i => $dest) {
-            User::create([
-                'name'                    => 'Staff - ' . $dest->name,
-                'email'                   => 'staff' . ($i + 1) . '@eturismo.gov',
-                'password'                => Hash::make('Staff@123!'),
+        $firstDest = Destination::first();
+        User::firstOrCreate(
+            ['email' => 'staff@eturismo.com'],
+            [
+                'name'                    => 'LM Staff',
+                'password'                => Hash::make('password'),
                 'role'                    => 'staff',
-                'contact'                 => '0917000000' . ($i + 1),
-                'assigned_destination_id' => $dest->id,
-            ]);
-        }
+                'contact'                 => '1234567890',
+                'assigned_destination_id' => $firstDest ? $firstDest->id : null,
+                'id_verification_status'  => 'verified',
+            ]
+        );
 
         // -------------------------------------------------------
         // 4. Sample Tourist Accounts
         // -------------------------------------------------------
-        $tourists = [
-            ['name' => 'Maria Santos',  'email' => 'maria@example.com',  'classification' => 'Local'],
-            ['name' => 'Juan Dela Cruz', 'email' => 'juan@example.com',   'classification' => 'Domestic'],
-            ['name' => 'James Miller',  'email' => 'james@example.com',   'classification' => 'Foreign'],
-        ];
-
-        foreach ($tourists as $tourist) {
-            User::create([
-                'name'           => $tourist['name'],
-                'email'          => $tourist['email'],
-                'password'       => Hash::make('Tourist@123!'),
-                'role'           => 'tourist',
-                'contact'        => '09191234567',
-                'classification' => $tourist['classification'],
-                'id_type'        => 'National ID',
-                'id_number'      => 'NID-' . rand(100000, 999999),
-            ]);
-        }
+        User::firstOrCreate(
+            ['email' => 'jylsam123@gmail.com'],
+            [
+                'name'                   => 'JYLSAM',
+                'last_name'              => 'QUIROG',
+                'password'               => Hash::make('password'),
+                'role'                   => 'tourist',
+                'contact'                => '09723462733',
+                'classification'         => 'Local',
+                'id_type'                => 'School ID',
+                'id_number'              => '2022-041633',
+                'id_verification_status' => 'verified',
+            ]
+        );
 
         $this->command->info('✅ E-Turismo seeded successfully!');
-        $this->command->info('   Admin   → admin@eturismo.gov  / Admin@123!');
-        $this->command->info('   Staff 1 → staff1@eturismo.gov / Staff@123!');
-        $this->command->info('   Tourist → maria@example.com   / Tourist@123!');
+        $this->command->info('   Admin   → admin@eturismo.com   / omsi2026');
+        $this->command->info('   Staff   → staff@eturismo.com   / password');
+        $this->command->info('   Tourist → jylsam123@gmail.com  / password');
     }
 }

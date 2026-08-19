@@ -20,8 +20,24 @@ class IdentityVerificationController extends Controller
     public function __construct(private IdentityVerificationService $verifier) {}
 
     /**
-     * Note: The show() method has been removed as the verification UI is now embedded in the Profile page.
+     * Get live verification status of the authenticated user for real-time UI polling.
      */
+    public function getStatus(Request $request)
+    {
+        $user = $request->user();
+        if (!$user) {
+            return response()->json(['error' => 'Unauthenticated'], 401);
+        }
+
+        return response()->json([
+            'status'         => $user->id_verification_status ?? 'pending',
+            'is_verified'    => ($user->id_verification_status ?? '') === 'verified',
+            'score'          => $user->id_verification_score,
+            'notes'          => $user->id_verification_notes,
+            'verified_at'    => $user->id_verified_at ? $user->id_verified_at->format('M d, Y') : null,
+            'processing_ms'  => $user->ocr_processing_ms,
+        ]);
+    }
 
     /**
      * Tourist resubmits a new ID photo after rejection.
@@ -96,11 +112,19 @@ class IdentityVerificationController extends Controller
         }
 
         // Compose full name
-        $nameParts = array_filter([
-            trim($request->first_name),
-            $request->middle_initial ? strtoupper(rtrim($request->middle_initial, '.')) . '.' : null,
-            trim($request->last_name),
-        ]);
+        $firstName = trim($request->first_name);
+        $middleInitial = $request->middle_initial ? strtoupper(rtrim($request->middle_initial, '.')) . '.' : null;
+        $lastName = trim($request->last_name);
+
+        if ($middleInitial) {
+            $rawMi = rtrim($middleInitial, '.');
+            $firstName = preg_replace('/\s+' . preg_quote($rawMi, '/') . '\.?$/i', '', $firstName);
+        }
+        if ($lastName) {
+            $firstName = preg_replace('/\s+' . preg_quote($lastName, '/') . '$/i', '', $firstName);
+        }
+
+        $nameParts = array_filter([$firstName, $middleInitial, $lastName]);
         $fullName = implode(' ', $nameParts);
 
         $user->update([
@@ -136,9 +160,9 @@ class IdentityVerificationController extends Controller
     /* ─── Admin actions ─────────────────────────────────────── */
 
     /**
-     * Admin: list tourists awaiting manual review.
+     * Admin: unified tourist identity verification & directory center.
      */
-    public function adminReviews()
+    public function adminReviews(Request $request)
     {
         $this->authorize('admin-only');
 
@@ -152,6 +176,7 @@ class IdentityVerificationController extends Controller
 
         $verified = User::where('role', 'tourist')
                         ->where('id_verification_status', 'verified')
+<<<<<<< Updated upstream
                         ->latest()->take(20)->get();
 
         return view('verification.admin_reviews', compact('pending', 'rejected', 'verified'));
@@ -163,10 +188,25 @@ class IdentityVerificationController extends Controller
     public function adminAccounts()
     {
         $this->authorize('admin-only');
+=======
+                        ->latest()->get();
+>>>>>>> Stashed changes
 
         $allUsers = User::where('role', '!=', 'staff')->latest()->get();
 
-        return view('verification.admin_accounts', compact('allUsers'));
+        $initialTab = $request->query('tab', ($pending->count() > 0 ? 'pending' : 'all'));
+
+        return view('verification.admin_reviews', compact('pending', 'verified', 'allUsers', 'initialTab'));
+    }
+
+    /**
+     * Admin: verify account status (redirects to unified tourist verification center).
+     */
+    public function adminAccounts(Request $request)
+    {
+        $this->authorize('admin-only');
+
+        return redirect()->route('verification.reviews', ['tab' => $request->query('tab', 'all')]);
     }
 
     /**
@@ -196,12 +236,28 @@ class IdentityVerificationController extends Controller
     {
         $this->authorize('admin-only');
 
+        // Normalize decision/status field
+        if (!$request->has('decision')) {
+            if ($request->has('status')) {
+                $request->merge(['decision' => $request->input('status')]);
+            } elseif ($request->has('id_verification_status')) {
+                $request->merge(['decision' => $request->input('id_verification_status')]);
+            }
+        }
+
         $request->validate([
+<<<<<<< Updated upstream
             'decision' => 'required|in:verified,rejected',
+=======
+            'decision' => 'required|in:pending,verified',
+>>>>>>> Stashed changes
             'notes'    => 'nullable|string|max:500',
         ]);
 
+        $decision = $request->decision;
+
         $user->update([
+<<<<<<< Updated upstream
             'id_verification_status' => $request->decision,
             'is_manually_verified'   => true, // Mark manually verified/decided by admin
             'id_verification_notes'  => $request->notes ?? ($user->id_verification_notes . ' | Admin decision: ' . $request->decision),
@@ -209,6 +265,15 @@ class IdentityVerificationController extends Controller
         ]);
 
         return back()->with('success', "Tourist {$user->name} has been marked as {$request->decision}.");
+=======
+            'id_verification_status' => $decision,
+            'is_manually_verified'   => $decision === 'verified',
+            'id_verification_notes'  => $request->notes ?? ('Admin decision: ' . $decision),
+            'id_verified_at'         => $decision === 'verified' ? now() : null,
+        ]);
+
+        return back()->with('success', "Tourist {$user->name} status set to " . strtoupper($decision) . ".");
+>>>>>>> Stashed changes
     }
 
     /**
@@ -311,19 +376,30 @@ class IdentityVerificationController extends Controller
     {
         $this->authorize('admin-only');
 
+        // Normalize status field if sent as id_verification_status or decision
+        if (!$request->has('status')) {
+            if ($request->has('id_verification_status')) {
+                $request->merge(['status' => $request->input('id_verification_status')]);
+            } elseif ($request->has('decision')) {
+                $request->merge(['status' => $request->input('decision')]);
+            }
+        }
+
         $request->validate([
-            'status' => 'required|in:unverified,pending,verified,rejected',
+            'status' => 'required|in:pending,verified',
             'notes'  => 'nullable|string|max:500',
         ]);
 
+        $status = $request->status;
+
         $user->update([
-            'id_verification_status' => $request->status,
+            'id_verification_status' => $status,
             'is_manually_verified'   => true, // Lock manual verification
             'id_verification_notes'  => $request->notes ?? 'Status manually updated by Admin.',
-            'id_verified_at'         => $request->status === 'verified' ? now() : null,
+            'id_verified_at'         => $status === 'verified' ? now() : null,
         ]);
 
-        return back()->with('success', "Account {$user->name}'s identity status updated to " . strtoupper($request->status) . ".");
+        return back()->with('success', "Identity status for {$user->fullName()} updated to " . strtoupper($status) . ".");
     }
 
     /**
@@ -333,8 +409,8 @@ class IdentityVerificationController extends Controller
     {
         $this->authorize('admin-only');
 
-        $staffUsers = \App\Models\User::where('role', 'staff')->latest()->get();
-        $destinations = \App\Models\Destination::orderBy('name')->get();
+        $staffUsers = User::where('role', 'staff')->latest()->get();
+        $destinations = Destination::orderBy('name')->get();
 
         return view('verification.admin_staff', compact('staffUsers', 'destinations'));
     }
@@ -342,7 +418,7 @@ class IdentityVerificationController extends Controller
     /**
      * Admin: reassign staff member's destination spot.
      */
-    public function reassignStaff(Request $request, \App\Models\User $user)
+    public function reassignStaff(Request $request, User $user)
     {
         $this->authorize('admin-only');
 
@@ -374,7 +450,7 @@ class IdentityVerificationController extends Controller
     /**
      * Admin: delete/remove a staff account.
      */
-    public function deleteStaff(\App\Models\User $user)
+    public function deleteStaff(User $user)
     {
         $this->authorize('admin-only');
 
@@ -382,6 +458,24 @@ class IdentityVerificationController extends Controller
             return back()->withErrors('You cannot delete your own account.');
         }
 
+<<<<<<< Updated upstream
+=======
+        // Cascade delete the assigned destination if the staff has one
+        if ($user->assigned_destination_id) {
+            $destination = Destination::find($user->assigned_destination_id);
+            if ($destination) {
+                if ($destination->photos) {
+                    Storage::disk('public')->delete($destination->photos);
+                }
+                // Also clean up any associated gallery images in storage
+                foreach ($destination->images as $image) {
+                    Storage::disk('public')->delete($image->path);
+                }
+                $destination->delete();
+            }
+        }
+
+>>>>>>> Stashed changes
         $user->delete();
 
         return back()->with('success', "Staff account {$user->name} deleted successfully.");
@@ -390,7 +484,7 @@ class IdentityVerificationController extends Controller
     /**
      * Admin: update a staff member's details.
      */
-    public function updateStaff(Request $request, \App\Models\User $user)
+    public function updateStaff(Request $request, User $user)
     {
         $this->authorize('admin-only');
 
@@ -422,4 +516,71 @@ class IdentityVerificationController extends Controller
 
         return back()->with('success', "Staff member {$user->name}'s details updated successfully.");
     }
+
+    /**
+     * Admin: Trigger automated OCR scan and auto-approval on a specific user account.
+     */
+    public function autoVerify(User $user)
+    {
+        $this->authorize('admin-only');
+
+        if (!$user->id_photo) {
+            return back()->withErrors("Cannot run OCR: {$user->name} has not uploaded an ID photo.");
+        }
+
+        $result = $this->verifier->verify($user);
+
+        $user->update([
+            'id_verification_status' => $result['status'],
+            'id_verification_score'  => $result['score'],
+            'id_verification_notes'  => $result['notes'],
+            'id_verified_at'         => $result['status'] === 'verified' ? now() : null,
+        ]);
+
+        if ($result['status'] === 'verified') {
+            return back()->with('success', "Account for {$user->name} was successfully auto-approved! (Score: {$result['score']}%)");
+        }
+
+        return back()->with('success', "OCR verification completed for {$user->name}. Result: {$result['status']} (Score: {$result['score']}%). Details: {$result['notes']}");
+    }
+
+    /**
+     * Admin: Trigger batch auto-verification on all pending tourist accounts with ID photos.
+     */
+    public function batchAutoVerify()
+    {
+        $this->authorize('admin-only');
+
+        $pendingUsers = User::where('role', 'tourist')
+            ->where('id_verification_status', 'pending')
+            ->whereNotNull('id_photo')
+            ->get();
+
+        if ($pendingUsers->isEmpty()) {
+            return back()->with('success', 'No pending accounts with uploaded ID photos found to verify.');
+        }
+
+        $approvedCount = 0;
+        $scannedCount = 0;
+
+        foreach ($pendingUsers as $user) {
+            $scannedCount++;
+            $result = $this->verifier->verify($user);
+            $isVerified = ($result['status'] === 'verified');
+
+            $user->update([
+                'id_verification_status' => $result['status'],
+                'id_verification_score'  => $result['score'],
+                'id_verification_notes'  => $result['notes'],
+                'id_verified_at'         => $isVerified ? now() : null,
+            ]);
+
+            if ($isVerified) {
+                $approvedCount++;
+            }
+        }
+
+        return back()->with('success', "Batch OCR verification completed: {$approvedCount} of {$scannedCount} accounts auto-approved.");
+    }
 }
+

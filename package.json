@@ -4,7 +4,8 @@
     "type": "module",
     "scripts": {
         "build": "vite build",
-        "dev": "vite"
+        "dev": "vite",
+        "ngrok": "ngrok http 80 --host-header=localhost"
     },
     "devDependencies": {
         "@tailwindcss/forms": "^0.5.2",
@@ -20,6 +21,7 @@
     },
     "dependencies": {
         "@alpinejs/collapse": "^3.15.12",
+        "@tabler/icons-webfont": "^3.46.0",
         "apexcharts": "^6.0.0"
     }
 }

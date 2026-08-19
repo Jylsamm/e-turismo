@@ -58,6 +58,7 @@ Route::post('/register/verify-code', [RegistrationOtpController::class, 'verifyC
 Route::middleware(['auth', 'verified'])->group(function () {
 
     // ── Identity Verification (always accessible after email verification) ──
+    Route::get('/verification/status', [IdentityVerificationController::class, 'getStatus'])->name('verification.status');
     Route::post('/verification/resubmit', [IdentityVerificationController::class, 'resubmit'])->name('verification.resubmit');
     Route::post('/verification/update-details', [IdentityVerificationController::class, 'updateDetails'])->name('verification.update_details');
 
@@ -182,6 +183,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('/admin/verifications/{user}/decide', [IdentityVerificationController::class, 'adminDecide'])->name('verification.decide');
         Route::post('/admin/accounts/create', [IdentityVerificationController::class, 'adminStoreAccount'])->name('admin.accounts.store');
         Route::post('/admin/accounts/{user}/status', [IdentityVerificationController::class, 'adminUpdateStatus'])->name('admin.accounts.update_status');
+        Route::post('/admin/accounts/{user}/auto-verify', [IdentityVerificationController::class, 'autoVerify'])->name('admin.accounts.auto_verify');
+        Route::post('/admin/accounts/batch-auto-verify', [IdentityVerificationController::class, 'batchAutoVerify'])->name('admin.accounts.batch_auto_verify');
 
         // Analytics
         Route::get('/admin/analytics/kpis', [AnalyticsController::class, 'getKpis'])->name('admin.analytics.kpis');

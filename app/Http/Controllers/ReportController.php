@@ -19,18 +19,19 @@ class ReportController extends Controller
     {
         $this->authorize('viewAny', Report::class);
 
-        $destinations = Destination::all();
+        $destinations = Destination::orderBy('name')->get();
 
         $filters = [
             'destination_id' => $request->destination_id,
-            'period' => $request->period ?? 'monthly',
-            'date_from' => $request->date_from ?? now()->startOfMonth()->toDateString(),
-            'date_to' => $request->date_to ?? now()->toDateString(),
+            'period'         => $request->period ?? 'monthly',
+            'date_from'      => $request->date_from ?? now()->startOfMonth()->toDateString(),
+            'date_to'        => $request->date_to ?? now()->toDateString(),
         ];
 
         $stats = $this->buildStats($filters);
+        $topDestinations = $this->getTopDestinations($filters);
 
-        return view('reports.index', compact('destinations', 'filters', 'stats'));
+        return view('reports.index', compact('destinations', 'filters', 'stats', 'topDestinations'));
     }
 
     /**
@@ -42,201 +43,14 @@ class ReportController extends Controller
 
         $filters = [
             'destination_id' => $report->destination_id,
-            'date_from' => $report->date_from,
-            'date_to' => $report->date_to,
+            'date_from'      => $report->date_from,
+            'date_to'        => $report->date_to,
         ];
 
         $stats = $this->buildStats($filters);
         $topDestinations = $this->getTopDestinations($filters);
 
         return view('reports.show', compact('report', 'stats', 'topDestinations'));
-    }
-
-    /**
-     * Export report data as Word DOCX using PHPWord TemplateProcessor.
-     * (Legacy export — kept for backward compat.)
-     */
-    public function exportDocx(Request $request)
-    {
-        $this->authorize('create', Report::class);
-
-        $request->validate([
-            'date_from' => 'required|date',
-            'date_to' => 'required|date|after_or_equal:date_from',
-            'destination_id' => 'nullable|exists:destinations,id',
-        ]);
-
-        $start = \Carbon\Carbon::parse($request->date_from);
-        $end = \Carbon\Carbon::parse($request->date_to);
-
-        $days = [];
-        for ($date = $start->copy(); $date->lte($end); $date->addDay()) {
-            $days[] = $date->copy();
-        }
-
-        // Fetch check-ins
-        $checkins = CheckIn::query()
-            ->join('bookings', 'check_ins.booking_id', '=', 'bookings.id')
-            ->join('users', 'bookings.tourist_id', '=', 'users.id')
-            ->selectRaw('DATE(bookings.visit_date) as visit_date, users.classification, users.gender, COUNT(*) as count')
-            ->whereBetween('bookings.visit_date', [$request->date_from, $request->date_to])
-            ->when($request->destination_id, function($q) use ($request) {
-                $q->where('bookings.destination_id', $request->destination_id);
-            })
-            ->groupBy('visit_date', 'users.classification', 'users.gender')
-            ->get();
-
-        // Fetch walk-ins
-        $walkins = WalkIn::query()
-            ->selectRaw('DATE(created_at) as visit_date, classification, gender, COUNT(*) as count')
-            ->whereBetween('created_at', [$request->date_from . ' 00:00:00', $request->date_to . ' 23:59:59'])
-            ->when($request->destination_id, function($q) use ($request) {
-                $q->where('destination_id', $request->destination_id);
-            })
-            ->groupBy('visit_date', 'classification', 'gender')
-            ->get();
-
-        // Group data by date
-        $data = [];
-        foreach ($days as $dayCarbon) {
-            $dateStr = $dayCarbon->toDateString();
-            $data[$dateStr] = [
-                'day' => $dayCarbon->day,
-                'week_day' => $dayCarbon->format('D'),
-                'this_male' => 0, 'this_female' => 0, 'this_total' => 0,
-                'other_male' => 0, 'other_female' => 0, 'other_total' => 0,
-                'foreign_male' => 0, 'foreign_female' => 0, 'foreign_total' => 0,
-                'grand_male' => 0, 'grand_female' => 0, 'grand_total' => 0,
-            ];
-        }
-
-        foreach ($checkins as $item) {
-            $dateStr = $item->visit_date;
-            if (!isset($data[$dateStr])) continue;
-            $c = $item->classification;
-            $g = strtolower($item->gender ?? 'male');
-            $cnt = $item->count;
-
-            if ($c === 'Local') {
-                if ($g === 'male') $data[$dateStr]['this_male'] += $cnt;
-                else $data[$dateStr]['this_female'] += $cnt;
-            } elseif ($c === 'Domestic' || $c === 'Domestic Tourist') {
-                if ($g === 'male') $data[$dateStr]['other_male'] += $cnt;
-                else $data[$dateStr]['other_female'] += $cnt;
-            } elseif ($c === 'Foreign' || $c === 'International Tourist') {
-                if ($g === 'male') $data[$dateStr]['foreign_male'] += $cnt;
-                else $data[$dateStr]['foreign_female'] += $cnt;
-            }
-        }
-
-        foreach ($walkins as $item) {
-            $dateStr = $item->visit_date;
-            if (!isset($data[$dateStr])) continue;
-            $c = $item->classification;
-            $g = strtolower($item->gender ?? 'male');
-            $cnt = $item->count;
-
-            if ($c === 'Local') {
-                if ($g === 'male') $data[$dateStr]['this_male'] += $cnt;
-                else $data[$dateStr]['this_female'] += $cnt;
-            } elseif ($c === 'Domestic' || $c === 'Domestic Tourist') {
-                if ($g === 'male') $data[$dateStr]['other_male'] += $cnt;
-                else $data[$dateStr]['other_female'] += $cnt;
-            } elseif ($c === 'Foreign' || $c === 'International Tourist') {
-                if ($g === 'male') $data[$dateStr]['foreign_male'] += $cnt;
-                else $data[$dateStr]['foreign_female'] += $cnt;
-            }
-        }
-
-        foreach ($data as $dateStr => &$row) {
-            $row['this_total'] = $row['this_male'] + $row['this_female'];
-            $row['other_total'] = $row['other_male'] + $row['other_female'];
-            $row['foreign_total'] = $row['foreign_male'] + $row['foreign_female'];
-            $row['grand_male'] = $row['this_male'] + $row['other_male'] + $row['foreign_male'];
-            $row['grand_female'] = $row['this_female'] + $row['other_female'] + $row['foreign_female'];
-            $row['grand_total'] = $row['grand_male'] + $row['grand_female'];
-        }
-        unset($row);
-
-        $templateProcessor = new \PhpOffice\PhpWord\TemplateProcessor(storage_path('app/Docx_Template/Tourism Attraction Visitor Record.docx'));
-
-        $monthYearLabel = $start->format('F Y');
-        $cityLabel = "Tigbao, Zamboanga del Sur";
-        $attractionName = "All Attractions";
-        $attractionType = "Various";
-
-        if ($request->destination_id) {
-            $dest = Destination::find($request->destination_id);
-            if ($dest) {
-                $attractionName = $dest->name;
-                $attractionType = $dest->description ?? 'Nature/Attraction';
-            }
-        }
-
-        $templateProcessor->setValue('month_year', $monthYearLabel);
-        $templateProcessor->setValue('city_municipality', $cityLabel);
-        $templateProcessor->setValue('attraction_name', $attractionName);
-        $templateProcessor->setValue('attraction_type', $attractionType);
-
-        $numRows = count($days);
-        $templateProcessor->cloneRow('day', $numRows);
-
-        $sumThisMale = 0; $sumThisFemale = 0; $sumThisTotal = 0;
-        $sumOtherMale = 0; $sumOtherFemale = 0; $sumOtherTotal = 0;
-        $sumForeignMale = 0; $sumForeignFemale = 0; $sumForeignTotal = 0;
-        $sumGrandMale = 0; $sumGrandFemale = 0; $sumGrandTotal = 0;
-
-        $rowIdx = 1;
-        foreach ($data as $dateStr => $row) {
-            $templateProcessor->setValue("day#{$rowIdx}", $row['day']);
-            $templateProcessor->setValue("week_day#{$rowIdx}", $row['week_day']);
-            $templateProcessor->setValue("this_male#{$rowIdx}", $row['this_male']);
-            $templateProcessor->setValue("this_female#{$rowIdx}", $row['this_female']);
-            $templateProcessor->setValue("this_total#{$rowIdx}", $row['this_total']);
-            $templateProcessor->setValue("other_male#{$rowIdx}", $row['other_male']);
-            $templateProcessor->setValue("other_female#{$rowIdx}", $row['other_female']);
-            $templateProcessor->setValue("other_total#{$rowIdx}", $row['other_total']);
-            $templateProcessor->setValue("foreign_male#{$rowIdx}", $row['foreign_male']);
-            $templateProcessor->setValue("foreign_female#{$rowIdx}", $row['foreign_female']);
-            $templateProcessor->setValue("foreign_total#{$rowIdx}", $row['foreign_total']);
-            $templateProcessor->setValue("grand_male#{$rowIdx}", $row['grand_male']);
-            $templateProcessor->setValue("grand_female#{$rowIdx}", $row['grand_female']);
-            $templateProcessor->setValue("grand_total#{$rowIdx}", $row['grand_total']);
-
-            $sumThisMale += $row['this_male'];
-            $sumThisFemale += $row['this_female'];
-            $sumThisTotal += $row['this_total'];
-            $sumOtherMale += $row['other_male'];
-            $sumOtherFemale += $row['other_female'];
-            $sumOtherTotal += $row['other_total'];
-            $sumForeignMale += $row['foreign_male'];
-            $sumForeignFemale += $row['foreign_female'];
-            $sumForeignTotal += $row['foreign_total'];
-            $sumGrandMale += $row['grand_male'];
-            $sumGrandFemale += $row['grand_female'];
-            $sumGrandTotal += $row['grand_total'];
-
-            $rowIdx++;
-        }
-
-        $templateProcessor->setValue('sum_this_male', $sumThisMale);
-        $templateProcessor->setValue('sum_this_female', $sumThisFemale);
-        $templateProcessor->setValue('sum_this_total', $sumThisTotal);
-        $templateProcessor->setValue('sum_other_male', $sumOtherMale);
-        $templateProcessor->setValue('sum_other_female', $sumOtherFemale);
-        $templateProcessor->setValue('sum_other_total', $sumOtherTotal);
-        $templateProcessor->setValue('sum_foreign_male', $sumForeignMale);
-        $templateProcessor->setValue('sum_foreign_female', $sumForeignFemale);
-        $templateProcessor->setValue('sum_foreign_total', $sumForeignTotal);
-        $templateProcessor->setValue('sum_grand_male', $sumGrandMale);
-        $templateProcessor->setValue('sum_grand_female', $sumGrandFemale);
-        $templateProcessor->setValue('sum_grand_total', $sumGrandTotal);
-
-        $tempFile = tempnam(sys_get_temp_dir(), 'docx_report');
-        $templateProcessor->saveAs($tempFile);
-
-        $cleanName = str_replace(' ', '_', $attractionName);
-        return response()->download($tempFile, "{$cleanName}-{$monthYearLabel}.docx")->deleteFileAfterSend(true);
     }
 
     /**
@@ -260,12 +74,22 @@ class ReportController extends Controller
         $viewData = $this->buildVisitorRecordData($request);
         extract($viewData); // gives us $data, $monthYearLabel, $cityLabel, $attractionName, $daysInMonth
 
-        $templateProcessor = new \PhpOffice\PhpWord\TemplateProcessor(base_path('resources/templates/Tourism Attraction Visitor Record.docx'));
+        $templatePath = $this->getDocxTemplatePath();
+        if (!$templatePath || !file_exists($templatePath)) {
+            return back()->with('error', 'Report template (.docx) was not found on the server.');
+        }
 
-        $templateProcessor->setValue('month_year', $monthYearLabel);
-        $templateProcessor->setValue('city_municipality', $cityLabel);
-        $templateProcessor->setValue('attraction_name', $attractionName);
-        $templateProcessor->setValue('type_of_attraction', '');
+        $templateProcessor = new \PhpOffice\PhpWord\TemplateProcessor($templatePath);
+        
+        $setVal = function($key, $val) use ($templateProcessor) {
+            $safeVal = htmlspecialchars((string)$val, ENT_QUOTES | ENT_SUBSTITUTE | ENT_XML1, 'UTF-8');
+            $templateProcessor->setValue($key, $safeVal);
+        };
+
+        $setVal('month_year', $monthYearLabel);
+        $setVal('city_municipality', $cityLabel);
+        $setVal('attraction_name', $attractionName);
+        $setVal('type_of_attraction', $attractionType ?? '');
 
         $sumThisMale = 0; $sumThisFemale = 0; $sumThisTotal = 0;
         $sumOtherMale = 0; $sumOtherFemale = 0; $sumOtherTotal = 0;
@@ -274,20 +98,20 @@ class ReportController extends Controller
 
         $rowIdx = 1;
         foreach ($data as $row) {
-            $templateProcessor->setValue("day#{$rowIdx}", $row['day']);
-            $templateProcessor->setValue("week_day#{$rowIdx}", $row['week_day']);
-            $templateProcessor->setValue("this_male#{$rowIdx}", $row['this_male']);
-            $templateProcessor->setValue("this_female#{$rowIdx}", $row['this_female']);
-            $templateProcessor->setValue("this_total#{$rowIdx}", $row['this_total']);
-            $templateProcessor->setValue("other_male#{$rowIdx}", $row['other_male']);
-            $templateProcessor->setValue("other_female#{$rowIdx}", $row['other_female']);
-            $templateProcessor->setValue("other_total#{$rowIdx}", $row['other_total']);
-            $templateProcessor->setValue("foreign_male#{$rowIdx}", $row['foreign_male']);
-            $templateProcessor->setValue("foreign_female#{$rowIdx}", $row['foreign_female']);
-            $templateProcessor->setValue("foreign_total#{$rowIdx}", $row['foreign_total']);
-            $templateProcessor->setValue("grand_male#{$rowIdx}", $row['grand_male']);
-            $templateProcessor->setValue("grand_female#{$rowIdx}", $row['grand_female']);
-            $templateProcessor->setValue("grand_total#{$rowIdx}", $row['grand_total']);
+            $setVal("day#{$rowIdx}", $row['day']);
+            $setVal("week_day#{$rowIdx}", $row['week_day']);
+            $setVal("this_male#{$rowIdx}", $row['this_male']);
+            $setVal("this_female#{$rowIdx}", $row['this_female']);
+            $setVal("this_total#{$rowIdx}", $row['this_total']);
+            $setVal("other_male#{$rowIdx}", $row['other_male']);
+            $setVal("other_female#{$rowIdx}", $row['other_female']);
+            $setVal("other_total#{$rowIdx}", $row['other_total']);
+            $setVal("foreign_male#{$rowIdx}", $row['foreign_male']);
+            $setVal("foreign_female#{$rowIdx}", $row['foreign_female']);
+            $setVal("foreign_total#{$rowIdx}", $row['foreign_total']);
+            $setVal("grand_male#{$rowIdx}", $row['grand_male']);
+            $setVal("grand_female#{$rowIdx}", $row['grand_female']);
+            $setVal("grand_total#{$rowIdx}", $row['grand_total']);
 
             $sumThisMale    += $row['this_male'];
             $sumThisFemale  += $row['this_female'];
@@ -311,33 +135,66 @@ class ReportController extends Controller
                       'other_male', 'other_female', 'other_total',
                       'foreign_male', 'foreign_female', 'foreign_total',
                       'grand_male', 'grand_female', 'grand_total'] as $field) {
-                $templateProcessor->setValue("{$field}#{$i}", '');
+                $setVal("{$field}#{$i}", '');
             }
         }
 
-        $templateProcessor->setValue('sum_this_male',    $sumThisMale);
-        $templateProcessor->setValue('sum_this_female',  $sumThisFemale);
-        $templateProcessor->setValue('sum_this_total',   $sumThisTotal);
-        $templateProcessor->setValue('sum_other_male',   $sumOtherMale);
-        $templateProcessor->setValue('sum_other_female', $sumOtherFemale);
-        $templateProcessor->setValue('sum_other_total',  $sumOtherTotal);
-        $templateProcessor->setValue('sum_foreign_male',   $sumForeignMale);
-        $templateProcessor->setValue('sum_foreign_female', $sumForeignFemale);
-        $templateProcessor->setValue('sum_foreign_total',  $sumForeignTotal);
-        $templateProcessor->setValue('sum_grand_male',   $sumGrandMale);
-        $templateProcessor->setValue('sum_grand_female', $sumGrandFemale);
-        $templateProcessor->setValue('sum_grand_total',  $sumGrandTotal);
+        $setVal('sum_this_male',    $sumThisMale);
+        $setVal('sum_this_female',  $sumThisFemale);
+        $setVal('sum_this_total',   $sumThisTotal);
+        $setVal('sum_other_male',   $sumOtherMale);
+        $setVal('sum_other_female', $sumOtherFemale);
+        $setVal('sum_other_total',  $sumOtherTotal);
+        $setVal('sum_foreign_male',   $sumForeignMale);
+        $setVal('sum_foreign_female', $sumForeignFemale);
+        $setVal('sum_foreign_total',  $sumForeignTotal);
+        $setVal('sum_grand_male',   $sumGrandMale);
+        $setVal('sum_grand_female', $sumGrandFemale);
+        $setVal('sum_grand_total',  $sumGrandTotal);
 
         $tempFile = tempnam(sys_get_temp_dir(), 'docx_vr');
         $templateProcessor->saveAs($tempFile);
 
-        $cleanName = str_replace(' ', '_', $attractionName);
-        return response()->download($tempFile, "{$cleanName}-{$monthYearLabel}.docx")->deleteFileAfterSend(true);
+        $cleanName = str_replace([' ', '/', '\\'], '_', $attractionName);
+        $filename  = "{$cleanName}-{$monthYearLabel}.docx";
+
+        return response()->download($tempFile, $filename, [
+            'Content-Type' => 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+        ])->deleteFileAfterSend(true);
+    }
+
+    /**
+     * Legacy DOCX export route alias.
+     */
+    public function exportDocx(Request $request)
+    {
+        return $this->exportVisitorRecord($request);
     }
 
     /* ------------------------------------------------------------------ */
     /*  Private helpers                                                     */
     /* ------------------------------------------------------------------ */
+
+    /**
+     * Locate the DOCX template from known locations.
+     */
+    private function getDocxTemplatePath(): ?string
+    {
+        $possiblePaths = [
+            resource_path('templates/Tourism Attraction Visitor Record.docx'),
+            base_path('resources/templates/Tourism Attraction Visitor Record.docx'),
+            base_path('Docx_Template/Tourism Attraction Visitor Record.docx'),
+            storage_path('app/Docx_Template/Tourism Attraction Visitor Record.docx'),
+        ];
+
+        foreach ($possiblePaths as $path) {
+            if (file_exists($path)) {
+                return $path;
+            }
+        }
+
+        return null;
+    }
 
     /**
      * Aggregate daily visitor counts by residence type & gender for one calendar month.
@@ -347,7 +204,7 @@ class ReportController extends Controller
     {
         $request->validate([
             'date_from'      => 'required|date',
-            'date_to'        => 'required|date|after_or_equal:date_from',
+            'date_to'        => 'nullable|date',
             'destination_id' => 'nullable|exists:destinations,id',
         ]);
 
@@ -355,7 +212,7 @@ class ReportController extends Controller
         $end         = \Carbon\Carbon::parse($request->date_from)->endOfMonth();
         $daysInMonth = $start->daysInMonth;
 
-        // Build a keyed array of all days in the month (ensures every day appears even with 0 counts)
+        // Build a keyed array of all days in the month
         $data = [];
         for ($d = $start->copy(); $d->lte($end); $d->addDay()) {
             $dateStr = $d->toDateString();
@@ -369,8 +226,8 @@ class ReportController extends Controller
             ];
         }
 
-        // --- Check-ins (online bookings that were physically checked in) ---
-        $checkins = CheckIn::query()
+        // 1. Primary checked-in tourists (Bookings + CheckIns + Users)
+        $primaryCheckins = CheckIn::query()
             ->join('bookings', 'check_ins.booking_id', '=', 'bookings.id')
             ->join('users',    'bookings.tourist_id',  '=', 'users.id')
             ->selectRaw('DATE(bookings.visit_date) as visit_date, users.classification, users.gender, COUNT(*) as cnt')
@@ -379,7 +236,17 @@ class ReportController extends Controller
             ->groupBy('visit_date', 'users.classification', 'users.gender')
             ->get();
 
-        // --- Walk-ins ---
+        // 2. Checked-in companions (Bookings + CheckIns + BookingCompanions)
+        $companionCheckins = DB::table('booking_companions')
+            ->join('bookings', 'booking_companions.booking_id', '=', 'bookings.id')
+            ->join('check_ins', 'check_ins.booking_id', '=', 'bookings.id')
+            ->selectRaw('DATE(bookings.visit_date) as visit_date, booking_companions.classification, booking_companions.gender, COUNT(*) as cnt')
+            ->whereBetween('bookings.visit_date', [$start->toDateString(), $end->toDateString()])
+            ->when($request->destination_id, fn($q) => $q->where('bookings.destination_id', $request->destination_id))
+            ->groupBy('visit_date', 'booking_companions.classification', 'booking_companions.gender')
+            ->get();
+
+        // 3. Walk-ins
         $walkins = WalkIn::query()
             ->selectRaw('DATE(created_at) as visit_date, classification, gender, COUNT(*) as cnt')
             ->whereBetween('created_at', [$start->toDateString() . ' 00:00:00', $end->toDateString() . ' 23:59:59'])
@@ -387,29 +254,51 @@ class ReportController extends Controller
             ->groupBy('visit_date', 'classification', 'gender')
             ->get();
 
+        // Helper to resolve bucket
+        $classify = function(?string $c): ?string {
+            $val = trim((string)$c);
+            if (empty($val) || strcasecmp($val, 'Local') === 0 || stripos($val, 'City') !== false || stripos($val, 'Municipality') !== false) {
+                return 'this';
+            }
+            if (strcasecmp($val, 'Domestic') === 0 || stripos($val, 'Domestic') !== false) {
+                return 'other';
+            }
+            if (strcasecmp($val, 'Foreign') === 0 || stripos($val, 'International') !== false || stripos($val, 'Foreign') !== false) {
+                return 'foreign';
+            }
+            return 'this';
+        };
+
+        // Helper to resolve gender
+        $genderize = function(?string $g): string {
+            $val = strtolower(trim((string)$g));
+            return (in_array($val, ['female', 'f', 'woman', 'girl'])) ? 'female' : 'male';
+        };
+
         // Aggregate into $data
-        foreach ([$checkins, $walkins] as $collection) {
+        foreach ([$primaryCheckins, $companionCheckins, $walkins] as $collection) {
             foreach ($collection as $item) {
                 $dateStr = $item->visit_date;
                 if (!isset($data[$dateStr])) continue;
-                $c   = $item->classification;
-                $g   = strtolower($item->gender ?? 'male');
-                $cnt = (int) $item->cnt;
 
-                $bucket = match(true) {
-                    $c === 'Local'                                     => 'this',
-                    in_array($c, ['Domestic', 'Domestic Tourist'])     => 'other',
-                    in_array($c, ['Foreign', 'International Tourist']) => 'foreign',
-                    default                                            => null,
-                };
-                if ($bucket === null) continue;
+                $bucket = $classify($item->classification ?? 'Local');
+                $g      = $genderize($item->gender ?? 'male');
+                $cnt    = (int) $item->cnt;
 
-                if ($g === 'male')   $data[$dateStr]["{$bucket}_male"]   += $cnt;
-                else                 $data[$dateStr]["{$bucket}_female"] += $cnt;
+                $data[$dateStr]["{$bucket}_{$g}"] += $cnt;
             }
         }
 
-        // Compute totals per row
+        // Compute row totals
+        $summary = [
+            'total_this'    => 0,
+            'total_other'   => 0,
+            'total_foreign' => 0,
+            'total_male'    => 0,
+            'total_female'  => 0,
+            'grand_total'   => 0,
+        ];
+
         foreach ($data as &$row) {
             $row['this_total']    = $row['this_male']    + $row['this_female'];
             $row['other_total']   = $row['other_male']   + $row['other_female'];
@@ -417,6 +306,13 @@ class ReportController extends Controller
             $row['grand_male']    = $row['this_male']    + $row['other_male']    + $row['foreign_male'];
             $row['grand_female']  = $row['this_female']  + $row['other_female']  + $row['foreign_female'];
             $row['grand_total']   = $row['grand_male']   + $row['grand_female'];
+
+            $summary['total_this']    += $row['this_total'];
+            $summary['total_other']   += $row['other_total'];
+            $summary['total_foreign'] += $row['foreign_total'];
+            $summary['total_male']    += $row['grand_male'];
+            $summary['total_female']  += $row['grand_female'];
+            $summary['grand_total']   += $row['grand_total'];
         }
         unset($row);
 
@@ -424,51 +320,69 @@ class ReportController extends Controller
         $monthYearLabel = $start->format('F Y');
         $cityLabel      = config('app.municipality_name', 'Tigbao, Zamboanga del Sur');
         $attractionName = 'All Attractions';
+        $attractionType = 'Ecotourism & Heritage Attractions';
 
         if ($request->destination_id) {
             $dest = Destination::find($request->destination_id);
             if ($dest) {
                 $attractionName = $dest->name;
+                $attractionType = $dest->description ? \Illuminate\Support\Str::limit($dest->description, 60) : 'Tourist Attraction';
             }
         }
 
-        return compact('data', 'monthYearLabel', 'cityLabel', 'attractionName', 'daysInMonth');
+        return compact('data', 'monthYearLabel', 'cityLabel', 'attractionName', 'attractionType', 'daysInMonth', 'summary');
     }
 
     private function buildStats(array $filters): array
     {
-        $query = Booking::whereBetween('visit_date', [
-            $filters['date_from'],
-            $filters['date_to'],
-        ]);
+        $dateFrom = $filters['date_from'];
+        $dateTo   = $filters['date_to'];
+        $destId   = $filters['destination_id'];
 
-        if (!empty($filters['destination_id'])) {
-            $query->where('destination_id', $filters['destination_id']);
-        }
+        $bookingQuery = Booking::whereBetween('visit_date', [$dateFrom, $dateTo])
+            ->when(!empty($destId), fn($q) => $q->where('destination_id', $destId));
 
-        $bookings = $query->get();
-
-        $stats = $query->clone()
+        $bookingCounts = $bookingQuery->clone()
             ->selectRaw('COUNT(*) as total_bookings')
             ->selectRaw("SUM(CASE WHEN status IN ('confirmed','completed') THEN 1 ELSE 0 END) as confirmed")
             ->selectRaw("SUM(CASE WHEN status = 'declined' THEN 1 ELSE 0 END) as declined")
             ->selectRaw("SUM(CASE WHEN status = 'pending' THEN 1 ELSE 0 END) as pending")
+            ->selectRaw("SUM(CASE WHEN status = 'cancelled' THEN 1 ELSE 0 END) as cancelled")
             ->first();
 
-        $totalVisitors = CheckIn::query()
+        // Checked-in primary tourists
+        $primaryVisitors = CheckIn::query()
             ->join('bookings', 'check_ins.booking_id', '=', 'bookings.id')
-            ->whereBetween('bookings.visit_date', [$filters['date_from'], $filters['date_to']])
-            ->when(!empty($filters['destination_id']), function ($q) use ($filters) {
-                $q->where('bookings.destination_id', $filters['destination_id']);
-            })
+            ->whereBetween('bookings.visit_date', [$dateFrom, $dateTo])
+            ->when(!empty($destId), fn($q) => $q->where('bookings.destination_id', $destId))
             ->count();
 
+        // Checked-in companions
+        $companionVisitors = DB::table('booking_companions')
+            ->join('bookings', 'booking_companions.booking_id', '=', 'bookings.id')
+            ->join('check_ins', 'check_ins.booking_id', '=', 'bookings.id')
+            ->whereBetween('bookings.visit_date', [$dateFrom, $dateTo])
+            ->when(!empty($destId), fn($q) => $q->where('bookings.destination_id', $destId))
+            ->count();
+
+        // Walk-in visitors
+        $walkinVisitors = WalkIn::query()
+            ->whereBetween('created_at', [$dateFrom . ' 00:00:00', $dateTo . ' 23:59:59'])
+            ->when(!empty($destId), fn($q) => $q->where('destination_id', $destId))
+            ->count();
+
+        $totalVisitors = $primaryVisitors + $companionVisitors + $walkinVisitors;
+
         return [
-            'total_bookings' => (int) ($stats->total_bookings ?? 0),
-            'total_visitors' => (int) $totalVisitors,
-            'confirmed'      => (int) ($stats->confirmed ?? 0),
-            'declined'       => (int) ($stats->declined ?? 0),
-            'pending'        => (int) ($stats->pending ?? 0),
+            'total_bookings'     => (int) ($bookingCounts->total_bookings ?? 0),
+            'confirmed'          => (int) ($bookingCounts->confirmed ?? 0),
+            'declined'           => (int) ($bookingCounts->declined ?? 0),
+            'pending'            => (int) ($bookingCounts->pending ?? 0),
+            'cancelled'          => (int) ($bookingCounts->cancelled ?? 0),
+            'total_visitors'     => (int) $totalVisitors,
+            'primary_visitors'   => (int) $primaryVisitors,
+            'companion_visitors' => (int) $companionVisitors,
+            'walkin_visitors'    => (int) $walkinVisitors,
         ];
     }
 
@@ -478,8 +392,8 @@ class ReportController extends Controller
             ->join('destinations', 'bookings.destination_id', '=', 'destinations.id')
             ->whereBetween('bookings.visit_date', [$filters['date_from'], $filters['date_to']])
             ->whereIn('bookings.status', ['confirmed', 'completed'])
-            ->select('destinations.name', DB::raw('count(*) as total'))
-            ->groupBy('destinations.name')
+            ->select('destinations.id', 'destinations.name', 'destinations.location', DB::raw('count(*) as total'))
+            ->groupBy('destinations.id', 'destinations.name', 'destinations.location')
             ->orderByDesc('total')
             ->limit(5)
             ->get();

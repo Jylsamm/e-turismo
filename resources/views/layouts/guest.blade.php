@@ -1,4 +1,4 @@
-@props(['maxWidth' => 'sm:max-w-md'])
+@props(['maxWidth' => 'max-w-md md:max-w-lg lg:max-w-[540px]'])
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
     <head>
@@ -8,9 +8,10 @@
 
         <title>{{ config('app.name', 'Laravel') }}</title>
 
-        <!-- Fonts -->
-        <link rel="preconnect" href="https://fonts.bunny.net">
-        <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
+        <!-- Typography: Space Grotesk & Inter -->
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
 
         <!-- Favicon -->
         @php
@@ -86,15 +87,41 @@
             #auth-card input[type="date"],
             #auth-card select,
             #auth-card textarea {
-                background-color: rgba(255, 255, 255, 0.9) !important;
-                color: #1e293b !important;
-                border: 1px solid rgba(255, 255, 255, 0.15) !important;
-                border-radius: 0.5rem !important; /* rounded-lg */
-                padding: 0.625rem 0.875rem !important;
-                font-size: 0.875rem !important;
-                font-weight: 500 !important;
+                background-color: rgba(255, 255, 255, 0.95) !important;
+                color: #0f172a !important;
+                border: 1.5px solid rgba(255, 255, 255, 0.25) !important;
+                border-radius: 1rem !important; /* rounded-2xl */
+                padding: 1rem 1.25rem !important;
+                font-size: 1.25rem !important;
+                font-weight: 700 !important;
+                line-height: 1.5 !important;
+                letter-spacing: -0.01em !important;
                 box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.06) !important;
                 transition: border-color 0.25s ease-out, box-shadow 0.25s ease-out, background-color 0.25s ease-out !important;
+            }
+
+            #auth-card input[type="password"] {
+                letter-spacing: 0.15em !important;
+                font-size: 1.35rem !important;
+            }
+
+            @media (min-width: 768px) {
+                #auth-card input[type="text"],
+                #auth-card input[type="email"],
+                #auth-card input[type="password"],
+                #auth-card input[type="date"],
+                #auth-card select,
+                #auth-card textarea {
+                    padding: 1.15rem 1.5rem !important;
+                    font-size: 1.45rem !important;
+                    font-weight: 700 !important;
+                    border-radius: 1.15rem !important;
+                }
+
+                #auth-card input[type="password"] {
+                    letter-spacing: 0.2em !important;
+                    font-size: 1.6rem !important;
+                }
             }
 
             #auth-card input[type="text"]:focus,
@@ -105,7 +132,7 @@
             #auth-card textarea:focus {
                 background-color: #ffffff !important;
                 border-color: #ffffff !important;
-                box-shadow: 0 0 10px rgba(255, 255, 255, 0.6), inset 0 2px 4px rgba(0, 0, 0, 0.06) !important;
+                box-shadow: 0 0 14px rgba(255, 255, 255, 0.7), inset 0 2px 4px rgba(0, 0, 0, 0.06) !important;
             }
 
             /* ── Buttons styling ── */
@@ -113,27 +140,44 @@
             #auth-card .btn-primary,
             #auth-card .otp-button,
             #auth-card x-primary-button,
-            #auth-card #submit-btn {
+            #auth-card #submit-btn,
+            #auth-card #login-submit-btn {
                 background-color: #10b981 !important;
                 color: #ffffff !important;
                 font-weight: 700 !important;
                 text-transform: uppercase !important;
                 letter-spacing: 0.05em !important;
-                padding: 0.625rem 1.25rem !important;
-                border-radius: 0.5rem !important;
+                padding: 0.875rem 1.5rem !important;
+                font-size: 1.0625rem !important;
+                border-radius: 0.75rem !important;
                 border: none !important;
                 cursor: pointer !important;
                 box-shadow: 0 4px 6px -1px rgba(16, 185, 129, 0.2), 0 2px 4px -1px rgba(16, 185, 129, 0.1) !important;
                 transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s ease-out, background-color 0.2s ease-out !important;
             }
 
+            @media (min-width: 768px) {
+                #auth-card button[type="submit"],
+                #auth-card .btn-primary,
+                #auth-card .otp-button,
+                #auth-card x-primary-button,
+                #auth-card #submit-btn,
+                #auth-card #login-submit-btn {
+                    padding: 1.05rem 1.85rem !important;
+                    font-size: 1.1875rem !important;
+                    border-radius: 0.875rem !important;
+                    letter-spacing: 0.06em !important;
+                }
+            }
+
             #auth-card button[type="submit"]:hover:not(:disabled),
             #auth-card .btn-primary:hover:not(:disabled),
             #auth-card .otp-button:hover:not(:disabled),
-            #auth-card #submit-btn:hover:not(:disabled) {
+            #auth-card #submit-btn:hover:not(:disabled),
+            #auth-card #login-submit-btn:hover:not(:disabled) {
                 background-color: #059669 !important;
-                transform: scale(1.03) !important;
-                box-shadow: 0 0 15px rgba(16, 185, 129, 0.5), 0 10px 15px -3px rgba(16, 185, 129, 0.3) !important;
+                transform: scale(1.02) !important;
+                box-shadow: 0 0 20px rgba(16, 185, 129, 0.5), 0 10px 15px -3px rgba(16, 185, 129, 0.3) !important;
             }
 
             #auth-card button[type="submit"]:active:not(:disabled),
@@ -339,6 +383,7 @@
         <!-- Dark Overlay -->
         <div class="fixed inset-0 bg-black/40 -z-10"></div>
 
+<<<<<<< Updated upstream
         <div class="min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0 relative z-0">
             <div>
                 <a href="/">
@@ -347,7 +392,19 @@
             </div>
 
             <div id="auth-card" class="{{ $maxWidth }} w-full mt-6 px-6 py-4 overflow-hidden">
+=======
+        <div class="min-h-screen flex flex-col justify-center items-center py-6 sm:py-8 md:py-10 px-4 sm:px-6 relative z-0">
+            <div id="auth-card" class="{{ $maxWidth }} w-full mx-auto px-6 py-6 sm:px-8 sm:py-8 md:px-10 md:py-9 overflow-hidden rounded-2xl md:rounded-3xl">
+>>>>>>> Stashed changes
                 <div class="spotlight-overlay"></div>
+
+                <!-- Brand Logo (Inside Card) -->
+                <div class="select-none mb-5 sm:mb-6 text-center">
+                    <a href="{{ route('home') }}" class="inline-block transition-all duration-300 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-emerald-400 rounded-2xl p-1" title="Return to E-Turismo Home">
+                        <x-application-logo class="h-12 sm:h-14 md:h-16 lg:h-18 w-auto max-w-[240px] sm:max-w-[300px] md:max-w-[360px] mx-auto drop-shadow-[0_8px_20px_rgba(0,0,0,0.6)]" style="filter: brightness(0) invert(1);" />
+                    </a>
+                </div>
+
                 {{ $slot }}
             </div>
         </div>

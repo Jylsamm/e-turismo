@@ -1,17 +1,13 @@
 <x-app-layout>
-    @push('head')
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css" />
-    @endpush
-
     <style>
         .stat-card {
             background: #fff;
-            border: 1px solid #e5e7eb;
-            border-radius: 12px;
+            border: 1.5px solid #e5e7eb;
+            border-radius: 16px;
             padding: 1.5rem;
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: 14px;
             transition: all 0.3s ease-in-out;
         }
         .stat-card:hover {
@@ -20,37 +16,37 @@
             border-color: #bbf7d0;
         }
         .stat-icon {
-            width: 40px;
-            height: 40px;
-            border-radius: 8px;
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 20px;
+            font-size: 22px;
             flex-shrink: 0;
         }
         .stat-label {
-            font-size: 13px;
-            color: #9ca3af;
-            font-weight: 500;
+            font-size: 0.82rem;
+            color: #64748b;
+            font-weight: 700;
             text-transform: uppercase;
-            letter-spacing: 0.4px;
+            letter-spacing: 0.5px;
         }
         .stat-value {
-            font-size: 32px;
-            font-weight: 600;
+            font-size: 2.25rem;
+            font-weight: 800;
             line-height: 1;
         }
         .action-btn {
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            width: 32px;
-            height: 32px;
-            border-radius: 7px;
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
             border: none;
             cursor: pointer;
-            font-size: 16px;
+            font-size: 18px;
             transition: all 0.15s;
             text-decoration: none;
         }
@@ -61,14 +57,14 @@
     <div class="pb-8 pt-0 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
 
         {{-- Header Summary --}}
-        <div class="flex items-center justify-between border-b border-gray-200 pb-4">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between border-b border-gray-200 pb-4 gap-3">
             <div>
-                <h1 class="text-2xl font-bold text-gray-800">Operations Center</h1>
-                <p class="text-sm text-gray-500 mt-1">Real-time overview of today's tourist spot activities.</p>
+                <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900">Operations Center</h1>
+                <p class="text-sm sm:text-base text-slate-500 mt-1">Real-time overview of today's tourist spot activities.</p>
             </div>
             <div class="flex gap-2">
-                <a href="{{ route('checkins.create') }}" class="inline-flex items-center gap-1.5 bg-green-700 hover:bg-green-800 text-white font-semibold rounded-xl px-4 py-2 text-sm transition">
-                    <i class="ti ti-qrcode"></i> Scan Check-In
+                <a href="{{ route('checkins.create') }}" class="inline-flex items-center gap-2 bg-green-700 hover:bg-green-800 text-white font-bold rounded-xl px-5 py-2.5 text-sm sm:text-base transition shadow-sm hover:shadow">
+                    <i class="ti ti-qrcode text-lg"></i> Scan Check-In
                 </a>
             </div>
         </div>
@@ -145,46 +141,53 @@
         {{-- Bookings & Check-ins Columns --}}
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {{-- Recent Booking Requests --}}
-            <div class="interactive-card overflow-hidden flex flex-col justify-between">
+            <div class="seamless-table-card flex flex-col justify-between">
                 <div>
-                    <div class="px-6 py-4 border-b border-gray-100 flex items-center gap-2">
-                        <i class="ti ti-list-details text-gray-400" style="font-size:20px;"></i>
-                        <h2 class="font-semibold text-gray-700">Recent Booking Requests</h2>
+                    <div class="seamless-table-header">
+                        <div class="seamless-table-title-group">
+                            <div class="seamless-table-icon">
+                                <i class="ti ti-list-details"></i>
+                            </div>
+                            <div>
+                                <div class="seamless-table-title">Recent Booking Requests</div>
+                                <div class="seamless-table-subtitle">Pending tourist requests requiring confirmation</div>
+                            </div>
+                        </div>
                     </div>
                     <div class="overflow-x-auto">
-                        <table class="w-full text-sm text-left">
+                        <table class="seamless-table">
                             <thead>
-                                <tr class="bg-gray-50 border-b border-gray-100">
-                                    <th class="px-6 py-3 text-xs font-semibold text-gray-400 uppercase tracking-wide">Visitor</th>
-                                    <th class="px-6 py-3 text-xs font-semibold text-gray-400 uppercase tracking-wide">Spot</th>
-                                    <th class="px-6 py-3 text-xs font-semibold text-gray-400 uppercase tracking-wide">Visit Date</th>
-                                    <th class="px-6 py-3 text-xs font-semibold text-gray-400 uppercase tracking-wide">Status</th>
-                                    <th class="px-6 py-3 text-center text-xs font-semibold text-gray-400 uppercase tracking-wide">Action</th>
+                                <tr>
+                                    <th class="text-left">Visitor</th>
+                                    <th class="text-left">Spot</th>
+                                    <th class="text-left">Visit Date</th>
+                                    <th class="text-left">Status</th>
+                                    <th class="text-center">Action</th>
                                 </tr>
                             </thead>
-                            <tbody class="divide-y divide-gray-50">
+                            <tbody>
                                 @forelse($recentPendingBookings as $booking)
                                     <tr>
-                                        <td class="px-6 py-3 font-medium text-gray-800">{{ $booking->tourist?->name ?? 'Unknown' }}</td>
-                                        <td class="px-6 py-3 text-gray-600">{{ $booking->destination?->name ?? '—' }}</td>
-                                        <td class="px-6 py-3 text-gray-500">{{ \Illuminate\Support\Carbon::parse($booking->visit_date)->format('M j, Y') }}</td>
-                                        <td class="px-6 py-3">
-                                            <span class="inline-flex items-center gap-1 text-xs font-semibold text-amber-700 bg-amber-50 px-2 py-0.5 rounded-full">
-                                                <i class="ti ti-clock" style="font-size:10px;"></i> Pending
+                                        <td class="font-bold text-slate-900">{{ $booking->tourist?->name ?? 'Unknown' }}</td>
+                                        <td class="text-slate-700 font-medium">{{ $booking->destination?->name ?? '—' }}</td>
+                                        <td class="text-slate-600 font-medium">{{ \Illuminate\Support\Carbon::parse($booking->visit_date)->format('M j, Y') }}</td>
+                                        <td>
+                                            <span class="inline-flex items-center gap-1.5 text-xs font-bold text-amber-800 bg-amber-50 px-2.5 py-1 rounded-full border border-amber-200">
+                                                <i class="ti ti-clock text-xs"></i> Pending
                                             </span>
                                         </td>
-                                        <td class="px-6 py-3 text-center">
-                                            <a href="{{ route('staff.bookings.index') }}" class="action-btn action-btn-view" title="Quick View">
+                                        <td class="text-center">
+                                            <a href="{{ route('staff.bookings.index') }}" class="action-btn action-btn-view inline-flex items-center justify-center" title="Quick View">
                                                 <i class="ti ti-eye"></i>
                                             </a>
                                         </td>
                                     </tr>
                                 @empty
                                     <tr>
-                                        <td colspan="5" class="px-6 py-8 text-center text-gray-450">
+                                        <td colspan="5" class="px-6 py-8 text-center text-gray-400">
                                             <div class="flex flex-col items-center gap-2">
                                                 <i class="ti ti-inbox" style="font-size:28px;"></i>
-                                                <span class="text-sm">No pending booking requests</span>
+                                                <span class="text-sm font-medium">No pending booking requests</span>
                                             </div>
                                         </td>
                                     </tr>
@@ -193,42 +196,49 @@
                         </table>
                     </div>
                 </div>
-                <div class="p-4 border-t border-gray-100 text-right bg-gray-50">
-                    <a href="{{ route('staff.bookings.index') }}" class="text-sm font-semibold text-green-700 hover:text-green-800 inline-flex items-center gap-1">
-                        Go to Bookings <i class="ti ti-arrow-right"></i>
+                <div class="p-3.5 border-t border-stone-200 text-right bg-stone-50">
+                    <a href="{{ route('staff.bookings.index') }}" class="text-xs sm:text-sm font-bold text-emerald-800 hover:text-emerald-900 inline-flex items-center gap-1.5">
+                        Go to Bookings Queue <i class="ti ti-arrow-right"></i>
                     </a>
                 </div>
             </div>
 
             {{-- Recent Check-ins --}}
-            <div class="interactive-card overflow-hidden flex flex-col justify-between">
+            <div class="seamless-table-card flex flex-col justify-between">
                 <div>
-                    <div class="px-6 py-4 border-b border-gray-100 flex items-center gap-2">
-                        <i class="ti ti-user-check text-gray-400" style="font-size:20px;"></i>
-                        <h2 class="font-semibold text-gray-700">Recent Check-ins</h2>
+                    <div class="seamless-table-header">
+                        <div class="seamless-table-title-group">
+                            <div class="seamless-table-icon">
+                                <i class="ti ti-user-check"></i>
+                            </div>
+                            <div>
+                                <div class="seamless-table-title">Recent Check-ins</div>
+                                <div class="seamless-table-subtitle">Live gate entry and arrivals recorded today</div>
+                            </div>
+                        </div>
                     </div>
                     <div class="overflow-x-auto">
-                        <table class="w-full text-sm text-left">
+                        <table class="seamless-table">
                             <thead>
-                                <tr class="bg-gray-50 border-b border-gray-100">
-                                    <th class="px-6 py-3 text-xs font-semibold text-gray-400 uppercase tracking-wide">Visitor</th>
-                                    <th class="px-6 py-3 text-xs font-semibold text-gray-400 uppercase tracking-wide">Spot</th>
-                                    <th class="px-6 py-3 text-xs font-semibold text-gray-400 uppercase tracking-wide">Check-in Time</th>
+                                <tr>
+                                    <th class="text-left">Visitor</th>
+                                    <th class="text-left">Spot</th>
+                                    <th class="text-left">Check-in Time</th>
                                 </tr>
                             </thead>
-                            <tbody class="divide-y divide-gray-50">
+                            <tbody>
                                 @forelse($recentCheckIns as $checkIn)
                                     <tr>
-                                        <td class="px-6 py-3 font-medium text-gray-800">{{ $checkIn->booking->tourist?->name ?? 'Unknown' }}</td>
-                                        <td class="px-6 py-3 text-gray-600">{{ $checkIn->booking->destination?->name ?? '—' }}</td>
-                                        <td class="px-6 py-3 text-gray-500">{{ $checkIn->arrival_time->diffForHumans() }}</td>
+                                        <td class="font-bold text-slate-900">{{ $checkIn->booking->tourist?->name ?? 'Unknown' }}</td>
+                                        <td class="text-slate-700 font-medium">{{ $checkIn->booking->destination?->name ?? '—' }}</td>
+                                        <td class="text-slate-600 font-medium">{{ $checkIn->arrival_time->diffForHumans() }}</td>
                                     </tr>
                                 @empty
                                     <tr>
-                                        <td colspan="3" class="px-6 py-8 text-center text-gray-450">
+                                        <td colspan="3" class="px-6 py-8 text-center text-gray-400">
                                             <div class="flex flex-col items-center gap-2">
                                                 <i class="ti ti-inbox" style="font-size:28px;"></i>
-                                                <span class="text-sm">No arrivals recorded today</span>
+                                                <span class="text-sm font-medium">No arrivals recorded today</span>
                                             </div>
                                         </td>
                                     </tr>
@@ -237,8 +247,14 @@
                         </table>
                     </div>
                 </div>
-                <div class="p-4 border-t border-gray-100 text-right bg-gray-50">
-                    <a href="{{ route('checkins.create') }}" class="text-sm font-semibold text-green-700 hover:text-green-800 inline-flex items-center gap-1">
+                <div class="p-3.5 border-t border-stone-200 text-right bg-stone-50">
+                    <a href="{{ route('staff.checkins.create') }}" class="text-xs sm:text-sm font-bold text-emerald-800 hover:text-emerald-900 inline-flex items-center gap-1.5">
+                        Open QR Scanner <i class="ti ti-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+                    <a href="{{ route('checkins.create') }}" class="text-sm sm:text-base font-bold text-green-700 hover:text-green-800 inline-flex items-center gap-1.5">
                         Open Check-in Panel <i class="ti ti-arrow-right"></i>
                     </a>
                 </div>
@@ -246,26 +262,26 @@
         </div>
 
         {{-- Spot Occupancy Overview --}}
-        <div class="interactive-card overflow-hidden">
+        <div class="interactive-card overflow-hidden rounded-2xl border border-gray-200">
             <div class="px-6 py-4 border-b border-gray-100 flex items-center gap-2">
-                <i class="ti ti-gauge text-gray-400" style="font-size:20px;"></i>
-                <h2 class="font-semibold text-gray-700">Spot Occupancy Overview</h2>
+                <i class="ti ti-gauge text-gray-400 text-xl"></i>
+                <h2 class="font-bold text-lg text-gray-800">Spot Occupancy Overview</h2>
             </div>
             <div class="p-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 @foreach($spots as $spot)
-                    <a href="{{ route('spots.dashboard', $spot) }}" class="block p-5 border border-gray-200 rounded-xl hover:border-green-600 transition-all duration-300 ease-in-out hover:-translate-y-1 hover:shadow-lg space-y-4">
+                    <a href="{{ route('spots.dashboard', $spot) }}" class="block p-5 border border-gray-200 rounded-2xl hover:border-green-600 transition-all duration-300 ease-in-out hover:-translate-y-1 hover:shadow-lg space-y-4">
                         <div class="flex justify-between items-start">
                             <div>
-                                <h3 class="font-bold text-gray-800 text-lg">{{ $spot->name }}</h3>
-                                <p class="text-xs text-gray-400 mt-0.5"><i class="ti ti-map-pin"></i> {{ $spot->location }}</p>
+                                <h3 class="font-extrabold text-gray-900 text-xl">{{ $spot->name }}</h3>
+                                <p class="text-xs sm:text-sm text-slate-500 mt-1"><i class="ti ti-map-pin"></i> {{ $spot->location }}</p>
                             </div>
                             @if($spot->occupancy_pct >= 100)
-                                <span class="inline-flex items-center gap-1 text-xs font-semibold text-red-700 bg-red-50 px-2 py-0.5 rounded-full">
-                                    <i class="ti ti-circle-x-filled" style="font-size:10px;"></i> Full
+                                <span class="inline-flex items-center gap-1.5 text-xs sm:text-sm font-bold text-red-700 bg-red-50 px-3 py-1 rounded-full border border-red-200">
+                                    <i class="ti ti-circle-x-filled text-xs"></i> Full
                                 </span>
                             @else
-                                <span class="inline-flex items-center gap-1 text-xs font-semibold text-green-700 bg-green-50 px-2 py-0.5 rounded-full">
-                                    <i class="ti ti-circle-check-filled" style="font-size:10px;"></i> Open
+                                <span class="inline-flex items-center gap-1.5 text-xs sm:text-sm font-bold text-green-700 bg-green-50 px-3 py-1 rounded-full border border-green-200">
+                                    <i class="ti ti-circle-check-filled text-xs"></i> Open
                                 </span>
                             @endif
                         </div>

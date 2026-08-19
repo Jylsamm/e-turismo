@@ -28,7 +28,27 @@ class DashboardController extends Controller
 
     private function adminDashboard()
     {
+<<<<<<< Updated upstream
         return view('dashboard');
+=======
+        $analytics = app(AnalyticsController::class);
+        $request = request();
+        $request->merge(['range' => 'today']);
+
+        $kpis = json_decode($analytics->getKpis($request)->getContent(), true);
+        $trends = json_decode($analytics->getTrendData($request)->getContent(), true);
+        $advanced = json_decode($analytics->getAdvancedData($request)->getContent(), true);
+
+        $destinations = Destination::query()->select(['id', 'name'])->get();
+
+        $initialAnalytics = [
+            'kpis' => $kpis,
+            'trends' => $trends,
+            'advanced' => $advanced,
+        ];
+
+        return view('dashboard', compact('initialAnalytics', 'destinations'));
+>>>>>>> Stashed changes
     }
 
     private function staffDashboard()

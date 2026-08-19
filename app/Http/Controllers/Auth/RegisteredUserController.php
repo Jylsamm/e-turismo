@@ -96,12 +96,27 @@ class RegisteredUserController extends Controller
         }
 
         // Compose full name: First [M.I.] Last [Suffix]
-        $nameParts = array_filter([
-            trim($request->first_name),
-            $request->middle_initial ? strtoupper(rtrim($request->middle_initial, '.')) . '.' : null,
-            trim($request->last_name),
-            $request->suffix ? trim($request->suffix) : null,
-        ]);
+        $firstName = trim($request->first_name);
+        $middleInitial = $request->middle_initial ? strtoupper(rtrim($request->middle_initial, '.')) . '.' : null;
+        if ($middleInitial && in_array(strtoupper(rtrim($middleInitial, '.')), ['N/A', 'NA', 'NONE', 'NOT APPLICABLE', 'NULL'])) {
+            $middleInitial = null;
+        }
+
+        $lastName = trim($request->last_name);
+        $suffix = $request->suffix ? trim($request->suffix) : null;
+        if ($suffix && in_array(strtoupper($suffix), ['N/A', 'NA', 'NONE', 'NOT APPLICABLE', 'NULL'])) {
+            $suffix = null;
+        }
+
+        if ($middleInitial) {
+            $rawMi = rtrim($middleInitial, '.');
+            $firstName = preg_replace('/\s+' . preg_quote($rawMi, '/') . '\.?$/i', '', $firstName);
+        }
+        if ($lastName) {
+            $firstName = preg_replace('/\s+' . preg_quote($lastName, '/') . '$/i', '', $firstName);
+        }
+
+        $nameParts = array_filter([$firstName, $middleInitial, $lastName, $suffix]);
         $fullName = implode(' ', $nameParts);
 
         // Fix 6: Wrap ONLY the user insert in a DB transaction.
@@ -109,15 +124,13 @@ class RegisteredUserController extends Controller
         // a dispatch/event failure can never roll back the user row.
         try {
             $user = DB::transaction(function () use (
-                $request, $fullName, $isSchoolId, $idPhotoPath
+                $request, $fullName, $middleInitial, $suffix, $isSchoolId, $idPhotoPath
             ) {
                 $newUser = User::create([
                     'name'            => $fullName,
                     'last_name'       => trim($request->last_name),
-                    'middle_initial'  => $request->middle_initial
-                        ? strtoupper(rtrim($request->middle_initial, '.')) . '.'
-                        : null,
-                    'suffix'          => $request->suffix ? trim($request->suffix) : null,
+                    'middle_initial'  => $middleInitial,
+                    'suffix'          => $suffix,
                     'email'           => $request->email,
                     'password'        => Hash::make($request->password),
                     'role'            => 'tourist',
@@ -158,18 +171,15 @@ class RegisteredUserController extends Controller
         // Log the user in before dispatching the job so the session is established
         Auth::login($user);
 
-        // Fix 2: Dispatch OCR job AFTER login so the user is already saved to DB.
-        // With QUEUE_CONNECTION=sync (default for XAMPP), this still runs inline
-        // but exceptions from OCR can no longer prevent the user account from existing.
+        // Dispatch OCR job asynchronously using afterResponse() so the tourist receives an immediate
+        // redirect to the dashboard without waiting for external OCR API latency
         try {
-            VerifyUserIdentityJob::dispatch($user);
+            VerifyUserIdentityJob::dispatch($user)->afterResponse();
         } catch (\Throwable $e) {
-            // Fix 6: OCR dispatch failure must never prevent the user from reaching the dashboard
             Log::error('[Registration] Failed to dispatch VerifyUserIdentityJob: ' . $e->getMessage(), [
                 'user_id'   => $user->id,
                 'exception' => $e,
             ]);
-            // Gracefully fall back to 'pending' so admin can manually review
             $user->update([
                 'id_verification_status' => 'pending',
                 'id_verification_notes'  => 'OCR_DISPATCH_FAILED: ' . $e->getMessage(),

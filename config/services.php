@@ -44,7 +44,8 @@ return [
     | Paid plans support files up to 25 MB (required for composite camera photos).
     */
     'ocr' => [
-        'key' => env('OCR_SPACE_API_KEY'),
+        'key'      => env('OCR_SPACE_API_KEY'),
+        'endpoint' => env('OCR_SPACE_ENDPOINT', 'https://api.ocr.space/parse/image'),
     ],
 
 ];

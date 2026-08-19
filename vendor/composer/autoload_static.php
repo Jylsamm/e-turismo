@@ -698,6 +698,7 @@ class ComposerStaticInit3c863d22a472c64e9bab0170aac32fcc
     );
 
     public static $classMap = array (
+        'App\\Console\\Commands\\SendRegistrationOtpCommand' => __DIR__ . '/../..' . '/app/Console/Commands/SendRegistrationOtpCommand.php',
         'App\\Http\\Controllers\\AnalyticsController' => __DIR__ . '/../..' . '/app/Http/Controllers/AnalyticsController.php',
         'App\\Http\\Controllers\\Auth\\AuthenticatedSessionController' => __DIR__ . '/../..' . '/app/Http/Controllers/Auth/AuthenticatedSessionController.php',
         'App\\Http\\Controllers\\Auth\\ConfirmablePasswordController' => __DIR__ . '/../..' . '/app/Http/Controllers/Auth/ConfirmablePasswordController.php',

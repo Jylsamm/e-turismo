@@ -1,3 +1,7 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap');
+@import '@tabler/icons-webfont/dist/tabler-icons.min.css';
+@import '@tabler/icons-webfont/dist/tabler-icons-filled.min.css';
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -34,12 +38,48 @@
     --et-gradient-hover: linear-gradient(135deg, #052e16 0%, #0B3D2E 40%, #15803d 70%, #22c55e 100%);
     --et-gradient-light: linear-gradient(135deg, #22c55e 0%, #4ADE80 60%, #a3e635 100%);
   }
-}
 
-/* ── Global body background ── */
-@layer base {
+  [x-cloak] {
+    display: none !important;
+  }
+
+  html {
+    font-family: 'Space Grotesk', 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    font-size: 16px;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
   body {
     background-color: var(--et-bg);
+    font-family: 'Space Grotesk', 'Inter', system-ui, -apple-system, sans-serif;
+    font-weight: 400;
+    color: #1e293b;
+    line-height: 1.5;
+    font-size: 0.9375rem; /* 15px crisp readable UI base */
+  }
+
+  /* Standard Headings across all app views: Crisp, futuristic Space Grotesk */
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Space Grotesk', 'Inter', system-ui, -apple-system, sans-serif;
+    letter-spacing: -0.02em;
+    color: #0f172a;
+  }
+
+  /* Display-only Anton font (used specifically on landing page hero titles, now normalized to futuristic Space Grotesk) */
+  .font-anton, .font-anton *, .heading-anton, .heading-anton * {
+    font-family: 'Space Grotesk', system-ui, sans-serif !important;
+    letter-spacing: -0.025em;
+    font-weight: 700 !important;
+  }
+
+  /* Standard UI text and controls */
+  p, span, a, button, label, input, select, textarea, td, th, li, .font-poppins, .font-space {
+    font-family: 'Space Grotesk', 'Inter', system-ui, -apple-system, sans-serif;
+  }
+
+  .font-inter {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
   }
 }
 
@@ -49,6 +89,115 @@
     @apply bg-white rounded-2xl border border-gray-200 shadow-sm
            transition-all duration-300 ease-in-out
            hover:-translate-y-1 hover:shadow-lg hover:shadow-green-600/15 hover:border-green-200;
+  }
+
+  /* ── Seamless Ledger Table System (Admin & Staff) ── */
+  .seamless-table-card {
+    background: #ffffff;
+    border: 1.5px solid #E7E0D6;
+    border-radius: 1.25rem;
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(28, 25, 23, 0.04);
+  }
+
+  .seamless-table-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.125rem 1.375rem;
+    border-bottom: 1px solid #E7E0D6;
+    background: #ffffff;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+
+  .seamless-table-title-group {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .seamless-table-icon {
+    width: 2.25rem;
+    height: 2.25rem;
+    border-radius: 0.625rem;
+    background: #ecfdf5;
+    color: #065f46;
+    border: 1px solid #a7f3d0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    flex-shrink: 0;
+  }
+
+  .seamless-table-title {
+    font-size: 0.8125rem;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: #064e3b;
+    line-height: 1.2;
+  }
+
+  .seamless-table-subtitle {
+    font-size: 0.75rem;
+    color: #78716c;
+    margin-top: 0.125rem;
+    font-weight: 500;
+  }
+
+  .seamless-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  .seamless-table thead th {
+    padding: 0.75rem 1rem;
+    font-size: 0.75rem;
+    font-weight: 800;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: #78716c;
+    text-align: left;
+    border-bottom: 2px solid #E7E0D6;
+    border-right: 1px solid #E7E0D6;
+    white-space: nowrap;
+    background: #FAF8F4;
+  }
+
+  .seamless-table thead th:last-child {
+    border-right: none;
+  }
+
+  .seamless-table tbody tr {
+    border-bottom: 1px solid #E7E0D6;
+    transition: background 150ms ease;
+    background: #ffffff;
+  }
+
+  .seamless-table tbody tr:nth-child(even) {
+    background: #FAF8F4;
+  }
+
+  .seamless-table tbody tr:hover {
+    background: #F0EDE6;
+  }
+
+  .seamless-table tbody tr:last-child {
+    border-bottom: none;
+  }
+
+  .seamless-table td {
+    padding: 0.875rem 1rem;
+    vertical-align: middle;
+    font-size: 0.875rem;
+    border-right: 1px solid #E7E0D6;
+    border-bottom: 1px solid #E7E0D6;
+  }
+
+  .seamless-table td:last-child {
+    border-right: none;
   }
 }
 

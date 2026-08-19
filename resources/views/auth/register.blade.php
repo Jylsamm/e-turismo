@@ -875,14 +875,25 @@
   /* ── Text Readability inside Dark Glass Container ── */
   #reg-form label {
     color: rgba(255, 255, 255, 0.95) !important;
+    font-size: 1rem !important;
+    font-weight: 600 !important;
   }
   .section-title h2 {
     color: #ffffff !important;
-    font-size: 1.25rem !important;
+    font-size: 1.35rem !important;
     font-weight: 800 !important;
   }
+<<<<<<< Updated upstream
   .section-hint, .otp-message {
     color: rgba(255, 255, 255, 0.7) !important;
+=======
+
+  .section-hint,
+  .otp-message {
+    color: rgba(255, 255, 255, 0.85) !important;
+    font-size: 0.95rem !important;
+    line-height: 1.5 !important;
+>>>>>>> Stashed changes
   }
   .otp-message.text-red-600 {
     color: #f87171 !important;
@@ -927,7 +938,7 @@
   }
 </style>
 
-<x-guest-layout maxWidth="sm:max-w-2xl">
+<x-guest-layout maxWidth="max-w-xl md:max-w-3xl lg:max-w-4xl">
   <!-- Back Button -->
   <div class="mb-6">
     <a href="{{ route('home') }}"
@@ -1091,6 +1102,7 @@
       {{-- Row 2: Get Code button (always visible once email valid) --}}
       <div class="flex items-center gap-3 mt-3">
         <button type="button" id="btn-get-code" class="otp-button" disabled>Get Code</button>
+        <button type="button" id="btn-edit-email" class="hidden text-xs font-bold text-emerald-400 hover:text-emerald-300 underline transition cursor-pointer">Change Email</button>
       </div>
 
       {{-- Row 3: OTP input + Verify — hidden until code is sent --}}
@@ -1779,6 +1791,8 @@
     // ── Form validity ──────────────────────────────────────────
     let otpVerified = false;
     let codeSent = false;
+    let cooldownExpiresAt = null;
+    let cooldownTimerInterval = null;
 
     // Extra refs for new elements
     const otpRevealRow = document.getElementById('otp-reveal-row');
@@ -2020,6 +2034,159 @@
       }
     }
 
+<<<<<<< Updated upstream
+=======
+    window.handleNextStep2 = function () {
+      const fn = firstNameInput ? firstNameInput.value.trim() : '';
+      const ln = lastNameInput ? lastNameInput.value.trim() : '';
+      const cl = classificationSelect ? classificationSelect.value : '';
+      const gEl = document.getElementById('gender');
+      const g = gEl ? gEl.value : '';
+      const ph = contactInput ? contactInput.value.trim() : '';
+
+      let isValid = true;
+      let firstInvalidEl = null;
+
+      const errFn = document.getElementById('err-first-name');
+      const errLn = document.getElementById('err-last-name');
+      const errCl = document.getElementById('err-classification');
+      const errG = document.getElementById('err-gender');
+      const errPh = document.getElementById('err-contact');
+
+      if (errFn) {
+        if (!fn) { errFn.classList.remove('hidden'); isValid = false; if (!firstInvalidEl) firstInvalidEl = firstNameInput; }
+        else { errFn.classList.add('hidden'); }
+      }
+
+      if (errLn) {
+        if (!ln) { errLn.classList.remove('hidden'); isValid = false; if (!firstInvalidEl) firstInvalidEl = lastNameInput; }
+        else { errLn.classList.add('hidden'); }
+      }
+
+      if (errCl) {
+        if (!cl) { errCl.classList.remove('hidden'); isValid = false; }
+        else { errCl.classList.add('hidden'); }
+      }
+
+      if (errG) {
+        if (g !== 'Male' && g !== 'Female') { errG.classList.remove('hidden'); isValid = false; }
+        else { errG.classList.add('hidden'); }
+      }
+
+      if (errPh) {
+        if (ph.length < 7) { errPh.classList.remove('hidden'); isValid = false; if (!firstInvalidEl) firstInvalidEl = contactInput; }
+        else { errPh.classList.add('hidden'); }
+      }
+
+      if (!isValid) {
+        if (firstInvalidEl) firstInvalidEl.focus();
+        return;
+      }
+
+      navigateToStep(2);
+    };
+
+    window.handleNextStep3 = function () {
+      const idTypeVal = idTypeSelect ? idTypeSelect.value : '';
+      const idNumVal  = idInput ? idInput.value.trim() : '';
+      const needsDob  = ID_TYPES_WITH_DOB.has(idTypeVal);
+      const dobVal    = dobInput ? dobInput.value : '';
+
+      let isValid = true;
+      let firstInvalidEl = null;
+
+      const errIdType = document.getElementById('err-id-type');
+      const errIdNum  = document.getElementById('err-id-number');
+      const errDob    = document.getElementById('err-dob');
+      const errPhoto  = document.getElementById('err-id-photo');
+
+      if (errIdType) {
+        if (!idTypeVal) { errIdType.classList.remove('hidden'); isValid = false; if (!firstInvalidEl) firstInvalidEl = idTypeSelect; }
+        else { errIdType.classList.add('hidden'); }
+      }
+
+      if (errIdNum) {
+        if (!idNumVal) { errIdNum.classList.remove('hidden'); isValid = false; if (!firstInvalidEl) firstInvalidEl = idInput; }
+        else { errIdNum.classList.add('hidden'); }
+      }
+
+      if (errDob) {
+        if (needsDob && !dobVal) { errDob.classList.remove('hidden'); isValid = false; }
+        else { errDob.classList.add('hidden'); }
+      }
+
+      if (errPhoto) {
+        if (!captured) { errPhoto.classList.remove('hidden'); isValid = false; }
+        else { errPhoto.classList.add('hidden'); }
+      }
+
+      if (!isValid) {
+        if (firstInvalidEl) firstInvalidEl.focus();
+        return;
+      }
+
+      navigateToStep(3);
+    };
+
+    window.handleNextStep4 = function () {
+      const pwd  = passwordInput ? passwordInput.value : '';
+      const pwdC = confirmPasswordInput ? confirmPasswordInput.value : '';
+
+      let isValid = true;
+      let firstInvalidEl = null;
+
+      const errPwd  = document.getElementById('err-password');
+      const errPwdC = document.getElementById('err-password-confirm');
+
+      if (errPwd) {
+        if (pwd.length < 8) { errPwd.classList.remove('hidden'); isValid = false; if (!firstInvalidEl) firstInvalidEl = passwordInput; }
+        else { errPwd.classList.add('hidden'); }
+      }
+
+      if (errPwdC) {
+        if (!pwdC || pwdC !== pwd) { errPwdC.classList.remove('hidden'); isValid = false; if (!firstInvalidEl) firstInvalidEl = confirmPasswordInput; }
+        else { errPwdC.classList.add('hidden'); }
+      }
+
+      const base64Val = document.getElementById('id_photo_base64') ? document.getElementById('id_photo_base64').value : '';
+      const fileCount = document.getElementById('id_photo') && document.getElementById('id_photo').files ? document.getElementById('id_photo').files.length : 0;
+      const hasPhoto  = captured || base64Val.length > 0 || fileCount > 0;
+
+      if (!hasPhoto) {
+        // If ID photo is missing, auto-navigate to ID Check step & highlight camera error
+        navigateToStep(2);
+        const errPhoto = document.getElementById('err-id-photo');
+        if (errPhoto) errPhoto.classList.remove('hidden');
+        return;
+      }
+
+      if (!isValid) {
+        if (firstInvalidEl) firstInvalidEl.focus();
+        return;
+      }
+
+      // ── All valid — trigger account creation ──
+      const btnSubmit = document.getElementById('btn-create-account');
+      const progressWrap = document.getElementById('submit-progress-wrap');
+      if (btnSubmit) {
+        btnSubmit.disabled = true;
+        btnSubmit.classList.add('opacity-75', 'cursor-not-allowed');
+        btnSubmit.innerHTML = `<span class="flex items-center gap-2">
+          <svg class="w-4 h-4 animate-spin text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+          </svg>
+          Creating Account...
+        </span>`;
+      }
+      if (progressWrap) {
+        progressWrap.classList.add('visible');
+      }
+
+      document.getElementById('reg-form').requestSubmit();
+    };
+
+>>>>>>> Stashed changes
     // Bind listeners to trigger updateStepProgress as user types/selects
     [firstNameInput, lastNameInput, passwordInput, confirmPasswordInput, idInput].forEach(el => {
       if (el) el.addEventListener('input', updateStepProgress);
@@ -2033,11 +2200,15 @@
 
     function saveFormState() {
       const state = {
-        email: emailInput.value,
-        verifiedEmail: otpVerified ? emailInput.value : null,
+        email: emailInput.value.trim(),
+        verifiedEmail: otpVerified ? emailInput.value.trim() : null,
+        codeSent: Boolean(codeSent),
+        otpPendingEmail: codeSent ? emailInput.value.trim() : null,
+        cooldownExpiresAt: cooldownExpiresAt || null,
         first_name: (document.getElementById('first_name') || {}).value || '',
         last_name: (document.getElementById('last_name') || {}).value || '',
         middle_initial: (document.getElementById('middle_initial') || {}).value || '',
+        suffix: (document.getElementById('suffix') || {}).value || '',
         classification: (document.getElementById('classification') || {}).value || '',
         gender: (document.getElementById('gender') || {}).value || '',
         id_type: idTypeSelect.value,
@@ -2070,6 +2241,13 @@
       if (state.password_confirmation) { confirmPasswordInput.value = state.password_confirmation; }
 
       // Restore verified email state (skip OTP re-entry)
+<<<<<<< Updated upstream
+=======
+      @if($errors->has('email'))
+        delete state.verifiedEmail;
+        delete state.codeSent;
+      @endif
+>>>>>>> Stashed changes
       if (state.verifiedEmail) {
         emailInput.value = state.verifiedEmail;
         otpVerified = true;
@@ -2090,6 +2268,50 @@
 
         msgDiv.className = 'mt-1 text-xs font-semibold text-green-600';
         msgDiv.textContent = '✓ Gmail address verified.';
+        const btnEditEmail = document.getElementById('btn-edit-email');
+        if (btnEditEmail) btnEditEmail.classList.add('hidden');
+      } else if (state.codeSent && state.otpPendingEmail) {
+        // Code was sent, user refreshed before entering OTP or verifying
+        emailInput.value = state.otpPendingEmail;
+        codeSent = true;
+        emailInput.readOnly = true;
+        emailInput.style.background = '#f9fafb';
+
+        // Reveal OTP row immediately on page reload
+        otpRevealRow.classList.add('otp-visible');
+        const btnEditEmail = document.getElementById('btn-edit-email');
+        if (btnEditEmail) btnEditEmail.classList.remove('hidden');
+
+        otpStatus.textContent = 'A 6-digit code was sent to your Gmail address. Check your inbox.';
+        otpStatus.className = 'otp-message text-green-600';
+
+        if (state.cooldownExpiresAt) {
+          cooldownExpiresAt = state.cooldownExpiresAt;
+          const remaining = Math.max(0, Math.ceil((state.cooldownExpiresAt - Date.now()) / 1000));
+          if (remaining > 0) {
+            btnGetCode.disabled = true;
+            btnGetCode.textContent = `Resend in ${remaining}s`;
+            if (cooldownTimerInterval) clearInterval(cooldownTimerInterval);
+            cooldownTimerInterval = setInterval(() => {
+              const curSec = Math.max(0, Math.ceil((cooldownExpiresAt - Date.now()) / 1000));
+              if (curSec <= 0) {
+                clearInterval(cooldownTimerInterval);
+                btnGetCode.innerHTML = 'Resend Code';
+                btnGetCode.disabled = false;
+                return;
+              }
+              btnGetCode.textContent = `Resend in ${curSec}s`;
+            }, 1000);
+          } else {
+            btnGetCode.innerHTML = 'Resend Code';
+            btnGetCode.disabled = false;
+          }
+        } else {
+          btnGetCode.innerHTML = 'Resend Code';
+          btnGetCode.disabled = false;
+        }
+
+        setTimeout(() => { if (otpInput) otpInput.focus(); }, 300);
       } else if (state.email) {
         emailInput.value = state.email;
       }
@@ -2206,65 +2428,104 @@
       }
     }
 
-    // ── Get Code ───────────────────────────────────────────────
+    // ── Get Code (Turbo Instant Optimistic Dispatch) ───────────
     btnGetCode.addEventListener('click', function () {
       const email = emailInput.value.trim();
       if (!email) return;
 
-      // Lock email input immediately
+      // 1. Instant Optimistic UI Reaction (< 10ms)
       emailInput.readOnly = true;
       emailInput.style.background = '#f9fafb';
       btnGetCode.disabled = true;
-      btnGetCode.innerHTML = '<svg class="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"/></svg>&ensp;Sending…';
 
-      otpStatus.textContent = '';
-      otpStatus.className = 'otp-message text-gray-500';
+      codeSent = true;
+      let cooldown = 60;
+      cooldownExpiresAt = Date.now() + (cooldown * 1000);
+      saveFormState();
 
+      // Immediately reveal OTP row with zero delay
+      otpRevealRow.classList.add('otp-visible');
+      setTimeout(() => { if (otpInput) otpInput.focus(); }, 150);
+
+      const btnEditEmail = document.getElementById('btn-edit-email');
+      if (btnEditEmail) btnEditEmail.classList.remove('hidden');
+
+      otpStatus.textContent = 'Sending 6-digit code to your Gmail inbox…';
+      otpStatus.className = 'otp-message text-emerald-400 font-semibold';
+
+      if (cooldownTimerInterval) clearInterval(cooldownTimerInterval);
+      btnGetCode.textContent = `Resend in ${cooldown}s`;
+      cooldownTimerInterval = setInterval(() => {
+        const remaining = Math.max(0, Math.ceil((cooldownExpiresAt - Date.now()) / 1000));
+        if (remaining <= 0) {
+          clearInterval(cooldownTimerInterval);
+          btnGetCode.innerHTML = 'Resend Code';
+          btnGetCode.disabled = false;
+          return;
+        }
+        btnGetCode.textContent = `Resend in ${remaining}s`;
+      }, 1000);
+
+      // 2. Network Dispatch in Background
       fetch("{{ route('register.send_code') }}", {
         method: 'POST', headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' }, body: JSON.stringify({ email })
       }).then(async r => {
         const d = await r.json();
         if (!r.ok) {
-          // Failure — re-unlock email + button
+          // Failure — rollback optimistic state
+          codeSent = false;
+          cooldownExpiresAt = null;
+          if (cooldownTimerInterval) clearInterval(cooldownTimerInterval);
           emailInput.readOnly = false;
           emailInput.style.background = '';
           btnGetCode.innerHTML = 'Get Code';
           btnGetCode.disabled = false;
+          otpRevealRow.classList.remove('otp-visible');
+          if (btnEditEmail) btnEditEmail.classList.add('hidden');
           otpStatus.textContent = d.message || 'Unable to send code.';
           otpStatus.className = 'otp-message text-red-600';
+          saveFormState();
           return;
         }
-        // Success
-        codeSent = true;
-        otpStatus.textContent = (d.message || 'Code sent!') + ' Check your Gmail inbox.';
-        otpStatus.className = 'otp-message text-green-600';
-
-        // Reveal OTP row with smooth transition
-        otpRevealRow.classList.add('otp-visible');
-        setTimeout(() => { otpInput.focus(); }, 400);
-
-        // Cooldown timer on Get Code button
-        let cooldown = d.cooldown || 60;
-        btnGetCode.textContent = `Resend in ${cooldown}s`;
-        const interval = setInterval(() => {
-          cooldown -= 1;
-          if (cooldown <= 0) {
-            clearInterval(interval);
-            btnGetCode.innerHTML = 'Resend Code';
-            btnGetCode.disabled = false;
-            return;
-          }
-          btnGetCode.textContent = `Resend in ${cooldown}s`;
-        }, 1000);
+        // Success confirmation
+        otpStatus.textContent = '✓ Code sent! Check your Gmail inbox.';
+        otpStatus.className = 'otp-message text-green-600 font-semibold';
       }).catch(() => {
+        // Rollback on network error
+        codeSent = false;
+        cooldownExpiresAt = null;
+        if (cooldownTimerInterval) clearInterval(cooldownTimerInterval);
         emailInput.readOnly = false;
         emailInput.style.background = '';
         btnGetCode.innerHTML = 'Get Code';
         btnGetCode.disabled = false;
-        otpStatus.textContent = 'Unable to send code at this time.';
+        otpRevealRow.classList.remove('otp-visible');
+        if (btnEditEmail) btnEditEmail.classList.add('hidden');
+        otpStatus.textContent = 'Unable to connect. Please check your internet connection.';
         otpStatus.className = 'otp-message text-red-600';
+        saveFormState();
       });
     });
+
+    // ── Change Email Button ────────────────────────────────────
+    const btnEditEmail = document.getElementById('btn-edit-email');
+    if (btnEditEmail) {
+      btnEditEmail.addEventListener('click', function () {
+        codeSent = false;
+        cooldownExpiresAt = null;
+        if (cooldownTimerInterval) clearInterval(cooldownTimerInterval);
+        emailInput.readOnly = false;
+        emailInput.style.background = '';
+        emailInput.focus();
+        otpRevealRow.classList.remove('otp-visible');
+        btnGetCode.innerHTML = 'Get Code';
+        btnGetCode.disabled = false;
+        btnEditEmail.classList.add('hidden');
+        otpStatus.textContent = 'Enter your Gmail address and click Get Code.';
+        otpStatus.className = 'otp-message text-gray-500';
+        saveFormState();
+      });
+    }
 
     // ── Verify Code ────────────────────────────────────────────
     btnVerifyCode.addEventListener('click', function () {
@@ -2335,6 +2596,19 @@
         btnVerifyCode.disabled = false;
       });
     });
+
+    // Check URL parameters for direct OTP prefill from email action link
+    const urlParams = new URLSearchParams(window.location.search);
+    const urlOtpCode = urlParams.get('code') || urlParams.get('otp');
+    if (urlOtpCode && urlOtpCode.length === 6 && otpInput && !otpVerified) {
+      otpRevealRow.classList.add('otp-visible');
+      otpInput.value = urlOtpCode;
+      setTimeout(() => {
+        if (btnVerifyCode && !btnVerifyCode.disabled) {
+          btnVerifyCode.focus();
+        }
+      }, 300);
+    }
 
     // ── Camera helpers ─────────────────────────────────────────
     function showState(name) {
@@ -2991,7 +3265,7 @@
           /* select — preventDefault stops blur from firing before click completes */
           li.addEventListener('mousedown', function (e) {
             e.preventDefault();
-            suffixInput.value = opt;
+            suffixInput.value = (opt === 'N/A') ? '' : opt;
             suffixInput.dispatchEvent(new Event('input', { bubbles: true }));
             suffixInput.dispatchEvent(new Event('change', { bubbles: true }));
             syncChecks();
@@ -3009,7 +3283,8 @@
           var cur = suffixInput.value.trim();
           ul.querySelectorAll('li').forEach(function (li) {
             var chk = li.querySelector('svg');
-            if (chk) chk.style.visibility = (li.dataset.value === cur) ? 'visible' : 'hidden';
+            var isMatch = (li.dataset.value === cur) || (li.dataset.value === 'N/A' && (cur === '' || cur.toUpperCase() === 'N/A'));
+            if (chk) chk.style.visibility = isMatch ? 'visible' : 'hidden';
           });
         }
 

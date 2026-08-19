@@ -36,10 +36,6 @@
         </div>
     </x-slot>
 
-    @push('head')
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css" />
-    @endpush
-
     <style>
         .tab-link {
             display: inline-flex;

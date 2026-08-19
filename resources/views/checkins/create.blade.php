@@ -6,10 +6,6 @@
         <p class="text-sm text-gray-500 mt-1">{{ $stats['destination_name'] }}</p>
     </x-slot>
 
-    @push('head')
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css" />
-    @endpush
-
     <style>
         /* ── Variables ─────────────────────────────── */
         :root {
@@ -205,12 +201,12 @@
         /* ── Stat pill ──────────────────────────────── */
         .stat-pill {
             background: #fff;
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: .85rem 1rem;
+            border: 1.5px solid var(--border);
+            border-radius: 16px;
+            padding: 1rem 1.15rem;
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 14px;
             cursor: pointer;
             transition: border-color .15s, box-shadow .15s;
             user-select: none;
@@ -222,36 +218,36 @@
         }
 
         .stat-icon {
-            width: 38px;
-            height: 38px;
-            border-radius: 9px;
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 19px;
+            font-size: 22px;
             flex-shrink: 0;
         }
 
         .stat-label {
-            font-size: 10px;
-            color: #9ca3af;
+            font-size: 0.78rem;
+            color: #64748b;
             font-weight: 700;
             text-transform: uppercase;
             letter-spacing: .5px;
         }
 
         .stat-value {
-            font-size: 1.35rem;
-            font-weight: 700;
-            color: #111827;
-            line-height: 1;
+            font-size: 1.6rem;
+            font-weight: 800;
+            color: #0f172a;
+            line-height: 1.1;
         }
     </style>
 
-    <div class="pt-2 pb-6 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-5">
+    <div class="pt-2 pb-6 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
 
         {{-- ① Stats Row ─────────────────────────────────────────────────── --}}
-        <div class="grid grid-cols-2 md:grid-cols-5 gap-3">
+        <div class="grid grid-cols-2 md:grid-cols-5 gap-4">
             <div class="stat-pill shadow-sm">
                 <div class="stat-icon bg-green-50 text-green-700"><i class="ti ti-user-check"></i></div>
                 <div>
@@ -266,7 +262,7 @@
                 <div class="stat-icon bg-amber-50 text-amber-600"><i class="ti ti-ticket"></i></div>
                 <div>
                     <div class="stat-label flex items-center gap-1">Pending <i class="ti ti-arrow-right text-amber-400"
-                            style="font-size:9px;"></i></div>
+                            style="font-size:11px;"></i></div>
                     <div class="stat-value text-amber-600" id="top-pending">{{ $stats['pending_arrivals'] }}</div>
                 </div>
             </div>
@@ -283,7 +279,7 @@
                 <div class="stat-icon bg-purple-50 text-purple-600"><i class="ti ti-map-pin"></i></div>
                 <div class="min-w-0">
                     <div class="stat-label">Spot</div>
-                    <div class="stat-value text-sm truncate" title="{{ $stats['destination_name'] }}">
+                    <div class="stat-value text-base font-bold truncate text-slate-800" title="{{ $stats['destination_name'] }}">
                         {{ $stats['destination_name'] }}</div>
                 </div>
             </div>
@@ -292,47 +288,47 @@
                 <div class="stat-icon bg-gray-100 text-gray-500" id="top-status-icon"><i class="ti ti-camera"></i></div>
                 <div>
                     <div class="stat-label">Camera</div>
-                    <div class="text-sm font-bold text-gray-400" id="top-status-text">Idle</div>
+                    <div class="text-base font-bold text-slate-600" id="top-status-text">Idle</div>
                 </div>
             </div>
         </div>
 
         {{-- ② Two-Column Main Layout ─────────────────────────────────────── --}}
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
 
             {{-- Left: Compact Scanner (5/12) ─────────────────────────────── --}}
             <div class="contents lg:block lg:col-span-5 lg:space-y-4">
 
                 {{-- Scanner Card --}}
-                <div class="interactive-card overflow-hidden order-1">
-                    <div class="px-5 py-3.5 border-b border-gray-100 flex items-center justify-between bg-gray-50">
-                        <h2 class="font-bold text-gray-800 text-sm flex items-center gap-2">
-                            <i class="ti ti-qrcode text-green-700"></i> QR Scanner
+                <div class="interactive-card overflow-hidden order-1 rounded-2xl border border-gray-200">
+                    <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between bg-gray-50">
+                        <h2 class="font-bold text-slate-900 text-base flex items-center gap-2">
+                            <i class="ti ti-qrcode text-green-700 text-xl"></i> QR Scanner
                         </h2>
                         <span id="camera-badge"
-                            class="inline-flex items-center gap-1 bg-gray-100 text-gray-500 px-2.5 py-1 rounded-full text-xs font-semibold">
+                            class="inline-flex items-center gap-1.5 bg-gray-100 text-slate-600 px-3 py-1 rounded-full text-xs sm:text-sm font-bold">
                             <i class="ti ti-camera"></i>
                             <span id="camera-badge-text">Camera Idle</span>
                         </span>
                     </div>
 
-                    <div class="p-5">
+                    <div class="p-6">
                         {{-- Camera device selector (shown when >1 camera) --}}
-                        <div id="camera-select-wrapper" class="mb-3 hidden">
-                            <label class="text-xs font-semibold text-gray-500 mb-1.5 flex items-center gap-1">
+                        <div id="camera-select-wrapper" class="mb-4 hidden">
+                            <label class="text-xs sm:text-sm font-bold text-slate-600 mb-1.5 flex items-center gap-1">
                                 <i class="ti ti-camera-rotate"></i> Switch Camera
                             </label>
                             <div class="relative">
                                 <select id="camera-select" onchange="switchCamera(this.value)"
-                                    class="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 focus:ring-2 focus:ring-green-400 outline-none appearance-none bg-white pr-8">
+                                    class="w-full text-sm sm:text-base font-semibold border border-gray-300 rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-green-400 outline-none appearance-none bg-white pr-9">
                                 </select>
                                 <span
-                                    class="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none text-xs">▾</span>
+                                    class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none text-xs">▾</span>
                             </div>
                         </div>
 
                         {{-- Compact QR Camera Box (Sized to fit column width) --}}
-                        <div class="scanner-container bg-gray-900 rounded-xl overflow-hidden flex items-center justify-center relative mx-auto w-full aspect-square"
+                        <div class="scanner-container bg-gray-900 rounded-2xl overflow-hidden flex items-center justify-center relative mx-auto w-full aspect-square"
                             id="scanner-frame">
 
                             <div id="reader" style="width:100%; height:100%;"></div>
@@ -350,54 +346,54 @@
                             {{-- Camera idle state --}}
                             <div class="text-center text-gray-400 z-10 px-4 absolute" id="camera-idle">
                                 <div class="text-5xl mb-3"><i class="ti ti-camera-off"></i></div>
-                                <p class="text-sm font-medium">Camera paused</p>
-                                <p class="text-xs mt-1 opacity-60">Press Start to activate</p>
+                                <p class="text-base font-bold text-slate-200">Camera paused</p>
+                                <p class="text-xs sm:text-sm mt-1 text-slate-400">Press Start to activate</p>
                             </div>
 
                             {{-- Verifying overlay --}}
                             <div class="absolute inset-0 bg-black/75 z-20 flex flex-col items-center justify-center text-white"
                                 id="verifying-overlay" style="display:none;">
                                 <i class="ti ti-loader-2 text-4xl text-green-400 spinner-loader mb-2"></i>
-                                <span class="text-sm font-semibold tracking-wide">Verifying ticket...</span>
+                                <span class="text-base font-bold tracking-wide">Verifying ticket...</span>
                             </div>
 
                             {{-- Camera Controls --}}
                             <div class="sc-controls">
                                 <button onclick="startCamera()" id="btn-start"
-                                    class="bg-green-700 hover:bg-green-800 text-white font-bold px-5 py-2 rounded-full text-xs flex items-center gap-1.5 shadow transition">
+                                    class="bg-green-700 hover:bg-green-800 text-white font-bold px-6 py-2.5 rounded-full text-xs sm:text-sm flex items-center gap-1.5 shadow transition cursor-pointer">
                                     <i class="ti ti-player-play"></i> Start Camera
                                 </button>
                                 <button onclick="stopCamera()" id="btn-stop" style="display:none;"
-                                    class="bg-white/10 hover:bg-white/20 text-white border border-white/25 font-bold px-5 py-2 rounded-full text-xs flex items-center gap-1.5 shadow transition">
+                                    class="bg-white/10 hover:bg-white/20 text-white border border-white/25 font-bold px-6 py-2.5 rounded-full text-xs sm:text-sm flex items-center gap-1.5 shadow transition cursor-pointer">
                                     <i class="ti ti-player-pause"></i> Pause
                                 </button>
                             </div>
                         </div>
 
                         {{-- Privacy Notice --}}
-                        <p class="text-center text-xs text-gray-400 mt-3 flex items-center justify-center gap-1">
-                            <i class="ti ti-shield-lock"></i>
+                        <p class="text-center text-xs sm:text-sm text-slate-400 mt-4 flex items-center justify-center gap-1.5">
+                            <i class="ti ti-shield-lock text-sm"></i>
                             Camera is used only for QR detection — not recorded or stored.
                         </p>
                     </div>
                 </div>
 
                 {{-- Scanner Health Card --}}
-                <div class="interactive-card p-5 space-y-3 order-5 w-full">
-                    <h3 class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Scanner Health</h3>
+                <div class="interactive-card p-5 space-y-3 order-5 w-full rounded-2xl border border-gray-200">
+                    <h3 class="text-xs sm:text-sm font-bold text-slate-400 uppercase tracking-wider">Scanner Health</h3>
                     <div class="space-y-2.5">
-                        <div class="flex items-center justify-between text-sm">
-                            <span class="text-gray-500 flex items-center gap-1.5"><i class="ti ti-camera"></i> Camera
+                        <div class="flex items-center justify-between text-sm sm:text-base font-medium">
+                            <span class="text-slate-600 flex items-center gap-2"><i class="ti ti-camera text-base"></i> Camera
                                 Link</span>
-                            <span class="font-bold text-gray-400" id="health-camera-val">Inactive</span>
+                            <span class="font-bold text-slate-400" id="health-camera-val">Inactive</span>
                         </div>
-                        <div class="flex items-center justify-between text-sm">
-                            <span class="text-gray-500 flex items-center gap-1.5"><i class="ti ti-scan"></i>
+                        <div class="flex items-center justify-between text-sm sm:text-base font-medium">
+                            <span class="text-slate-600 flex items-center gap-2"><i class="ti ti-scan text-base"></i>
                                 Decoder</span>
-                            <span class="font-bold text-gray-400" id="health-scanner-val">Off</span>
+                            <span class="font-bold text-slate-400" id="health-scanner-val">Off</span>
                         </div>
-                        <div class="flex items-center justify-between text-sm">
-                            <span class="text-gray-500 flex items-center gap-1.5"><i class="ti ti-wifi"></i>
+                        <div class="flex items-center justify-between text-sm sm:text-base font-medium">
+                            <span class="text-slate-600 flex items-center gap-2"><i class="ti ti-wifi text-base"></i>
                                 Connection</span>
                             <span class="font-bold text-green-600">Online</span>
                         </div>
@@ -406,38 +402,38 @@
             </div>
 
             {{-- Right: Verification Tools (7/12) ─────────────────────────── --}}
-            <div class="contents lg:block lg:col-span-7 lg:space-y-4">
+            <div class="contents lg:block lg:col-span-7 lg:space-y-5">
 
                 {{-- ③ Result / Confirm card (hidden until scan/verify) --}}
                 <div id="result-card" style="display:none;" class="order-2 w-full"></div>
 
                 {{-- Manual Verification Card --}}
-                <div class="interactive-card p-5 space-y-3 order-3 w-full">
-                    <h3 class="text-sm font-bold text-gray-800 flex items-center gap-1.5">
-                        <i class="ti ti-keyboard text-green-700"></i> Manual Verification
+                <div class="interactive-card p-6 space-y-3.5 order-3 w-full rounded-2xl border border-gray-200">
+                    <h3 class="text-base sm:text-lg font-bold text-slate-900 flex items-center gap-2">
+                        <i class="ti ti-keyboard text-green-700 text-xl"></i> Manual Verification
                     </h3>
-                    <div class="flex gap-2">
+                    <div class="flex gap-2.5">
                         <input type="text" id="manual-input" placeholder="Enter Booking Code or QR Token…"
                             onkeydown="if(event.key==='Enter') previewManual()"
-                            class="flex-1 border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-green-400 outline-none h-[42px]">
+                            class="flex-1 border border-gray-300 rounded-xl px-4 py-3 text-base font-medium focus:ring-2 focus:ring-green-400 outline-none h-[48px]">
                         <button onclick="previewManual()"
-                            class="bg-green-700 hover:bg-green-800 text-white font-semibold rounded-lg px-5 text-sm flex items-center gap-1.5 transition whitespace-nowrap h-[42px]">
-                            <i class="ti ti-search"></i> Verify
+                            class="bg-green-700 hover:bg-green-800 text-white font-bold rounded-xl px-6 text-base flex items-center gap-2 transition whitespace-nowrap h-[48px] shadow-sm cursor-pointer">
+                            <i class="ti ti-search text-lg"></i> Verify
                         </button>
                     </div>
-                    <p class="text-xs text-gray-400">Paste the QR token from the tourist's ticket confirmation.</p>
+                    <p class="text-xs sm:text-sm text-slate-500">Paste the QR token from the tourist's ticket confirmation.</p>
                 </div>
 
                 {{-- ④ Pending Arrivals Queue (collapsible) --}}
-                <div class="interactive-card overflow-hidden order-4 w-full"
+                <div class="interactive-card overflow-hidden order-4 w-full rounded-2xl border border-gray-200"
                     id="pending-panel">
                     <button
-                        class="w-full px-5 py-3.5 flex items-center justify-between text-left hover:bg-gray-50 transition"
+                        class="w-full px-6 py-4 flex items-center justify-between text-left hover:bg-gray-50 transition"
                         onclick="togglePending()">
-                        <div class="flex items-center gap-2">
-                            <i class="ti ti-ticket text-amber-500"></i>
-                            <span class="font-bold text-gray-800 text-sm">Pending Arrivals Queue</span>
-                            <span class="bg-amber-100 text-amber-700 text-xs font-bold px-2 py-0.5 rounded-full"
+                        <div class="flex items-center gap-2.5">
+                            <i class="ti ti-ticket text-amber-500 text-xl"></i>
+                            <span class="font-bold text-slate-900 text-base sm:text-lg">Pending Arrivals Queue</span>
+                            <span class="bg-amber-100 text-amber-800 text-xs sm:text-sm font-bold px-2.5 py-0.5 rounded-full"
                                 id="pending-count-badge">{{ $stats['pending_arrivals'] }}</span>
                         </div>
                         <i class="ti ti-chevron-down text-gray-400 panel-chevron open" id="pending-chevron"></i>
@@ -445,8 +441,8 @@
                     <div class="panel-body open" id="pending-body">
                         <div class="border-t border-gray-100">
                             <ul id="pending-list" class="divide-y divide-gray-50 max-h-64 overflow-y-auto">
-                                <li class="px-5 py-4 text-sm text-gray-400 text-center" id="pending-placeholder">
-                                    <i class="ti ti-loader-2 spinner-loader text-lg block mb-1 mx-auto"></i>
+                                <li class="px-6 py-5 text-sm sm:text-base text-gray-400 text-center" id="pending-placeholder">
+                                    <i class="ti ti-loader-2 spinner-loader text-xl block mb-1 mx-auto"></i>
                                     Loading queue...
                                 </li>
                             </ul>
@@ -455,21 +451,21 @@
                 </div>
 
                 {{-- Activity Timeline (collapsible) --}}
-                <div class="interactive-card overflow-hidden order-6 w-full">
+                <div class="interactive-card overflow-hidden order-6 w-full rounded-2xl border border-gray-200">
                     <button
-                        class="w-full px-5 py-3.5 flex items-center justify-between text-left hover:bg-gray-50 transition"
+                        class="w-full px-6 py-4 flex items-center justify-between text-left hover:bg-gray-50 transition"
                         onclick="toggleActivity()">
-                        <div class="flex items-center gap-2">
-                            <i class="ti ti-activity text-green-700"></i>
-                            <span class="font-bold text-gray-800 text-sm">Recent Activity</span>
+                        <div class="flex items-center gap-2.5">
+                            <i class="ti ti-activity text-green-700 text-xl"></i>
+                            <span class="font-bold text-slate-900 text-base sm:text-lg">Recent Activity</span>
                         </div>
                         <i class="ti ti-chevron-down text-gray-400 panel-chevron open" id="activity-chevron"></i>
                     </button>
                     <div class="panel-body open" id="activity-body">
-                        <div class="border-t border-gray-100 p-4 max-h-56 overflow-y-auto">
-                            <ul id="history-log" class="space-y-2.5 relative border-l border-gray-100 pl-4 py-1">
-                                <li id="log-empty" class="text-xs text-gray-400 italic py-6 text-center">
-                                    <i class="ti ti-history text-gray-300 text-2xl block mb-1.5 mx-auto"></i>
+                        <div class="border-t border-gray-100 p-5 max-h-56 overflow-y-auto">
+                            <ul id="history-log" class="space-y-3 relative border-l border-gray-100 pl-4 py-1">
+                                <li id="log-empty" class="text-sm text-slate-400 italic py-6 text-center">
+                                    <i class="ti ti-history text-slate-300 text-2xl block mb-2 mx-auto"></i>
                                     No verification activities yet.
                                 </li>
                             </ul>

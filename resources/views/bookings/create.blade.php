@@ -1,6 +1,5 @@
 <x-app-layout>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Fraunces:ital,wght@0,600;1,600&display=swap');
 
         :root {
             --teal: #0d9488; --teal-dark: #0f766e; --ocean: #0891b2;
@@ -11,7 +10,7 @@
             --sh-card: 0 2px 12px rgba(0,0,0,.07);
             --r-sm: 8px; --r-md: 14px; --r-lg: 20px;
         }
-        #booking-page * { font-family: 'Plus Jakarta Sans', sans-serif; box-sizing: border-box; }
+        #booking-page * { box-sizing: border-box; }
         #booking-page { background: var(--bg); min-height: 100vh; }
 
         .booking-outer { max-width: 620px; margin: 0 auto; padding: 0 20px 64px; }
@@ -22,7 +21,11 @@
 
         /* Header */
         .booking-header { text-align: center; padding: 28px 0 24px; }
+<<<<<<< Updated upstream
         .booking-header h1 { font-family: 'Fraunces', serif; font-size: 1.8rem; color: var(--text-1); margin-bottom: 8px; }
+=======
+        .booking-header h1 { font-size: 1.8rem; color: var(--text-1); margin-bottom: 8px; display: flex; align-items: center; justify-content: center; gap: 8px; }
+>>>>>>> Stashed changes
         .booking-header p { font-size: .9rem; color: var(--text-3); }
 
         /* Dest chip */
@@ -56,7 +59,7 @@
         .form-label span { color: var(--rose); }
         .form-input {
             width: 100%; border: 1.5px solid #d1d5db; border-radius: var(--r-sm);
-            padding: 11px 14px; font-family: 'Plus Jakarta Sans', sans-serif;
+            padding: 11px 14px;
             font-size: .9rem; color: var(--text-2); outline: none;
             transition: border-color var(--t), box-shadow var(--t); background: #fff;
         }
@@ -93,13 +96,23 @@
             font-size: 1rem; font-weight: 800;
             background: linear-gradient(135deg, var(--teal), var(--ocean));
             color: #fff; box-shadow: 0 4px 20px rgba(13,148,136,.35);
+<<<<<<< Updated upstream
             cursor: pointer; transition: var(--t); font-family: 'Plus Jakarta Sans', sans-serif;
+=======
+            cursor: pointer; transition: var(--t);
+            display: flex; align-items: center; justify-content: center; gap: 8px;
+>>>>>>> Stashed changes
         }
         .btn-submit:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(13,148,136,.45); }
         .btn-cancel {
             width: 100%; padding: 11px; border: 1.5px solid #e5e7eb; border-radius: var(--r-md);
             font-size: .9rem; font-weight: 600; background: #fff; color: var(--text-3);
+<<<<<<< Updated upstream
             margin-top: 10px; cursor: pointer; transition: var(--t); font-family: 'Plus Jakarta Sans', sans-serif;
+=======
+            margin-top: 10px; cursor: pointer; transition: var(--t);
+            display: flex; align-items: center; justify-content: center; gap: 6px; text-decoration: none;
+>>>>>>> Stashed changes
         }
         .btn-cancel:hover { border-color: var(--rose); color: var(--rose); }
 

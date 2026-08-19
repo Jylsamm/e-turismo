@@ -53,6 +53,7 @@
             "@php artisan config:clear --ansi",
             "@php artisan test"
         ],
+        "ngrok": "ngrok http 80 --host-header=localhost",
         "post-autoload-dump": [
             "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
             "@php artisan package:discover --ansi"

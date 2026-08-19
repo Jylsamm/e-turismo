@@ -4,7 +4,10 @@
     @endpush
     {{-- No header slot — full-width detail layout --}}
     <style>
+<<<<<<< Updated upstream
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Fraunces:ital,wght@0,600;1,600&display=swap');
+=======
+>>>>>>> Stashed changes
 
         :root {
             --teal:       #16a34a; --teal-light: #4ade80; --teal-dark: #166534;
@@ -17,7 +20,7 @@
             --sh-md:      0 4px 20px rgba(22,197,94,.13);
             --r-sm: 8px; --r-md: 14px; --r-lg: 20px; --r-xl: 28px;
         }
-        #dest-detail * { font-family: 'Plus Jakarta Sans', sans-serif; box-sizing: border-box; }
+        #dest-detail * { box-sizing: border-box; }
 
         /* ── Wrapper ── */
         #dest-detail { background: var(--bg); min-height: 100vh; }
@@ -39,11 +42,21 @@
             margin: 16px 0 28px; position: relative;
             display: flex; align-items: flex-end;
         }
+<<<<<<< Updated upstream
         .detail-hero-bg { position: absolute; inset: 0; background-size: cover; background-position: center; }
         .detail-hero-overlay { position: absolute; inset: 0; background: linear-gradient(to bottom, rgba(0,0,0,0) 40%, rgba(0,0,0,.55) 100%); }
         .detail-hero-text { position: relative; z-index: 1; padding: 24px 32px; width: 100%; }
         .detail-hero-name { font-family: 'Fraunces', serif; font-size: clamp(1.5rem,4vw,2.2rem); color: #fff; line-height: 1.1; text-shadow: 0 2px 8px rgba(0,0,0,.3); }
         .detail-hero-loc  { color: rgba(255,255,255,.82); font-size: .9rem; margin-top: 6px; display: flex; align-items: center; gap: 5px; }
+=======
+        .detail-hero:hover { transform: translateY(-3px); box-shadow: 0 20px 40px -15px rgba(11, 61, 46, 0.12); }
+        .detail-hero-bg { position: absolute; inset: 0; background-size: cover; background-position: center; transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1); }
+        .detail-hero:hover .detail-hero-bg { transform: scale(1.03); }
+        .detail-hero-overlay { position: absolute; inset: 0; background: linear-gradient(to bottom, rgba(0,0,0,0) 30%, rgba(0,0,0,.65) 100%); }
+        .detail-hero-text { position: relative; z-index: 1; padding: 32px; width: 100%; }
+        .detail-hero-name { font-size: clamp(1.6rem, 4vw, 2.4rem); color: #fff; line-height: 1.15; text-shadow: 0 2px 12px rgba(0,0,0,.3); }
+        .detail-hero-loc  { color: rgba(255,255,255,.88); font-size: .9rem; margin-top: 8px; display: flex; align-items: center; gap: 6px; }
+>>>>>>> Stashed changes
 
         /* ── Grid ── */
         .detail-grid { display: grid; grid-template-columns: 1fr 320px; gap: 24px; align-items: start; }

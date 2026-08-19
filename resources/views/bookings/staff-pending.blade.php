@@ -3,23 +3,19 @@
         <h1 class="text-2xl font-bold text-gray-800">Booking Management</h1>
     </x-slot>
 
-    @push('head')
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css" />
-    @endpush
-
     <style>
         .period-btn {
             display: inline-flex;
             align-items: center;
             gap: 6px;
-            padding: 8px 16px;
-            border-radius: 6px;
-            font-size: 13px;
-            font-weight: 500;
+            padding: 9px 18px;
+            border-radius: 12px;
+            font-size: 0.95rem;
+            font-weight: 700;
             cursor: pointer;
-            border: 1px solid #e5e7eb;
+            border: 1.5px solid #e5e7eb;
             background: #fff;
-            color: #6b7280;
+            color: #64748b;
             transition: all 0.2s ease;
         }
         .period-btn:hover {
@@ -28,36 +24,40 @@
             background: #f0fdf4;
         }
         .period-btn.active {
-            background: #2d7a4a;
+            background: #166534;
             color: #fff;
-            border-color: #2d7a4a;
+            border-color: #166534;
+            box-shadow: 0 2px 8px rgba(22, 101, 52, 0.25);
         }
         .tab-btn {
-            padding: 10px 20px;
-            font-size: 14px;
-            font-weight: 500;
-            color: #6b7280;
-            border-bottom: 2px solid transparent;
+            padding: 12px 22px;
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: #64748b;
+            border-bottom: 2.5px solid transparent;
             cursor: pointer;
             transition: all 0.15s;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
         }
         .tab-btn:hover {
-            color: #2d7a4a;
+            color: #166534;
         }
         .tab-btn.active {
-            color: #2d7a4a;
-            border-bottom-color: #2d7a4a;
+            color: #166534;
+            border-bottom-color: #166534;
         }
         .action-btn {
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            width: 32px;
-            height: 32px;
-            border-radius: 7px;
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
             border: none;
             cursor: pointer;
-            font-size: 16px;
+            font-size: 18px;
             transition: all 0.15s;
             text-decoration: none;
         }
@@ -85,14 +85,14 @@
 
         {{-- Flash Messages --}}
         @if(session('success'))
-            <div class="bg-green-50 border border-green-300 text-green-800 px-4 py-3 rounded-lg flex items-center gap-2">
-                <i class="ti ti-circle-check" style="font-size:18px;"></i>
+            <div class="bg-green-50 border border-green-300 text-green-800 px-4 py-3 rounded-xl flex items-center gap-2 font-medium">
+                <i class="ti ti-circle-check" style="font-size:20px;"></i>
                 {{ session('success') }}
             </div>
         @endif
         @if(session('error'))
-            <div class="bg-red-50 border border-red-300 text-red-800 px-4 py-3 rounded-lg flex items-center gap-2">
-                <i class="ti ti-circle-x" style="font-size:18px;"></i>
+            <div class="bg-red-50 border border-red-300 text-red-800 px-4 py-3 rounded-xl flex items-center gap-2 font-medium">
+                <i class="ti ti-circle-x" style="font-size:20px;"></i>
                 {{ session('error') }}
             </div>
         @endif
@@ -117,10 +117,10 @@
 
             {{-- Period Selector --}}
             <div class="flex items-center gap-3">
-                <span class="text-sm font-medium text-gray-500 flex items-center gap-1.5 shrink-0">
-                    <i class="ti ti-filter" style="font-size:15px;"></i> Filter:
+                <span class="text-sm sm:text-base font-bold text-slate-500 flex items-center gap-1.5 shrink-0">
+                    <i class="ti ti-filter text-lg"></i> Filter:
                 </span>
-                <div class="flex items-center gap-2">
+                <div class="flex items-center gap-2 flex-wrap">
                     <button class="period-btn" :class="{ 'active': period === 'all' }" @click="setPeriod('all')">
                         <i class="ti ti-inbox"></i> All
                     </button>
@@ -142,10 +142,11 @@
         </div>
 
         {{-- Table Card --}}
-        <div class="interactive-card overflow-hidden">
+        <div class="seamless-table-card">
             <div class="overflow-x-auto">
-                <table class="w-full text-sm text-left">
+                <table class="seamless-table">
                     <thead>
+<<<<<<< Updated upstream
                         <tr class="bg-gray-50 border-b border-gray-100">
                             <th class="px-5 py-3 text-xs font-semibold text-gray-400 uppercase tracking-wide">Booking ID</th>
                             <th class="px-5 py-3 text-left text-xs font-semibold text-gray-400 uppercase tracking-wide">Visitor Name</th>
@@ -155,10 +156,22 @@
                             <th class="px-5 py-3 text-left text-xs font-semibold text-gray-400 uppercase tracking-wide">Payment</th>
                             <th class="px-5 py-3 text-left text-xs font-semibold text-gray-400 uppercase tracking-wide">Booking Status</th>
                             <th class="px-5 py-3 text-center text-xs font-semibold text-gray-400 uppercase tracking-wide">Actions</th>
+=======
+                        <tr>
+                            <th class="text-left">Booking ID</th>
+                            <th class="text-left">Visitor Name</th>
+                            <th class="text-left">Tourist Spot</th>
+                            <th class="text-left">Visit Date</th>
+                            <th class="text-center">Guests</th>
+                            <th class="text-left">Payment</th>
+                            <th class="text-left">Booking Status</th>
+                            <th class="text-center">Actions</th>
+>>>>>>> Stashed changes
                         </tr>
                     </thead>
-                    <tbody class="divide-y divide-gray-50">
+                    <tbody>
                         <template x-for="b in getActiveList()" :key="b.id">
+<<<<<<< Updated upstream
                             <tr class="hover:bg-gray-50">
                                 <td class="px-5 py-3 font-semibold text-gray-700">#<span x-text="b.id"></span></td>
                                 <td class="px-5 py-3 font-medium text-gray-900" x-text="b.tourist ? b.tourist.name : 'Unknown'"></td>
@@ -193,6 +206,50 @@
                                                     </button>
                                                 </form>
                                                 <button class="action-btn action-btn-decline" title="Reject" @click="rejectBooking(b.id)">
+=======
+                            <tr class="border-b border-gray-200 hover:bg-gray-50/80 transition-colors">
+                                <td class="px-6 py-4 font-bold text-slate-900">#<span x-text="b.id"></span></td>
+                                <td class="px-6 py-4 font-bold text-slate-800"
+                                    x-text="b.tourist ? b.tourist.name : 'Unknown'"></td>
+                                <td class="px-6 py-4 text-slate-700 font-medium" x-text="b.destination ? b.destination.name : '—'">
+                                </td>
+                                <td class="px-6 py-4 text-slate-600 font-medium" x-text="formatDate(b.visit_date)"></td>
+                                <td class="px-6 py-4 text-center text-slate-800 font-bold" x-text="1 + (b.companions ? b.companions.length : 0)">1</td>
+                                <td class="px-6 py-4">
+                                    <span
+                                        class="inline-flex items-center gap-1.5 text-xs sm:text-sm font-bold px-3 py-1 rounded-full border"
+                                        :class="b.payment_status === 'approved' ? 'text-green-700 bg-green-50 border-green-200' : (b.payment_status === 'pending_verification' ? 'text-amber-700 bg-amber-50 border-amber-200' : (b.payment_status === 'refund_pending' ? 'text-blue-700 bg-blue-50 border-blue-200' : (b.payment_status === 'not_charged' ? 'text-gray-700 bg-gray-50 border-gray-200' : 'text-red-700 bg-red-50 border-red-200')))">
+                                        <i class="ti"
+                                            :class="b.payment_status === 'approved' ? 'ti-circle-check-filled' : (b.payment_status === 'pending_verification' ? 'ti-clock' : (b.payment_status === 'refund_pending' ? 'ti-arrow-back-up' : 'ti-info-circle'))"></i>
+                                        <span
+                                            x-text="b.payment_status ? b.payment_status.replace('_', ' ') : 'unpaid'"></span>
+                                    </span>
+                                </td>
+                                <td class="px-6 py-4">
+                                    <span
+                                        class="inline-flex items-center gap-1.5 text-xs sm:text-sm font-bold px-3 py-1 rounded-full border"
+                                        :class="b.status === 'completed' || b.status === 'confirmed' ? 'text-green-700 bg-green-50 border-green-200' : (b.status === 'pending' ? 'text-amber-700 bg-amber-50 border-amber-200' : 'text-red-700 bg-red-50 border-red-200')">
+                                        <i class="ti"
+                                            :class="b.status === 'completed' || b.status === 'confirmed' ? 'ti-circle-check-filled' : 'ti-clock'"></i>
+                                        <span x-text="b.status"></span>
+                                    </span>
+                                </td>
+                                <td class="px-6 py-4">
+                                    <div class="flex items-center justify-center gap-2">
+                                        <button class="action-btn action-btn-view" title="View Details"
+                                            @click="viewDetails(b.id)">
+                                            <i class="ti ti-eye"></i>
+                                        </button>
+                                        <template x-if="b.status === 'pending'">
+                                            <div class="flex gap-2">
+                                                <button type="button"
+                                                    @click="triggerApprove(b.id, b.tourist ? b.tourist.name : 'Tourist')"
+                                                    class="action-btn action-btn-confirm" title="Approve">
+                                                    <i class="ti ti-check"></i>
+                                                </button>
+                                                <button class="action-btn action-btn-decline" title="Reject"
+                                                    @click="rejectBooking(b.id)">
+>>>>>>> Stashed changes
                                                     <i class="ti ti-x"></i>
                                                 </button>
                                             </div>
